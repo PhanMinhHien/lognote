@@ -1,4117 +1,2814 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Money Log</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      --bg: #f5f7fb;
-      --sidebar: #ffffff;
-      --card: #ffffff;
-      --border: #e5e7eb;
-      --text: #111827;
-      --muted: #6b7280;
-      --primary: #111827;
-      --primary-soft: #f3f4f6;
-
-      --income: #16a34a;
-      --income-bg: #ecfdf5;
-
-      --expense: #dc2626;
-      --expense-bg: #fef2f2;
-
-      --shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
-    }
-
-    body.dark {
-      --bg: #0f1115;
-      --sidebar: #15181e;
-      --card: #181c23;
-      --border: #292e38;
-      --text: #f3f4f6;
-      --muted: #9ca3af;
-      --primary: #f3f4f6;
-      --primary-soft: #242933;
-
-      --income: #4ade80;
-      --income-bg: rgba(34, 197, 94, 0.12);
-
-      --expense: #f87171;
-      --expense-bg: rgba(239, 68, 68, 0.12);
-
-      --shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-    }
-
-    body {
-      font-family:
-        Inter,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-
-      transition:
-        background 0.2s ease,
-        color 0.2s ease;
-    }
-
-    button,
-    input,
-    select {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    /* =====================================
-       APP LAYOUT
-    ===================================== */
-
-    .app {
-      display: flex;
-      min-height: 100vh;
-    }
-
-    .sidebar {
-      width: 240px;
-      background: var(--sidebar);
-      border-right: 1px solid var(--border);
-
-      padding: 24px 16px;
-
-      position: fixed;
-      inset: 0 auto 0 0;
-
-      z-index: 20;
-
-      display: flex;
-      flex-direction: column;
-    }
-
-    .brand {
-      padding: 4px 12px 28px;
-    }
-
-    .brand-title {
-      font-size: 21px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-    }
-
-    .brand-subtitle {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 4px;
-    }
-
-    .nav {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .nav-btn {
-      width: 100%;
-
-      border: 0;
-      background: transparent;
-
-      color: var(--muted);
-
-      padding: 12px 14px;
-
-      border-radius: 10px;
-
-      text-align: left;
-
-      font-weight: 600;
-
-      transition: 0.15s;
-    }
-
-    .nav-btn:hover {
-      background: var(--primary-soft);
-      color: var(--text);
-    }
-
-    .nav-btn.active {
-      background: var(--primary);
-      color: var(--bg);
-    }
-
-    .sidebar-bottom {
-      margin-top: auto;
-    }
-
-    .theme-btn {
-      width: 100%;
-
-      border: 1px solid var(--border);
-
-      background: var(--card);
-      color: var(--text);
-
-      padding: 11px 13px;
-
-      border-radius: 10px;
-
-      text-align: left;
-
-      font-weight: 600;
-    }
-
-    .theme-btn:hover {
-      background: var(--primary-soft);
-    }
-
-    .main {
-      margin-left: 240px;
-
-      width: calc(100% - 240px);
-
-      padding: 28px;
-
-      min-width: 0;
-    }
-
-    .page {
-      display: none;
-    }
-
-    .page.active {
-      display: block;
-    }
-
-    /* =====================================
-       TOP BAR
-    ===================================== */
-
-    .topbar {
-      display: flex;
-
-      justify-content: space-between;
-      align-items: center;
-
-      gap: 20px;
-
-      margin-bottom: 26px;
-    }
-
-    .page-title {
-      font-size: 27px;
-      font-weight: 800;
-
-      letter-spacing: -0.6px;
-    }
-
-    .page-subtitle {
-      color: var(--muted);
-
-      margin-top: 5px;
-
-      font-size: 14px;
-    }
-
-    .primary-btn {
-      border: 0;
-
-      background: var(--primary);
-      color: var(--bg);
-
-      padding: 11px 17px;
-
-      border-radius: 10px;
-
-      font-weight: 700;
-
-      transition: 0.15s;
-    }
-
-    .primary-btn:hover {
-      opacity: 0.88;
-      transform: translateY(-1px);
-    }
-
-    /* =====================================
-       CARDS
-    ===================================== */
-
-    .card {
-      background: var(--card);
-
-      border: 1px solid var(--border);
-
-      border-radius: 16px;
-
-      box-shadow: var(--shadow);
-    }
-
-    /* =====================================
-       KPI
-    ===================================== */
-
-    .kpi-grid {
-      display: grid;
-
-      grid-template-columns:
-        repeat(4, minmax(0, 1fr));
-
-      gap: 16px;
-
-      margin-bottom: 20px;
-    }
-
-    .kpi {
-      padding: 20px;
-    }
-
-    .kpi-label {
-      font-size: 13px;
-
-      color: var(--muted);
-
-      margin-bottom: 9px;
-    }
-
-    .kpi-value {
-      font-size: 25px;
-
-      font-weight: 800;
-
-      letter-spacing: -0.5px;
-    }
-
-    .kpi-value.income {
-      color: var(--income);
-    }
-
-    .kpi-value.expense {
-      color: var(--expense);
-    }
-
-    .kpi-value.balance-positive {
-      color: var(--income);
-    }
-
-    .kpi-value.balance-negative {
-      color: var(--expense);
-    }
-
-    /* =====================================
-       DASHBOARD
-    ===================================== */
-
-    .dashboard-grid {
-      display: grid;
-
-      grid-template-columns:
-        minmax(0, 1.7fr)
-        minmax(300px, 1fr);
-
-      gap: 20px;
-
-      margin-bottom: 20px;
-    }
-
-    .panel {
-      padding: 20px;
-    }
-
-    .panel-header {
-      display: flex;
-
-      justify-content: space-between;
-      align-items: center;
-
-      gap: 10px;
-
-      margin-bottom: 18px;
-    }
-
-    .panel-title {
-      font-size: 16px;
-      font-weight: 800;
-    }
-
-    .panel-subtitle {
-      color: var(--muted);
-
-      font-size: 12px;
-    }
-
-    .chart-container {
-      height: 280px;
-
-      position: relative;
-    }
-
-    /* =====================================
-       CATEGORY
-    ===================================== */
-
-    .category-list {
-      display: flex;
-
-      flex-direction: column;
-
-      gap: 13px;
-    }
-
-    .category-row {
-      display: flex;
-
-      align-items: center;
-
-      gap: 12px;
-    }
-
-    .category-icon {
-      width: 38px;
-      height: 38px;
-
-      border-radius: 10px;
-
-      background: var(--primary-soft);
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      flex-shrink: 0;
-    }
-
-    .category-info {
-      flex: 1;
-
-      min-width: 0;
-    }
-
-    .category-name {
-      font-size: 13px;
-
-      font-weight: 700;
-
-      margin-bottom: 5px;
-    }
-
-    .category-bar {
-      height: 6px;
-
-      background: var(--primary-soft);
-
-      border-radius: 999px;
-
-      overflow: hidden;
-    }
-
-    .category-bar-fill {
-      height: 100%;
-
-      border-radius: 999px;
-
-      background: var(--expense);
-    }
-
-    .category-amount {
-      font-size: 13px;
-
-      font-weight: 700;
-
-      white-space: nowrap;
-    }
-
-    /* =====================================
-       TRANSACTION LIST
-    ===================================== */
-
-    .transaction-list {
-      display: flex;
-
-      flex-direction: column;
-    }
-
-    .transaction-item {
-      display: flex;
-
-      align-items: center;
-
-      gap: 14px;
-
-      padding: 14px 0;
-
-      border-bottom:
-        1px solid var(--border);
-    }
-
-    .transaction-item:last-child {
-      border-bottom: 0;
-    }
-
-    .transaction-icon {
-      width: 42px;
-      height: 42px;
-
-      border-radius: 11px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      flex-shrink: 0;
-
-      font-size: 18px;
-    }
-
-    .transaction-icon.income {
-      background: var(--income-bg);
-    }
-
-    .transaction-icon.expense {
-      background: var(--expense-bg);
-    }
-
-    .transaction-info {
-      flex: 1;
-
-      min-width: 0;
-    }
-
-    .transaction-name {
-      font-weight: 700;
-
-      font-size: 14px;
-
-      overflow: hidden;
-
-      text-overflow: ellipsis;
-
-      white-space: nowrap;
-    }
-
-    .transaction-meta {
-      color: var(--muted);
-
-      font-size: 12px;
-
-      margin-top: 4px;
-    }
-
-    .transaction-amount {
-      font-weight: 800;
-
-      font-size: 14px;
-
-      white-space: nowrap;
-    }
-
-    .transaction-amount.income {
-      color: var(--income);
-    }
-
-    .transaction-amount.expense {
-      color: var(--expense);
-    }
-
-    .empty-state {
-      color: var(--muted);
-
-      text-align: center;
-
-      padding: 30px 10px;
-
-      font-size: 14px;
-    }
-
-    /* =====================================
-       FILTERS
-    ===================================== */
-
-    .filters {
-      padding: 18px;
-
-      margin-bottom: 18px;
-    }
-
-    .filter-grid {
-      display: grid;
-
-      grid-template-columns:
-        minmax(150px, 1fr)
-        minmax(150px, 1fr)
-        minmax(140px, 0.8fr)
-        minmax(140px, 0.8fr)
-        minmax(200px, 1.4fr);
-
-      gap: 12px;
-    }
-
-    .field {
-      display: flex;
-
-      flex-direction: column;
-
-      gap: 6px;
-    }
-
-    .field label {
-      font-size: 12px;
-
-      color: var(--muted);
-
-      font-weight: 700;
-    }
-
-    .field input,
-    .field select {
-      width: 100%;
-
-      border: 1px solid var(--border);
-
-      background: var(--card);
-      color: var(--text);
-
-      border-radius: 9px;
-
-      padding: 10px 11px;
-
-      outline: none;
-    }
-
-    .field input:focus,
-    .field select:focus {
-      border-color: var(--text);
-    }
-
-    /* =====================================
-       SUMMARY
-    ===================================== */
-
-    .range-summary {
-      display: flex;
-
-      gap: 10px;
-
-      flex-wrap: wrap;
-
-      margin-bottom: 18px;
-    }
-
-    .summary-pill {
-      background: var(--card);
-
-      border: 1px solid var(--border);
-
-      border-radius: 10px;
-
-      padding: 10px 13px;
-
-      font-size: 13px;
-    }
-
-    .summary-pill strong {
-      margin-left: 5px;
-    }
-
-    .summary-pill.income strong {
-      color: var(--income);
-    }
-
-    .summary-pill.expense strong {
-      color: var(--expense);
-    }
-
-    /* =====================================
-       TABLE
-    ===================================== */
-
-    .table-card {
-      overflow: hidden;
-    }
-
-    .table-wrapper {
-      width: 100%;
-
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-
-      border-collapse: collapse;
-
-      min-width: 760px;
-    }
-
-    th,
-    td {
-      padding: 14px 18px;
-
-      text-align: left;
-
-      border-bottom:
-        1px solid var(--border);
-    }
-
-    th {
-      font-size: 11px;
-
-      text-transform: uppercase;
-
-      letter-spacing: 0.5px;
-
-      color: var(--muted);
-
-      font-weight: 800;
-
-      background: var(--primary-soft);
-    }
-
-    td {
-      font-size: 14px;
-    }
-
-    tbody tr:hover {
-      background: var(--primary-soft);
-    }
-
-    .type-badge,
-    .category-badge {
-      display: inline-flex;
-
-      align-items: center;
-
-      gap: 5px;
-
-      padding: 5px 9px;
-
-      border-radius: 999px;
-
-      font-size: 12px;
-
-      font-weight: 700;
-    }
-
-    .type-badge.income {
-      background: var(--income-bg);
-
-      color: var(--income);
-    }
-
-    .type-badge.expense {
-      background: var(--expense-bg);
-
-      color: var(--expense);
-    }
-
-    .category-badge {
-      background: var(--primary-soft);
-
-      color: var(--text);
-    }
-
-    .actions {
-      display: flex;
-
-      gap: 7px;
-    }
-
-    .action-btn {
-      border: 1px solid var(--border);
-
-      background: var(--card);
-
-      color: var(--text);
-
-      border-radius: 8px;
-
-      padding: 6px 9px;
-
-      font-size: 12px;
-    }
-
-    .action-btn:hover {
-      background: var(--primary-soft);
-    }
-
-    .action-btn.delete:hover {
-      color: var(--expense);
-
-      border-color: var(--expense);
-    }
-
-    /* =====================================
-       MODAL
-    ===================================== */
-
-    .modal-backdrop {
-      position: fixed;
-
-      inset: 0;
-
-      background:
-        rgba(0, 0, 0, 0.55);
-
-      display: none;
-
-      align-items: center;
-      justify-content: center;
-
-      padding: 20px;
-
-      z-index: 100;
-    }
-
-    .modal-backdrop.show {
-      display: flex;
-    }
-
-    .modal {
-      width: min(500px, 100%);
-
-      background: var(--card);
-
-      border: 1px solid var(--border);
-
-      border-radius: 18px;
-
-      box-shadow:
-        0 25px 70px
-        rgba(0, 0, 0, 0.25);
-
-      padding: 22px;
-    }
-
-    .modal-header {
-      display: flex;
-
-      justify-content: space-between;
-      align-items: center;
-
-      margin-bottom: 22px;
-    }
-
-    .modal-title {
-      font-size: 19px;
-
-      font-weight: 800;
-    }
-
-    .close-btn {
-      border: 0;
-
-      background: transparent;
-
-      color: var(--muted);
-
-      font-size: 23px;
-
-      line-height: 1;
-    }
-
-    .type-switch {
-      display: grid;
-
-      grid-template-columns: 1fr 1fr;
-
-      gap: 8px;
-
-      margin-bottom: 18px;
-    }
-
-    .type-btn {
-      border: 1px solid var(--border);
-
-      background: var(--card);
-
-      color: var(--muted);
-
-      padding: 11px;
-
-      border-radius: 10px;
-
-      font-weight: 800;
-    }
-
-    .type-btn.active.income {
-      background: var(--income-bg);
-
-      color: var(--income);
-
-      border-color: var(--income);
-    }
-
-    .type-btn.active.expense {
-      background: var(--expense-bg);
-
-      color: var(--expense);
-
-      border-color: var(--expense);
-    }
-
-    .modal-fields {
-      display: flex;
-
-      flex-direction: column;
-
-      gap: 14px;
-    }
-
-    .modal-footer {
-      display: flex;
-
-      justify-content: flex-end;
-
-      gap: 9px;
-
-      margin-top: 22px;
-    }
-
-    .secondary-btn {
-      border: 1px solid var(--border);
-
-      background: var(--card);
-
-      color: var(--text);
-
-      padding: 10px 15px;
-
-      border-radius: 9px;
-
-      font-weight: 700;
-    }
-
-    /* =====================================
-       FIREBASE STATUS
-    ===================================== */
-
-    .firebase-status {
-      position: fixed;
-
-      bottom: 15px;
-      right: 15px;
-
-      background: var(--card);
-
-      border: 1px solid var(--border);
-
-      box-shadow: var(--shadow);
-
-      border-radius: 9px;
-
-      padding: 8px 11px;
-
-      font-size: 11px;
-
-      color: var(--muted);
-
-      z-index: 50;
-    }
-
-    .firebase-status.ok {
-      color: var(--income);
-    }
-
-    .firebase-status.error {
-      color: var(--expense);
-    }
-
-    /* =====================================
-       RESPONSIVE
-    ===================================== */
-
-    @media (max-width: 1100px) {
-
-      .kpi-grid {
-        grid-template-columns:
-          repeat(2, 1fr);
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Money Log</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
 
-      .dashboard-grid {
-        grid-template-columns: 1fr;
+      :root {
+        --bg: #f5f7fb;
+        --sidebar: #ffffff;
+        --card: #ffffff;
+        --border: #e5e7eb;
+        --text: #111827;
+        --muted: #6b7280;
+        --primary: #111827;
+        --primary-soft: #f3f4f6;
+        --income: #16a34a;
+        --income-bg: #ecfdf5;
+        --expense: #dc2626;
+        --expense-bg: #fef2f2;
+        --shadow: 0 8px 30px rgba(15, 23, 42, 0.06);
       }
 
-      .filter-grid {
-        grid-template-columns:
-          repeat(2, 1fr);
+      body.dark {
+        --bg: #0f1115;
+        --sidebar: #15181e;
+        --card: #181c23;
+        --border: #292e38;
+        --text: #f3f4f6;
+        --muted: #9ca3af;
+        --primary: #f3f4f6;
+        --primary-soft: #242933;
+        --income: #4ade80;
+        --income-bg: rgba(34, 197, 94, 0.12);
+        --expense: #f87171;
+        --expense-bg: rgba(239, 68, 68, 0.12);
+        --shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
       }
 
-    }
+      body {
+        font-family:
+          Inter,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        transition:
+          background 0.2s ease,
+          color 0.2s ease;
+      }
 
-    @media (max-width: 760px) {
+      button,
+      input,
+      select {
+        font: inherit;
+      }
 
-      .sidebar {
-        width: 100%;
-
-        height: auto;
-
-        bottom: auto;
-
-        position: relative;
-
-        border-right: 0;
-
-        border-bottom:
-          1px solid var(--border);
-
-        padding: 12px;
+      button {
+        cursor: pointer;
       }
 
       .app {
-        display: block;
+        display: flex;
+        min-height: 100vh;
       }
 
-      .brand {
-        padding: 5px 8px 12px;
-      }
-
-      .nav {
-        flex-direction: row;
-      }
-
-      .nav-btn {
-        flex: 1;
-
-        text-align: center;
-      }
-
-      .sidebar-bottom {
-        margin-top: 10px;
-      }
-
-      .theme-btn {
-        text-align: center;
-      }
-
-      .main {
-        margin-left: 0;
-
-        width: 100%;
-
-        padding: 18px;
-      }
-
-      .topbar {
-        align-items: flex-start;
-      }
-
-      .page-title {
-        font-size: 22px;
-      }
-
-      .kpi-grid {
-        grid-template-columns:
-          1fr 1fr;
-      }
-
-      .filter-grid {
-        grid-template-columns: 1fr;
-      }
-
-    }
-
-    @media (max-width: 500px) {
-
-      .kpi-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .topbar {
+      .sidebar {
+        width: 240px;
+        background: var(--sidebar);
+        border-right: 1px solid var(--border);
+        padding: 24px 16px;
+        position: fixed;
+        inset: 0 auto 0 0;
+        z-index: 20;
+        display: flex;
         flex-direction: column;
       }
 
-      .topbar .primary-btn {
+      .brand {
+        padding: 4px 12px 28px;
+      }
+
+      .brand-title {
+        font-size: 21px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+      }
+
+      .brand-subtitle {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+
+      .nav {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .nav-btn {
         width: 100%;
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        padding: 12px 14px;
+        border-radius: 10px;
+        text-align: left;
+        font-weight: 600;
+        transition: 0.15s;
+      }
+
+      .nav-btn:hover {
+        background: var(--primary-soft);
+        color: var(--text);
+      }
+
+      .nav-btn.active {
+        background: var(--primary);
+        color: var(--bg);
+      }
+
+      .sidebar-bottom {
+        margin-top: auto;
+      }
+
+      .theme-btn {
+        width: 100%;
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--text);
+        padding: 11px 13px;
+        border-radius: 10px;
+        text-align: left;
+        font-weight: 600;
+      }
+
+      .theme-btn:hover {
+        background: var(--primary-soft);
+      }
+
+      .main {
+        margin-left: 240px;
+        width: calc(100% - 240px);
+        padding: 28px;
+        min-width: 0;
+      }
+
+      .page {
+        display: none;
+      }
+
+      .page.active {
+        display: block;
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 26px;
+      }
+
+      .page-title {
+        font-size: 27px;
+        font-weight: 800;
+        letter-spacing: -0.6px;
+      }
+
+      .page-subtitle {
+        color: var(--muted);
+        margin-top: 5px;
+        font-size: 14px;
+      }
+
+      .primary-btn {
+        border: 0;
+        background: var(--primary);
+        color: var(--bg);
+        padding: 11px 17px;
+        border-radius: 10px;
+        font-weight: 700;
+        transition: 0.15s;
+      }
+
+      .primary-btn:hover {
+        opacity: 0.88;
+        transform: translateY(-1px);
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+      }
+
+      .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+
+      .kpi {
+        padding: 20px;
+      }
+
+      .kpi-label {
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 9px;
+      }
+
+      .kpi-value {
+        font-size: 25px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+      }
+
+      .kpi-value.income,
+      .kpi-value.balance-positive {
+        color: var(--income);
+      }
+
+      .kpi-value.expense,
+      .kpi-value.balance-negative {
+        color: var(--expense);
+      }
+
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.7fr) minmax(300px, 1fr);
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .panel {
+        padding: 20px;
+      }
+
+      .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+
+      .panel-title {
+        font-size: 16px;
+        font-weight: 800;
+      }
+
+      .panel-subtitle {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .chart-container {
+        height: 280px;
+        position: relative;
+      }
+
+      .category-list {
+        display: flex;
+        flex-direction: column;
+        gap: 13px;
+      }
+
+      .category-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .category-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: var(--primary-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .category-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .category-name {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 5px;
+      }
+
+      .category-bar {
+        height: 6px;
+        background: var(--primary-soft);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+
+      .category-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+        background: var(--expense);
+      }
+
+      .category-amount {
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .transaction-list {
+        display: flex;
+        flex-direction: column;
       }
 
       .transaction-item {
-        gap: 9px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .transaction-item:last-child {
+        border-bottom: 0;
       }
 
       .transaction-icon {
-        width: 36px;
-        height: 36px;
+        width: 42px;
+        height: 42px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 18px;
+      }
+
+      .transaction-icon.income {
+        background: var(--income-bg);
+      }
+
+      .transaction-icon.expense {
+        background: var(--expense-bg);
+      }
+
+      .transaction-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .transaction-name {
+        font-weight: 700;
+        font-size: 14px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .transaction-meta {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 4px;
       }
 
       .transaction-amount {
+        font-weight: 800;
+        font-size: 14px;
+        white-space: nowrap;
+      }
+
+      .transaction-amount.income {
+        color: var(--income);
+      }
+
+      .transaction-amount.expense {
+        color: var(--expense);
+      }
+
+      .empty-state {
+        color: var(--muted);
+        text-align: center;
+        padding: 30px 10px;
+        font-size: 14px;
+      }
+
+      .filters {
+        padding: 18px;
+        margin-bottom: 18px;
+      }
+
+      .filter-grid {
+        display: grid;
+        grid-template-columns:
+          minmax(150px, 1fr)
+          minmax(150px, 1fr)
+          minmax(140px, 0.8fr)
+          minmax(140px, 0.8fr)
+          minmax(200px, 1.4fr);
+        gap: 12px;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .field label {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .field input,
+      .field select {
+        width: 100%;
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--text);
+        border-radius: 9px;
+        padding: 10px 11px;
+        outline: none;
+      }
+
+      .field input:focus,
+      .field select:focus {
+        border-color: var(--text);
+      }
+
+      .range-summary {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+      }
+
+      .summary-pill {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 13px;
         font-size: 13px;
       }
 
-    }
+      .summary-pill strong {
+        margin-left: 5px;
+      }
 
-  </style>
-</head>
+      .summary-pill.income strong {
+        color: var(--income);
+      }
 
-<body>
+      .summary-pill.expense strong {
+        color: var(--expense);
+      }
 
-  <div class="app">
+      .table-card {
+        overflow: hidden;
+      }
 
-    <!-- =====================================
-         SIDEBAR
-    ====================================== -->
+      .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+      }
 
-    <aside class="sidebar">
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 760px;
+      }
 
-      <div class="brand">
+      th,
+      td {
+        padding: 14px 18px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+      }
 
-        <div class="brand-title">
-          💰 Money Log
+      th {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--muted);
+        font-weight: 800;
+        background: var(--primary-soft);
+      }
+
+      td {
+        font-size: 14px;
+      }
+
+      tbody tr:hover {
+        background: var(--primary-soft);
+      }
+
+      .type-badge,
+      .category-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 9px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .type-badge.income {
+        background: var(--income-bg);
+        color: var(--income);
+      }
+
+      .type-badge.expense {
+        background: var(--expense-bg);
+        color: var(--expense);
+      }
+
+      .category-badge {
+        background: var(--primary-soft);
+        color: var(--text);
+      }
+
+      .actions {
+        display: flex;
+        gap: 7px;
+      }
+
+      .action-btn {
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--text);
+        border-radius: 8px;
+        padding: 6px 9px;
+        font-size: 12px;
+      }
+
+      .action-btn:hover {
+        background: var(--primary-soft);
+      }
+
+      .action-btn.delete:hover {
+        color: var(--expense);
+        border-color: var(--expense);
+      }
+
+      /* =====================================
+         MODALS
+      ===================================== */
+
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 100;
+        overflow-y: auto;
+      }
+
+      .modal-backdrop.show {
+        display: flex;
+      }
+
+      .modal {
+        width: min(500px, 100%);
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25);
+        padding: 22px;
+        color: var(--text);
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 22px;
+      }
+
+      .modal-title {
+        font-size: 19px;
+        font-weight: 800;
+      }
+
+      .close-btn {
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        font-size: 23px;
+        line-height: 1;
+      }
+
+      .type-switch {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 18px;
+      }
+
+      .type-btn {
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--muted);
+        padding: 11px;
+        border-radius: 10px;
+        font-weight: 800;
+      }
+
+      .type-btn.active.income {
+        background: var(--income-bg);
+        color: var(--income);
+        border-color: var(--income);
+      }
+
+      .type-btn.active.expense {
+        background: var(--expense-bg);
+        color: var(--expense);
+        border-color: var(--expense);
+      }
+
+      .modal-fields {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 9px;
+        margin-top: 22px;
+      }
+
+      .secondary-btn {
+        border: 1px solid var(--border);
+        background: var(--card);
+        color: var(--text);
+        padding: 10px 15px;
+        border-radius: 9px;
+        font-weight: 700;
+      }
+
+      .secondary-btn:hover {
+        background: var(--primary-soft);
+      }
+
+      /* CUSTOM ALERT / CONFIRM MODAL */
+
+      #appDialogBackdrop {
+        z-index: 200;
+      }
+
+      .app-dialog {
+        width: min(420px, 100%);
+        background: var(--card);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 26px;
+        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
+        animation: dialogAppear 0.18s ease-out;
+      }
+
+      @keyframes dialogAppear {
+        from {
+          opacity: 0;
+          transform: translateY(8px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .app-dialog-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-bottom: 16px;
+        background: var(--primary-soft);
+      }
+
+      .app-dialog-icon.success {
+        background: var(--income-bg);
+      }
+
+      .app-dialog-icon.error,
+      .app-dialog-icon.danger {
+        background: var(--expense-bg);
+      }
+
+      .app-dialog-title {
+        font-size: 20px;
+        line-height: 1.35;
+        font-weight: 800;
+        margin-bottom: 10px;
+      }
+
+      .app-dialog-message {
+        font-size: 14px;
+        line-height: 1.65;
+        color: var(--muted);
+        white-space: pre-line;
+        overflow-wrap: anywhere;
+      }
+
+      .app-dialog-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 24px;
+      }
+
+      .app-dialog-footer button {
+        min-width: 90px;
+      }
+
+      .app-dialog-confirm.danger {
+        background: var(--expense);
+        color: #fff;
+      }
+
+      .app-dialog-confirm.danger:hover {
+        opacity: 0.88;
+      }
+
+      .firebase-status {
+        position: fixed;
+        bottom: 15px;
+        right: 15px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        border-radius: 9px;
+        padding: 8px 11px;
+        font-size: 11px;
+        color: var(--muted);
+        z-index: 50;
+      }
+
+      .firebase-status.ok {
+        color: var(--income);
+      }
+
+      .firebase-status.error {
+        color: var(--expense);
+      }
+
+      @media (max-width: 1100px) {
+        .kpi-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .filter-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      @media (max-width: 760px) {
+        .sidebar {
+          width: 100%;
+          height: auto;
+          bottom: auto;
+          position: relative;
+          border-right: 0;
+          border-bottom: 1px solid var(--border);
+          padding: 12px;
+        }
+
+        .app {
+          display: block;
+        }
+
+        .brand {
+          padding: 5px 8px 12px;
+        }
+
+        .nav {
+          flex-direction: row;
+        }
+
+        .nav-btn {
+          flex: 1;
+          text-align: center;
+        }
+
+        .sidebar-bottom {
+          margin-top: 10px;
+        }
+
+        .theme-btn {
+          text-align: center;
+        }
+
+        .main {
+          margin-left: 0;
+          width: 100%;
+          padding: 18px;
+        }
+
+        .topbar {
+          align-items: flex-start;
+        }
+
+        .page-title {
+          font-size: 22px;
+        }
+
+        .kpi-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .filter-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 500px) {
+        .kpi-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .topbar {
+          flex-direction: column;
+        }
+
+        .topbar .primary-btn {
+          width: 100%;
+        }
+
+        .transaction-item {
+          gap: 9px;
+        }
+
+        .transaction-icon {
+          width: 36px;
+          height: 36px;
+        }
+
+        .transaction-amount {
+          font-size: 13px;
+        }
+
+        .app-dialog {
+          padding: 22px;
+        }
+
+        .app-dialog-footer {
+          flex-direction: column-reverse;
+        }
+
+        .app-dialog-footer button {
+          width: 100%;
+        }
+      }
+
+      /* APP LOCK */
+      .app-lock-screen {
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        background: var(--bg);
+      }
+
+      .app-lock-screen.hidden {
+        display: none !important;
+      }
+
+      .app-lock-card {
+        width: min(420px, 100%);
+        padding: 28px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--card);
+        box-shadow: var(--shadow);
+      }
+
+      .app-lock-icon {
+        font-size: 38px;
+        margin-bottom: 16px;
+      }
+
+      .app-lock-title {
+        font-size: 24px;
+        font-weight: 800;
+        margin-bottom: 8px;
+      }
+
+      .app-lock-description {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 22px;
+      }
+
+      .app-lock-card .field {
+        margin-bottom: 14px;
+      }
+
+      .app-lock-error {
+        color: var(--expense);
+        font-size: 13px;
+        margin: 8px 0 14px;
+        line-height: 1.5;
+        white-space: pre-line;
+      }
+
+      .app-lock-card .primary-btn {
+        width: 100%;
+      }
+
+      .settings-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 20px;
+      }
+
+      .settings-card {
+        padding: 22px;
+      }
+
+      .settings-description {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.6;
+        margin: 10px 0 20px;
+      }
+
+      .lock-countdown {
+        font-size: 28px;
+        font-weight: 800;
+        margin: 12px 0;
+        letter-spacing: 1px;
+      }
+
+      .settings-card .field {
+        margin-bottom: 14px;
+      }
+
+      @media (max-width: 760px) {
+        .settings-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-title">💰 Money Log</div>
+          <div class="brand-subtitle">Personal finance tracker</div>
         </div>
 
-        <div class="brand-subtitle">
-          Personal finance tracker
-        </div>
-
-      </div>
-
-
-      <nav class="nav">
-
-        <button
-          class="nav-btn active"
-          data-page="dashboard"
-          onclick="switchPage('dashboard')"
-        >
-          📊 Dashboard
-        </button>
-
-        <button
-          class="nav-btn"
-          data-page="transactions"
-          onclick="switchPage('transactions')"
-        >
-          💳 Transactions
-        </button>
-
-      </nav>
-
-
-      <div class="sidebar-bottom">
-
-        <button
-          class="theme-btn"
-          id="themeBtn"
-          onclick="toggleTheme()"
-        >
-          🌙 Dark mode
-        </button>
-
-      </div>
-
-    </aside>
-
-
-    <!-- =====================================
-         MAIN
-    ====================================== -->
-
-    <main class="main">
-
-      <!-- ===================================
-           DASHBOARD
-      ==================================== -->
-
-      <section
-        id="dashboardPage"
-        class="page active"
-      >
-
-        <div class="topbar">
-
-          <div>
-
-            <div class="page-title">
-              Dashboard 👋
-            </div>
-
-            <div class="page-subtitle">
-              Tổng quan thu chi của bạn
-            </div>
-
-          </div>
-
-
+        <nav class="nav">
           <button
-            class="primary-btn"
-            onclick="openAddModal()"
+            class="nav-btn active"
+            data-page="dashboard"
+            onclick="switchPage('dashboard')"
           >
-            + Giao dịch
+            📊 Dashboard
           </button>
+          <button
+            class="nav-btn"
+            data-page="transactions"
+            onclick="switchPage('transactions')"
+          >
+            💳 Transactions
+          </button>
+          <button
+            class="nav-btn"
+            data-page="settings"
+            onclick="switchPage('settings')"
+          >
+            ⚙️ Settings
+          </button>
+        </nav>
 
+        <div class="sidebar-bottom">
+          <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">
+            🌙 Dark mode
+          </button>
         </div>
+      </aside>
 
-
-        <!-- KPI -->
-
-        <div class="kpi-grid">
-
-          <div class="card kpi">
-
-            <div class="kpi-label">
-              Số dư
-            </div>
-
-            <div
-              id="balanceValue"
-              class="kpi-value"
-            >
-              0 ₫
-            </div>
-
-          </div>
-
-
-          <div class="card kpi">
-
-            <div class="kpi-label">
-              Tổng thu
-            </div>
-
-            <div
-              id="incomeValue"
-              class="kpi-value income"
-            >
-              0 ₫
-            </div>
-
-          </div>
-
-
-          <div class="card kpi">
-
-            <div class="kpi-label">
-              Tổng chi
-            </div>
-
-            <div
-              id="expenseValue"
-              class="kpi-value expense"
-            >
-              0 ₫
-            </div>
-
-          </div>
-
-
-          <div class="card kpi">
-
-            <div class="kpi-label">
-              Chi tháng này
-            </div>
-
-            <div
-              id="monthExpenseValue"
-              class="kpi-value expense"
-            >
-              0 ₫
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <!-- CHARTS -->
-
-        <div class="dashboard-grid">
-
-          <div class="card panel">
-
-            <div class="panel-header">
-
-              <div>
-
-                <div class="panel-title">
-                  Thu / Chi 7 ngày
-                </div>
-
-                <div class="panel-subtitle">
-                  7 ngày gần nhất
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <div class="chart-container">
-
-              <canvas
-                id="weeklyChart"
-              ></canvas>
-
-            </div>
-
-          </div>
-
-
-          <div class="card panel">
-
-            <div class="panel-header">
-
-              <div>
-
-                <div class="panel-title">
-                  Chi theo nhóm
-                </div>
-
-                <div class="panel-subtitle">
-                  Tháng hiện tại
-                </div>
-
-              </div>
-
-            </div>
-
-
-            <div
-              id="categoryList"
-              class="category-list"
-            ></div>
-
-          </div>
-
-        </div>
-
-
-        <!-- RECENT -->
-
-        <div class="card panel">
-
-          <div class="panel-header">
-
+      <main class="main">
+        <section id="dashboardPage" class="page active">
+          <div class="topbar">
             <div>
-
-              <div class="panel-title">
-                Giao dịch gần đây
-              </div>
-
-              <div class="panel-subtitle">
-                10 giao dịch mới nhất
-              </div>
-
+              <div class="page-title">Dashboard 👋</div>
+              <div class="page-subtitle">Tổng quan thu chi của bạn</div>
             </div>
-
-
-            <button
-              class="secondary-btn"
-              onclick="switchPage('transactions')"
-            >
-              Xem tất cả
+            <button class="primary-btn" onclick="openAddModal()">
+              + Giao dịch
             </button>
-
           </div>
 
-
-          <div
-            id="recentTransactions"
-            class="transaction-list"
-          ></div>
-
-        </div>
-
-      </section>
-
-
-      <!-- ===================================
-           TRANSACTIONS
-      ==================================== -->
-
-      <section
-        id="transactionsPage"
-        class="page"
-      >
-
-        <div class="topbar">
-
-          <div>
-
-            <div class="page-title">
-              Transactions
+          <div class="kpi-grid">
+            <div class="card kpi">
+              <div class="kpi-label">Số dư</div>
+              <div id="balanceValue" class="kpi-value">0 ₫</div>
             </div>
-
-            <div class="page-subtitle">
-              Xem và quản lý các giao dịch
+            <div class="card kpi">
+              <div class="kpi-label">Tổng thu</div>
+              <div id="incomeValue" class="kpi-value income">0 ₫</div>
             </div>
-
+            <div class="card kpi">
+              <div class="kpi-label">Tổng chi</div>
+              <div id="expenseValue" class="kpi-value expense">0 ₫</div>
+            </div>
+            <div class="card kpi">
+              <div class="kpi-label">Chi tháng này</div>
+              <div id="monthExpenseValue" class="kpi-value expense">0 ₫</div>
+            </div>
           </div>
 
+          <div class="dashboard-grid">
+            <div class="card panel">
+              <div class="panel-header">
+                <div>
+                  <div class="panel-title">Thu / Chi 7 ngày</div>
+                  <div class="panel-subtitle">7 ngày gần nhất</div>
+                </div>
+              </div>
+              <div class="chart-container">
+                <canvas id="weeklyChart"></canvas>
+              </div>
+            </div>
 
-          <button
-            class="primary-btn"
-            onclick="openAddModal()"
-          >
-            + Giao dịch
-          </button>
+            <div class="card panel">
+              <div class="panel-header">
+                <div>
+                  <div class="panel-title">Chi theo nhóm</div>
+                  <div class="panel-subtitle">Tháng hiện tại</div>
+                </div>
+              </div>
+              <div id="categoryList" class="category-list"></div>
+            </div>
+          </div>
 
-        </div>
-
-
-        <!-- FILTERS -->
-
-        <div class="card filters">
-
-          <div class="filter-grid">
-
-            <div class="field">
-
-              <label>
-                Từ ngày
-              </label>
-
-              <input
-                type="date"
-                id="filterFrom"
+          <div class="card panel">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">Giao dịch gần đây</div>
+                <div class="panel-subtitle">10 giao dịch mới nhất</div>
+              </div>
+              <button
+                class="secondary-btn"
+                onclick="switchPage('transactions')"
               >
-
+                Xem tất cả
+              </button>
             </div>
+            <div id="recentTransactions" class="transaction-list"></div>
+          </div>
+        </section>
 
-
-            <div class="field">
-
-              <label>
-                Đến ngày
-              </label>
-
-              <input
-                type="date"
-                id="filterTo"
-              >
-
+        <section id="transactionsPage" class="page">
+          <div class="topbar">
+            <div>
+              <div class="page-title">Transactions</div>
+              <div class="page-subtitle">Xem và quản lý các giao dịch</div>
             </div>
-
-
-            <div class="field">
-
-              <label>
-                Loại
-              </label>
-
-              <select id="filterType">
-
-                <option value="all">
-                  Tất cả
-                </option>
-
-                <option value="income">
-                  Thu
-                </option>
-
-                <option value="expense">
-                  Chi
-                </option>
-
-              </select>
-
-            </div>
-
-
-            <div class="field">
-
-              <label>
-                Category
-              </label>
-
-              <select id="filterCategory">
-
-                <option value="all">
-                  Tất cả
-                </option>
-
-                <option value="Tiền trọ">
-                  🏠 Tiền trọ
-                </option>
-
-                <option value="Tiền điện">
-                  ⚡ Tiền điện
-                </option>
-
-                <option value="Ăn uống">
-                  🍜 Ăn uống
-                </option>
-
-                <option value="Mua sắm">
-                  🛍️ Mua sắm
-                </option>
-
-              </select>
-
-            </div>
-
-
-            <div class="field">
-
-              <label>
-                Tìm kiếm
-              </label>
-
-              <input
-                type="text"
-                id="filterSearch"
-                placeholder="Tìm note / category..."
-              >
-
-            </div>
-
+            <button class="primary-btn" onclick="openAddModal()">
+              + Giao dịch
+            </button>
           </div>
 
-        </div>
-
-
-        <!-- RANGE SUMMARY -->
-
-        <div class="range-summary">
-
-          <div class="summary-pill income">
-
-            Thu:
-
-            <strong id="rangeIncome">
-              0 ₫
-            </strong>
-
+          <div class="card filters">
+            <div class="filter-grid">
+              <div class="field">
+                <label for="filterFrom">Từ ngày</label>
+                <input type="date" id="filterFrom" />
+              </div>
+              <div class="field">
+                <label for="filterTo">Đến ngày</label>
+                <input type="date" id="filterTo" />
+              </div>
+              <div class="field">
+                <label for="filterType">Loại</label>
+                <select id="filterType">
+                  <option value="all">Tất cả</option>
+                  <option value="income">Thu</option>
+                  <option value="expense">Chi</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="filterCategory">Category</label>
+                <select id="filterCategory">
+                  <option value="all">Tất cả</option>
+                  <option value="Tiền trọ">🏠 Tiền trọ</option>
+                  <option value="Tiền điện">⚡ Tiền điện</option>
+                  <option value="Ăn uống">🍜 Ăn uống</option>
+                  <option value="Mua sắm">🛍️ Mua sắm</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="filterSearch">Tìm kiếm</label>
+                <input
+                  type="text"
+                  id="filterSearch"
+                  placeholder="Tìm note / category..."
+                />
+              </div>
+            </div>
           </div>
 
-
-          <div class="summary-pill expense">
-
-            Chi:
-
-            <strong id="rangeExpense">
-              0 ₫
-            </strong>
-
+          <div class="range-summary">
+            <div class="summary-pill income">
+              Thu: <strong id="rangeIncome">0 ₫</strong>
+            </div>
+            <div class="summary-pill expense">
+              Chi: <strong id="rangeExpense">0 ₫</strong>
+            </div>
+            <div class="summary-pill">
+              Số giao dịch: <strong id="rangeCount">0</strong>
+            </div>
           </div>
 
+          <div class="card table-card">
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Ngày</th>
+                    <th>Loại</th>
+                    <th>Category</th>
+                    <th>Note</th>
+                    <th>Số tiền</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="transactionTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
 
-          <div class="summary-pill">
-
-            Số giao dịch:
-
-            <strong id="rangeCount">
-              0
-            </strong>
-
+        <section id="settingsPage" class="page">
+          <div class="topbar">
+            <div>
+              <div class="page-title">Setting ⚙️</div>
+              <div class="page-subtitle">
+                Quản lý bảo mật và cài đặt Money Log
+              </div>
+            </div>
           </div>
 
-        </div>
+          <div class="settings-grid">
+            <div class="card settings-card">
+              <div class="panel-title">🔒 App Lock</div>
+              <div class="settings-description">
+                Money Log tự khóa sau 8 tiếng kể từ lúc mở khóa thành công. Nếu
+                tải lại trang trong thời hạn này, ứng dụng sẽ tiếp tục phiên
+                hiện tại.
+              </div>
 
+              <div class="panel-subtitle">Thời gian còn lại</div>
+              <div id="lockCountdown" class="lock-countdown">
+                Đang kiểm tra...
+              </div>
+              <div id="lockStatusText" class="settings-description">
+                Đang kiểm tra trạng thái khóa.
+              </div>
 
-        <!-- TABLE -->
+              <button class="secondary-btn" onclick="lockApp(true)">
+                🔒 Khóa ngay
+              </button>
+            </div>
 
-        <div class="card table-card">
+            <div class="card settings-card">
+              <div class="panel-title">🔑 Đổi mật khẩu App Lock</div>
+              <div class="settings-description">
+                Nhập mật khẩu hiện tại, sau đó nhập và xác nhận mật khẩu mới.
+              </div>
 
-          <div class="table-wrapper">
+              <form id="changePasswordForm">
+                <div class="field">
+                  <label for="currentLockPassword">Mật khẩu hiện tại</label>
+                  <input
+                    id="currentLockPassword"
+                    type="password"
+                    autocomplete="current-password"
+                    required
+                  />
+                </div>
 
-            <table>
+                <div class="field">
+                  <label for="newLockPassword">Mật khẩu mới</label>
+                  <input
+                    id="newLockPassword"
+                    type="password"
+                    autocomplete="new-password"
+                    minlength="4"
+                    required
+                  />
+                </div>
 
-              <thead>
+                <div class="field">
+                  <label for="confirmLockPassword">Xác nhận mật khẩu mới</label>
+                  <input
+                    id="confirmLockPassword"
+                    type="password"
+                    autocomplete="new-password"
+                    minlength="4"
+                    required
+                  />
+                </div>
 
-                <tr>
-
-                  <th>
-                    Ngày
-                  </th>
-
-                  <th>
-                    Loại
-                  </th>
-
-                  <th>
-                    Category
-                  </th>
-
-                  <th>
-                    Note
-                  </th>
-
-                  <th>
-                    Số tiền
-                  </th>
-
-                  <th>
-                    Actions
-                  </th>
-
-                </tr>
-
-              </thead>
-
-
-              <tbody
-                id="transactionTableBody"
-              ></tbody>
-
-            </table>
-
+                <button
+                  id="changePasswordBtn"
+                  class="primary-btn"
+                  type="submit"
+                >
+                  Cập nhật mật khẩu
+                </button>
+              </form>
+            </div>
           </div>
-
-        </div>
-
-      </section>
-
-    </main>
-
-  </div>
-
-
-  <!-- =====================================
-       FIREBASE STATUS
-  ====================================== -->
-
-  <div
-    id="firebaseStatus"
-    class="firebase-status"
-  >
-    Connecting Firebase...
-  </div>
-
-
-  <!-- =====================================
-       ADD / EDIT MODAL
-  ====================================== -->
-
-  <div
-    id="transactionModal"
-    class="modal-backdrop"
-  >
-
-    <div class="modal">
-
-      <div class="modal-header">
-
-        <div
-          id="modalTitle"
-          class="modal-title"
-        >
-          Thêm giao dịch
-        </div>
-
-
-        <button
-          class="close-btn"
-          onclick="closeModal()"
-        >
-          ×
-        </button>
-
-      </div>
-
-
-      <!-- TYPE -->
-
-      <div class="type-switch">
-
-        <button
-          id="incomeTypeBtn"
-          class="type-btn income active"
-          onclick="setTransactionType('income')"
-        >
-          🟢 Thu
-        </button>
-
-
-        <button
-          id="expenseTypeBtn"
-          class="type-btn expense"
-          onclick="setTransactionType('expense')"
-        >
-          🔴 Chi
-        </button>
-
-      </div>
-
-
-      <div class="modal-fields">
-
-        <div class="field">
-
-          <label>
-            Ngày
-          </label>
-
-          <input
-            type="date"
-            id="transactionDate"
-          >
-
-        </div>
-
-
-        <div class="field">
-
-          <label>
-            Số tiền
-          </label>
-
-          <input
-            type="number"
-            id="transactionAmount"
-            placeholder="Ví dụ: 500000"
-            min="0"
-            step="1000"
-          >
-
-        </div>
-
-
-        <div
-          id="categoryField"
-          class="field"
-        >
-
-          <label>
-            Category
-          </label>
-
-          <select
-            id="transactionCategory"
-          >
-
-            <option value="Tiền trọ">
-              🏠 Tiền trọ
-            </option>
-
-            <option value="Tiền điện">
-              ⚡ Tiền điện
-            </option>
-
-            <option value="Ăn uống">
-              🍜 Ăn uống
-            </option>
-
-            <option value="Mua sắm">
-              🛍️ Mua sắm
-            </option>
-
-          </select>
-
-        </div>
-
-
-        <div class="field">
-
-          <label>
-            Note
-          </label>
-
-          <input
-            type="text"
-            id="transactionNote"
-            placeholder="Ví dụ: Ăn trưa..."
-          >
-
-        </div>
-
-      </div>
-
-
-      <div class="modal-footer">
-
-        <button
-          class="secondary-btn"
-          onclick="closeModal()"
-        >
-          Hủy
-        </button>
-
-
-        <button
-          id="saveTransactionBtn"
-          class="primary-btn"
-          onclick="saveTransaction()"
-        >
-          Lưu giao dịch
-        </button>
-
-      </div>
-
+        </section>
+      </main>
     </div>
 
-  </div>
-
-
-  <!-- =====================================
-       FIREBASE
-  ====================================== -->
-
-  <script type="module">
-
-    import {
-      initializeApp
-    }
-    from
-      "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-
-
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      updateDoc,
-      deleteDoc,
-      doc,
-      onSnapshot,
-      serverTimestamp
-    }
-    from
-      "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
-
-    /* =====================================
-       FIREBASE CONFIG
-    ====================================== */
-
-    const firebaseConfig = {
-
-      apiKey:
-        "AIzaSyB-0fTPuTelYXlHLIpjQ7E_Nj9cTAYbrEU",
-
-      authDomain:
-        "lognote-6f697.firebaseapp.com",
-
-      projectId:
-        "lognote-6f697",
-
-      storageBucket:
-        "lognote-6f697.firebasestorage.app",
-
-      messagingSenderId:
-        "919811506375",
-
-      appId:
-        "1:919811506375:web:e3cef6f5f77b1707f07ee2"
-
-    };
-
-
-    /* =====================================
-       INITIALIZE FIREBASE
-    ====================================== */
-
-    let db = null;
-
-    try {
-
-      const app =
-        initializeApp(
-          firebaseConfig
-        );
-
-
-      db =
-        getFirestore(app);
-
-
-      setFirebaseStatus(
-        "● Firebase connected",
-        "ok"
-      );
-
-
-      startRealtimeListener();
-
-    }
-
-    catch (error) {
-
-      console.error(
-        "Firebase initialization error:",
-        error
-      );
-
-
-      setFirebaseStatus(
-        "Firebase connection error",
-        "error"
-      );
-
-    }
-
-
-    /* =====================================
-       APP DATA
-    ====================================== */
-
-    let transactions = [];
-
-    let editingId = null;
-
-    let currentTransactionType =
-      "income";
-
-    let weeklyChart = null;
-
-
-    /* =====================================
-       FIRESTORE REALTIME
-    ====================================== */
-
-    function startRealtimeListener() {
-
-      if (!db) return;
-
-
-      const transactionsRef =
-        collection(
-          db,
-          "transactions"
-        );
-
-
-      onSnapshot(
-
-        transactionsRef,
-
-        snapshot => {
-
-          transactions =
-            snapshot.docs.map(
-              item => ({
-
-                id:
-                  item.id,
-
-                ...item.data()
-
-              })
-            );
-
-
-          transactions.sort(
-            (a, b) =>
-              String(
-                b.date || ""
-              )
-              .localeCompare(
-                String(
-                  a.date || ""
-                )
-              )
-          );
-
-
-          renderEverything();
-
-        },
-
-
-        error => {
-
-          console.error(
-            "Firestore listener error:",
-            error
-          );
-
-
-          setFirebaseStatus(
-            "● Firestore error",
-            "error"
-          );
-
+    <div id="appLockScreen" class="app-lock-screen">
+      <div class="app-lock-card">
+        <div class="app-lock-icon">🔐</div>
+        <div id="lockTitle" class="app-lock-title">Money Log đang khóa</div>
+        <div id="lockDescription" class="app-lock-description">
+          Nhập mật khẩu để xem dữ liệu thu chi.
+        </div>
+
+        <form id="lockForm">
+          <div class="field">
+            <label for="lockPassword">Mật khẩu</label>
+            <input
+              id="lockPassword"
+              type="password"
+              autocomplete="current-password"
+              placeholder="Nhập mật khẩu App Lock"
+              required
+            />
+          </div>
+
+          <div id="lockError" class="app-lock-error" role="alert"></div>
+
+          <button id="lockSubmitBtn" class="primary-btn" type="submit">
+            Mở khóa
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div id="firebaseStatus" class="firebase-status">
+      Connecting Firebase...
+    </div>
+
+    <!-- ADD / EDIT TRANSACTION MODAL -->
+    <div id="transactionModal" class="modal-backdrop">
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalTitle"
+      >
+        <div class="modal-header">
+          <div id="modalTitle" class="modal-title">Thêm giao dịch</div>
+          <button class="close-btn" onclick="closeModal()" aria-label="Đóng">
+            ×
+          </button>
+        </div>
+
+        <div class="type-switch">
+          <button
+            id="incomeTypeBtn"
+            class="type-btn income active"
+            onclick="setTransactionType('income')"
+          >
+            🟢 Thu
+          </button>
+          <button
+            id="expenseTypeBtn"
+            class="type-btn expense"
+            onclick="setTransactionType('expense')"
+          >
+            🔴 Chi
+          </button>
+        </div>
+
+        <div class="modal-fields">
+          <div class="field">
+            <label for="transactionDate">Ngày</label>
+            <input type="date" id="transactionDate" />
+          </div>
+
+          <div class="field">
+            <label for="transactionAmount">Số tiền</label>
+            <input
+              type="number"
+              id="transactionAmount"
+              placeholder="Ví dụ: 500000"
+              min="0"
+              step="1000"
+            />
+          </div>
+
+          <div id="categoryField" class="field">
+            <label for="transactionCategory">Category</label>
+            <select id="transactionCategory">
+              <option value="Tiền trọ">🏠 Tiền trọ</option>
+              <option value="Tiền điện">⚡ Tiền điện</option>
+              <option value="Ăn uống">🍜 Ăn uống</option>
+              <option value="Mua sắm">🛍️ Mua sắm</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="transactionNote">Note</label>
+            <input
+              type="text"
+              id="transactionNote"
+              placeholder="Ví dụ: Ăn trưa..."
+            />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="secondary-btn" onclick="closeModal()">Hủy</button>
+          <button
+            id="saveTransactionBtn"
+            class="primary-btn"
+            onclick="saveTransaction()"
+          >
+            Lưu giao dịch
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CUSTOM NOTIFICATION / CONFIRMATION MODAL -->
+    <div id="appDialogBackdrop" class="modal-backdrop" aria-hidden="true">
+      <div
+        class="app-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="appDialogTitle"
+        aria-describedby="appDialogMessage"
+      >
+        <div id="appDialogIcon" class="app-dialog-icon">ℹ️</div>
+        <div id="appDialogTitle" class="app-dialog-title">Thông báo</div>
+        <div id="appDialogMessage" class="app-dialog-message"></div>
+        <div class="app-dialog-footer">
+          <button id="appDialogCancel" class="secondary-btn" type="button">
+            Hủy
+          </button>
+          <button
+            id="appDialogConfirm"
+            class="primary-btn app-dialog-confirm"
+            type="button"
+          >
+            Đồng ý
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+        updateDoc,
+        deleteDoc,
+        doc,
+        getDoc,
+        setDoc,
+        onSnapshot,
+        serverTimestamp,
+      } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyB-0fPuTelYXlHLIpjQ7E_Nj9cTAYbrEU",
+        authDomain: "lognote-6f697.firebaseapp.com",
+        projectId: "lognote-6f697",
+        storageBucket: "lognote-6f697.firebasestorage.app",
+        messagingSenderId: "919811506375",
+        appId: "1:919811506375:web:e3cef6f5f77b1707f07ee2",
+      };
+
+      let db = null;
+      let transactions = [];
+      let editingId = null;
+      let currentTransactionType = "income";
+      let weeklyChart = null;
+      window.startPasswordSetup = function () {
+        const passwordInput = document.getElementById("lockPassword");
+        const confirmField = document.getElementById("lockConfirmField");
+        const errorBox = document.getElementById("lockError");
+
+        // Chuyển sang chế độ thiết lập mật khẩu mới
+        showLockScreen(true);
+
+        // Xóa nội dung cũ
+        if (passwordInput) passwordInput.value = "";
+
+        const confirmInput = confirmField?.querySelector("input");
+        if (confirmInput) confirmInput.value = "";
+
+        if (errorBox) {
+          errorBox.textContent =
+            "Hãy tạo mật khẩu mới và nhập lại để xác nhận.";
+        }
+      };
+      /* =====================================
+         CUSTOM APP DIALOG
+      ===================================== */
+
+      let appDialogResolver = null;
+      let appDialogIsConfirm = false;
+
+      window.showAppDialog = function ({
+        title = "Thông báo",
+        message = "",
+        type = "info",
+        confirm = false,
+        confirmText = "Đồng ý",
+        cancelText = "Hủy",
+      } = {}) {
+        const backdrop = document.getElementById("appDialogBackdrop");
+        const titleElement = document.getElementById("appDialogTitle");
+        const messageElement = document.getElementById("appDialogMessage");
+        const iconElement = document.getElementById("appDialogIcon");
+        const confirmButton = document.getElementById("appDialogConfirm");
+        const cancelButton = document.getElementById("appDialogCancel");
+
+        // Nếu dialog cũ còn mở, kết thúc dialog cũ trước khi mở dialog mới.
+        if (appDialogResolver) {
+          const previousResolver = appDialogResolver;
+          appDialogResolver = null;
+          previousResolver(false);
         }
 
-      );
+        titleElement.textContent = title;
+        messageElement.textContent = message;
 
-    }
-
-
-    /* =====================================
-       SAVE
-    ====================================== */
-
-    window.saveTransaction =
-      async function () {
-
-        if (!db) {
-
-          alert(
-            "Firebase chưa được kết nối."
-          );
-
-          return;
-
-        }
-
-
-        const date =
-          document
-            .getElementById(
-              "transactionDate"
-            )
-            .value;
-
-
-        const amount =
-          Number(
-            document
-              .getElementById(
-                "transactionAmount"
-              )
-              .value
-          );
-
-
-        const note =
-          document
-            .getElementById(
-              "transactionNote"
-            )
-            .value
-            .trim();
-
-
-        const category =
-          currentTransactionType ===
-          "expense"
-
-            ? document
-                .getElementById(
-                  "transactionCategory"
-                )
-                .value
-
-            : "";
-
-
-        if (!date) {
-
-          alert(
-            "Vui lòng chọn ngày."
-          );
-
-          return;
-
-        }
-
-
-        if (
-          !amount ||
-          amount <= 0
-        ) {
-
-          alert(
-            "Vui lòng nhập số tiền hợp lệ."
-          );
-
-          return;
-
-        }
-
-
-        const data = {
-
-          type:
-            currentTransactionType,
-
-          amount:
-            Math.round(amount),
-
-          date,
-
-          category,
-
-          note,
-
-          updatedAt:
-            serverTimestamp()
-
+        const dialogIcons = {
+          info: "ℹ️",
+          success: "✅",
+          warning: "⚠️",
+          error: "❌",
+          danger: "🗑️",
         };
 
+        iconElement.textContent = dialogIcons[type] || dialogIcons.info;
+        iconElement.className = "app-dialog-icon";
+        if (["success", "error", "danger", "warning"].includes(type)) {
+          iconElement.classList.add(type);
+        }
+
+        confirmButton.textContent = confirmText;
+        cancelButton.textContent = cancelText;
+        confirmButton.className = "primary-btn app-dialog-confirm";
+        if (type === "danger") {
+          confirmButton.classList.add("danger");
+        }
+
+        cancelButton.style.display = confirm ? "" : "none";
+        appDialogIsConfirm = confirm;
+
+        backdrop.classList.add("show");
+        backdrop.setAttribute("aria-hidden", "false");
+
+        return new Promise((resolve) => {
+          appDialogResolver = resolve;
+          confirmButton.focus();
+        });
+      };
+
+      window.closeAppDialog = function (result = false) {
+        const backdrop = document.getElementById("appDialogBackdrop");
+        backdrop.classList.remove("show");
+        backdrop.setAttribute("aria-hidden", "true");
+
+        if (appDialogResolver) {
+          const resolve = appDialogResolver;
+          appDialogResolver = null;
+          resolve(result);
+        }
+      };
+
+      document
+        .getElementById("appDialogConfirm")
+        .addEventListener("click", () => {
+          window.closeAppDialog(true);
+        });
+
+      document
+        .getElementById("appDialogCancel")
+        .addEventListener("click", () => {
+          window.closeAppDialog(false);
+        });
+
+      document
+        .getElementById("appDialogBackdrop")
+        .addEventListener("click", (event) => {
+          if (event.target.id === "appDialogBackdrop") {
+            window.closeAppDialog(false);
+          }
+        });
+
+      /* =====================================
+   APP LOCK + FIREBASE INITIALIZATION
+===================================== */
+
+      const LOCK_DURATION_MS = 8 * 60 * 60 * 1000;
+      const LOCK_EXPIRY_KEY = "money_log_app_lock_expiry";
+
+      let unsubscribeTransactions = null;
+      let lockExpiry = 0;
+      let lockTimer = null;
+      let lockConfigExists = false;
+      let lockPasswordHash = null;
+      let isAppUnlocked = false;
+      let isSettingUpPassword = false;
+      let lockActionInProgress = false;
+
+      function hashPassword(password) {
+        return crypto.subtle
+          .digest("SHA-256", new TextEncoder().encode(password))
+          .then((digest) =>
+            Array.from(new Uint8Array(digest))
+              .map((byte) => byte.toString(16).padStart(2, "0"))
+              .join(""),
+          );
+      }
+      function showLockScreen(message = "") {
+        const screen = document.getElementById("appLockScreen");
+        screen.classList.remove("hidden");
+
+        document.getElementById("lockTitle").textContent =
+          "Money Log đang khóa";
+
+        document.getElementById("lockDescription").textContent =
+          "Nhập mật khẩu để tiếp tục xem dữ liệu thu chi.";
+
+        document.getElementById("lockPassword").value = "";
+
+        document.getElementById("lockError").textContent =
+          typeof message === "string" ? message : "";
+
+        document.getElementById("lockSubmitBtn").textContent = "Mở khóa";
+
+        setTimeout(() => {
+          document.getElementById("lockPassword").focus();
+        }, 0);
+      }
+      function hideLockScreen() {
+        document.getElementById("appLockScreen").classList.add("hidden");
+      }
+
+      function clearSensitiveUI() {
+        transactions = [];
+
+        if (weeklyChart) {
+          weeklyChart.destroy();
+          weeklyChart = null;
+        }
+
+        closeModal();
+
+        // Xóa dữ liệu đang hiển thị trước khi che giao diện.
+        document.getElementById("balanceValue").textContent = "—";
+        document.getElementById("incomeValue").textContent = "—";
+        document.getElementById("expenseValue").textContent = "—";
+        document.getElementById("monthExpenseValue").textContent = "—";
+        document.getElementById("categoryList").innerHTML = "";
+        document.getElementById("recentTransactions").innerHTML = "";
+        document.getElementById("transactionTableBody").innerHTML = "";
+        document.getElementById("rangeIncome").textContent = "—";
+        document.getElementById("rangeExpense").textContent = "—";
+        document.getElementById("rangeCount").textContent = "—";
+      }
+
+      function stopRealtimeListener() {
+        if (unsubscribeTransactions) {
+          unsubscribeTransactions();
+          unsubscribeTransactions = null;
+        }
+      }
+
+      function updateLockCountdown() {
+        const countdown = document.getElementById("lockCountdown");
+        const status = document.getElementById("lockStatusText");
+
+        if (!isAppUnlocked || !lockExpiry) {
+          countdown.textContent = "Đang khóa";
+          status.textContent = "Mở khóa để bắt đầu phiên 8 tiếng.";
+          return;
+        }
+
+        const remaining = lockExpiry - Date.now();
+
+        if (remaining <= 0) {
+          lockApp(true);
+          return;
+        }
+
+        const totalSeconds = Math.ceil(remaining / 1000);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        countdown.textContent =
+          String(hours).padStart(2, "0") +
+          ":" +
+          String(minutes).padStart(2, "0") +
+          ":" +
+          String(seconds).padStart(2, "0");
+
+        status.textContent = "Ứng dụng sẽ tự khóa khi bộ đếm về 00:00:00.";
+      }
+
+      function startLockCountdown() {
+        clearInterval(lockTimer);
+        updateLockCountdown();
+        lockTimer = setInterval(updateLockCountdown, 1000);
+      }
+
+      async function startRealtimeListener() {
+        if (!db || !isAppUnlocked || unsubscribeTransactions) return;
+
+        const transactionsRef = collection(db, "transactions");
+
+        unsubscribeTransactions = onSnapshot(
+          transactionsRef,
+          (snapshot) => {
+            if (!isAppUnlocked) return;
+
+            transactions = snapshot.docs.map((item) => ({
+              id: item.id,
+              ...item.data(),
+            }));
+
+            transactions.sort((a, b) =>
+              String(b.date || "").localeCompare(String(a.date || "")),
+            );
+
+            renderEverything();
+            setFirebaseStatus("● Firebase connected", "ok");
+          },
+          (error) => {
+            console.error("Firestore listener error:", error);
+            setFirebaseStatus("● Firestore error", "error");
+
+            window.showAppDialog({
+              title: "Lỗi tải dữ liệu",
+              message:
+                "Không thể đọc dữ liệu từ Firestore.\n\n" +
+                (error.message || "Lỗi không xác định."),
+              type: "error",
+            });
+          },
+        );
+      }
+
+      async function unlockApp() {
+        if (!db || lockActionInProgress) return;
+
+        lockActionInProgress = true;
 
         try {
+          const password = document.getElementById("lockPassword").value;
 
-          if (editingId) {
-
-            await updateDoc(
-
-              doc(
-                db,
-                "transactions",
-                editingId
-              ),
-
-              data
-
-            );
-
+          if (password.length < 4) {
+            document.getElementById("lockError").textContent =
+              "Mật khẩu cần có ít nhất 4 ký tự.";
+            return;
           }
 
-          else {
+          if (isSettingUpPassword) {
+            const confirmation = document.getElementById(
+              "lockPasswordConfirm",
+            ).value;
 
-            await addDoc(
+            if (password !== confirmation) {
+              document.getElementById("lockError").textContent =
+                "Mật khẩu xác nhận không khớp.";
+              return;
+            }
 
-              collection(
-                db,
-                "transactions"
-              ),
+            const passwordHash = await hashPassword(password);
 
+            await setDoc(
+              doc(db, "settings", "appLock"),
               {
-
-                ...data,
-
-                createdAt:
-                  serverTimestamp()
-
-              }
-
+                passwordHash,
+                updatedAt: serverTimestamp(),
+              },
+              { merge: true },
             );
 
+            lockPasswordHash = passwordHash;
+            lockConfigExists = true;
+          } else {
+            const enteredHash = await hashPassword(password);
+
+            if (enteredHash !== lockPasswordHash) {
+              document.getElementById("lockError").textContent =
+                "Mật khẩu không chính xác. Vui lòng thử lại.";
+              document.getElementById("lockPassword").value = "";
+              return;
+            }
           }
 
+          isAppUnlocked = true;
+          lockExpiry = Date.now() + LOCK_DURATION_MS;
+
+          // Chỉ lưu thời hạn phiên, không lưu mật khẩu hoặc hash.
+          localStorage.setItem(LOCK_EXPIRY_KEY, String(lockExpiry));
+
+          hideLockScreen();
+          startLockCountdown();
+          await startRealtimeListener();
+        } catch (error) {
+          console.error("App Lock error:", error);
+
+          document.getElementById("lockError").textContent =
+            "Không thể xác thực hoặc lưu mật khẩu trên Firebase.\n" +
+            (error.message || "Vui lòng kiểm tra Firestore Rules và thử lại.");
+        } finally {
+          lockActionInProgress = false;
+        }
+      }
+
+      window.lockApp = async function (showMessage = false) {
+        if (lockActionInProgress) return;
+
+        isAppUnlocked = false;
+        lockExpiry = 0;
+
+        clearInterval(lockTimer);
+        lockTimer = null;
+
+        localStorage.removeItem(LOCK_EXPIRY_KEY);
+
+        stopRealtimeListener();
+        clearSensitiveUI();
+
+        showLockScreen(false);
+        updateLockCountdown();
+
+        if (showMessage) {
+          setFirebaseStatus("● App locked", "");
+        }
+      };
+
+      async function initializeAppLock() {
+        try {
+          const lockDoc = await getDoc(doc(db, "settings", "appLock"));
+
+          lockPasswordHash = lockDoc.exists()
+            ? lockDoc.data().passwordHash || null
+            : null;
+
+          lockConfigExists = Boolean(lockPasswordHash);
+
+          if (!lockConfigExists) {
+            localStorage.removeItem(LOCK_EXPIRY_KEY);
+            showLockScreen(true);
+            updateLockCountdown();
+            setFirebaseStatus("● Set up App Lock", "");
+            return;
+          }
+
+          const savedExpiry = Number(
+            localStorage.getItem(LOCK_EXPIRY_KEY) || 0,
+          );
+
+          // Khôi phục phiên đã mở khóa sau F5 nếu chưa hết hạn.
+          if (savedExpiry > Date.now()) {
+            isAppUnlocked = true;
+            lockExpiry = savedExpiry;
+
+            hideLockScreen();
+            startLockCountdown();
+            await startRealtimeListener();
+            return;
+          }
+
+          localStorage.removeItem(LOCK_EXPIRY_KEY);
+          showLockScreen(false);
+          updateLockCountdown();
+          setFirebaseStatus("● App locked", "");
+        } catch (error) {
+          console.error("App Lock initialization error:", error);
+          setFirebaseStatus("● App Lock error", "error");
+
+          showLockScreen(
+            false,
+            "Không thể kiểm tra cấu hình App Lock trên Firebase.\n" +
+              "Vui lòng kiểm tra kết nối và quyền truy cập Firestore.",
+          );
+        }
+      }
+
+      document
+        .getElementById("lockForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+          await unlockApp();
+        });
+
+      document
+        .getElementById("changePasswordForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
+
+          if (!isAppUnlocked || !db) return;
+
+          const currentPassword = document.getElementById(
+            "currentLockPassword",
+          ).value;
+          const newPassword = document.getElementById("newLockPassword").value;
+          const confirmation = document.getElementById(
+            "confirmLockPassword",
+          ).value;
+          const button = document.getElementById("changePasswordBtn");
+
+          if (newPassword.length < 4) {
+            await window.showAppDialog({
+              title: "Mật khẩu chưa hợp lệ",
+              message: "Mật khẩu mới cần có ít nhất 4 ký tự.",
+              type: "warning",
+            });
+            return;
+          }
+
+          if (newPassword !== confirmation) {
+            await window.showAppDialog({
+              title: "Mật khẩu không khớp",
+              message: "Vui lòng nhập lại mật khẩu xác nhận.",
+              type: "warning",
+            });
+            return;
+          }
+
+          button.disabled = true;
+          button.textContent = "Đang cập nhật...";
+
+          try {
+            const currentHash = await hashPassword(currentPassword);
+
+            if (currentHash !== lockPasswordHash) {
+              await window.showAppDialog({
+                title: "Sai mật khẩu hiện tại",
+                message: "Mật khẩu hiện tại không chính xác.",
+                type: "error",
+              });
+              return;
+            }
+
+            const newHash = await hashPassword(newPassword);
+
+            await setDoc(
+              doc(db, "settings", "appLock"),
+              {
+                passwordHash: newHash,
+                updatedAt: serverTimestamp(),
+              },
+              { merge: true },
+            );
+
+            lockPasswordHash = newHash;
+
+            document.getElementById("changePasswordForm").reset();
+
+            await window.showAppDialog({
+              title: "Đổi mật khẩu thành công",
+              message: "Mật khẩu App Lock mới đã được lưu vào Firebase.",
+              type: "success",
+            });
+          } catch (error) {
+            console.error("Change App Lock password error:", error);
+
+            await window.showAppDialog({
+              title: "Không thể đổi mật khẩu",
+              message:
+                "Không thể cập nhật mật khẩu trên Firebase.\n\n" +
+                (error.message || "Lỗi không xác định."),
+              type: "error",
+            });
+          } finally {
+            button.disabled = false;
+            button.textContent = "Cập nhật mật khẩu";
+          }
+        });
+
+      try {
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+
+        setFirebaseStatus("● Checking App Lock...", "");
+        await initializeAppLock();
+      } catch (error) {
+        console.error("Firebase initialization error:", error);
+        setFirebaseStatus("Firebase connection error", "error");
+
+        showLockScreen(
+          false,
+          "Không thể khởi tạo Firebase. Vui lòng kiểm tra cấu hình và tải lại trang.",
+        );
+      }
+      /* =====================================
+   MONEY INPUT HELPERS
+===================================== */
+
+      // Chuyển số tiền nhập vào thành number để lưu Firebase.
+      // Dấu . và , được xem là dấu phân cách hàng nghìn.
+      function parseMoneyInput(value) {
+        const normalized = String(value ?? "")
+          .trim()
+          .replace(/[.,\s]/g, "");
+
+        if (!normalized || !/^\d+$/.test(normalized)) {
+          return NaN;
+        }
+
+        return Number(normalized);
+      }
+
+      // Định dạng số tiền: 1500000 -> 1.500.000
+      function formatMoneyInput(value) {
+        const amount = parseMoneyInput(value);
+
+        if (!Number.isSafeInteger(amount)) {
+          return "";
+        }
+
+        return amount.toLocaleString("vi-VN");
+      }
+
+      // Tự động định dạng khi nhập tiền.
+      const transactionAmountInput =
+        document.getElementById("transactionAmount");
+
+      if (transactionAmountInput) {
+        // Dùng text để cho phép nhập cả dấu . và ,
+        transactionAmountInput.type = "text";
+        transactionAmountInput.inputMode = "decimal";
+
+        transactionAmountInput.addEventListener("input", function () {
+          const input = this;
+          const oldValue = input.value;
+          const oldPosition = input.selectionStart ?? oldValue.length;
+
+          // Đếm số chữ số trước vị trí con trỏ.
+          const digitsBeforeCursor = oldValue
+            .slice(0, oldPosition)
+            .replace(/\D/g, "").length;
+
+          // Chỉ giữ lại chữ số, sau đó thêm dấu phân cách.
+          const digits = oldValue.replace(/\D/g, "");
+          const formatted = digits
+            ? Number(digits).toLocaleString("vi-VN")
+            : "";
+
+          input.value = formatted;
+
+          // Giữ vị trí con trỏ tương đối khi đang nhập.
+          let newPosition = 0;
+          let digitCount = 0;
+
+          while (
+            newPosition < formatted.length &&
+            digitCount < digitsBeforeCursor
+          ) {
+            if (/\d/.test(formatted[newPosition])) {
+              digitCount++;
+            }
+            newPosition++;
+          }
+
+          input.setSelectionRange(newPosition, newPosition);
+        });
+      }
+      /* =====================================
+         SAVE TRANSACTION
+      ===================================== */
+
+      window.saveTransaction = async function () {
+        if (!db) {
+          await window.showAppDialog({
+            title: "Chưa kết nối Firebase",
+            message:
+              "Firebase chưa được kết nối. Vui lòng kiểm tra kết nối và thử lại.",
+            type: "error",
+          });
+          return;
+        }
+
+        const date = document.getElementById("transactionDate").value;
+        const amountInput = document
+          .getElementById("transactionAmount")
+          .value.trim();
+
+        const amount = parseMoneyInput(amountInput);
+        const note = document.getElementById("transactionNote").value.trim();
+
+        const category =
+          currentTransactionType === "expense"
+            ? document.getElementById("transactionCategory").value
+            : "";
+
+        if (!date) {
+          await window.showAppDialog({
+            title: "Thiếu ngày giao dịch",
+            message: "Vui lòng chọn ngày cho giao dịch.",
+            type: "warning",
+          });
+          return;
+        }
+
+        if (
+          amountInput === "" ||
+          !Number.isSafeInteger(amount) ||
+          amount <= 0
+        ) {
+          await window.showAppDialog({
+            title: "Số tiền không hợp lệ",
+            message: "Vui lòng nhập số tiền nguyên lớn hơn 0.",
+            type: "warning",
+          });
+          return;
+        }
+
+        const data = {
+          type: currentTransactionType,
+          amount: Math.round(amount),
+          date,
+          category,
+          note,
+          updatedAt: serverTimestamp(),
+        };
+
+        const saveButton = document.getElementById("saveTransactionBtn");
+        saveButton.disabled = true;
+        saveButton.textContent = "Đang lưu...";
+
+        try {
+          if (editingId) {
+            await updateDoc(doc(db, "transactions", editingId), data);
+          } else {
+            await addDoc(collection(db, "transactions"), {
+              ...data,
+              createdAt: serverTimestamp(),
+            });
+          }
 
           closeModal();
 
+          await window.showAppDialog({
+            title: "Lưu thành công",
+            message: editingId
+              ? "Giao dịch đã được cập nhật thành công."
+              : "Giao dịch mới đã được lưu thành công.",
+            type: "success",
+          });
+        } catch (error) {
+          console.error("Save transaction error:", error);
+
+          await window.showAppDialog({
+            title: "Không thể lưu giao dịch",
+            message:
+              "Đã xảy ra lỗi khi lưu giao dịch.\n\n" +
+              (error.message || "Lỗi không xác định."),
+            type: "error",
+          });
+        } finally {
+          saveButton.disabled = false;
+          saveButton.textContent = "Lưu giao dịch";
         }
-
-        catch (error) {
-
-          console.error(
-            "Save transaction error:",
-            error
-          );
-
-
-          alert(
-            "Không thể lưu giao dịch.\n\n" +
-            error.message
-          );
-
-        }
-
       };
 
+      /* =====================================
+         DELETE TRANSACTION
+      ===================================== */
 
-    /* =====================================
-       DELETE
-    ====================================== */
+      window.deleteTransaction = async function (id) {
+        if (!db) {
+          await window.showAppDialog({
+            title: "Chưa kết nối Firebase",
+            message: "Không thể xóa vì Firebase chưa được kết nối.",
+            type: "error",
+          });
+          return;
+        }
 
-    window.deleteTransaction =
-      async function (id) {
+        const transaction = transactions.find((item) => item.id === id);
+        if (!transaction) {
+          await window.showAppDialog({
+            title: "Không tìm thấy giao dịch",
+            message: "Giao dịch này có thể đã bị xóa hoặc không còn tồn tại.",
+            type: "warning",
+          });
+          return;
+        }
 
-        if (!db) return;
-
-
-        const transaction =
-          transactions.find(
-            item =>
-              item.id === id
-          );
-
-
-        if (!transaction) return;
-
-
-        const confirmed =
-          confirm(
-            "Bạn có chắc muốn xóa giao dịch này?"
-          );
-
+        const confirmed = await window.showAppDialog({
+          title: "Xóa giao dịch?",
+          message:
+            "Bạn có chắc muốn xóa giao dịch này không?\n\n" +
+            (transaction.note || transaction.category || "Giao dịch") +
+            "\nSố tiền: " +
+            formatMoney(transaction.amount) +
+            "\n\nThao tác này không thể hoàn tác.",
+          type: "danger",
+          confirm: true,
+          confirmText: "Xóa giao dịch",
+          cancelText: "Hủy",
+        });
 
         if (!confirmed) return;
 
-
         try {
+          await deleteDoc(doc(db, "transactions", id));
 
-          await deleteDoc(
+          await window.showAppDialog({
+            title: "Đã xóa giao dịch",
+            message: "Giao dịch đã được xóa thành công.",
+            type: "success",
+          });
+        } catch (error) {
+          console.error("Delete error:", error);
 
-            doc(
-              db,
-              "transactions",
-              id
-            )
-
-          );
-
+          await window.showAppDialog({
+            title: "Không thể xóa giao dịch",
+            message:
+              "Đã xảy ra lỗi khi xóa giao dịch.\n\n" +
+              (error.message || "Lỗi không xác định."),
+            type: "error",
+          });
         }
-
-        catch (error) {
-
-          console.error(
-            "Delete error:",
-            error
-          );
-
-
-          alert(
-            "Không thể xóa giao dịch.\n\n" +
-            error.message
-          );
-
-        }
-
       };
 
+      /* =====================================
+         EDIT TRANSACTION
+      ===================================== */
 
-    /* =====================================
-       EDIT
-    ====================================== */
-
-    window.editTransaction =
-      function (id) {
-
-        const transaction =
-          transactions.find(
-            item =>
-              item.id === id
-          );
-
-
+      window.editTransaction = function (id) {
+        const transaction = transactions.find((item) => item.id === id);
         if (!transaction) return;
 
-
         editingId = id;
+        currentTransactionType = transaction.type || "income";
 
-
-        currentTransactionType =
-          transaction.type ||
-          "income";
-
-
-        document
-          .getElementById(
-            "modalTitle"
-          )
-          .textContent =
-          "Sửa giao dịch";
-
-
-        document
-          .getElementById(
-            "transactionDate"
-          )
-          .value =
-          transaction.date ||
-          "";
-
-
-        document
-          .getElementById(
-            "transactionAmount"
-          )
-          .value =
-          transaction.amount ||
-          "";
-
-
-        document
-          .getElementById(
-            "transactionNote"
-          )
-          .value =
-          transaction.note ||
-          "";
-
-
-        document
-          .getElementById(
-            "transactionCategory"
-          )
-          .value =
-          transaction.category ||
-          "Ăn uống";
-
+        document.getElementById("modalTitle").textContent = "Sửa giao dịch";
+        document.getElementById("transactionDate").value =
+          transaction.date || "";
+        document.getElementById("transactionAmount").value =
+          transaction.amount != null
+            ? formatMoneyInput(transaction.amount)
+            : "";
+        document.getElementById("transactionNote").value =
+          transaction.note || "";
+        document.getElementById("transactionCategory").value =
+          transaction.category || "Ăn uống";
 
         updateTypeUI();
-
-
-        document
-          .getElementById(
-            "transactionModal"
-          )
-          .classList
-          .add("show");
-
+        document.getElementById("transactionModal").classList.add("show");
       };
 
+      /* =====================================
+         OPEN ADD MODAL
+      ===================================== */
 
-    /* =====================================
-       OPEN ADD MODAL
-    ====================================== */
-
-    window.openAddModal =
-      function () {
-
+      window.openAddModal = function () {
         editingId = null;
+        currentTransactionType = "income";
 
-
-        currentTransactionType =
-          "income";
-
-
-        document
-          .getElementById(
-            "modalTitle"
-          )
-          .textContent =
-          "Thêm giao dịch";
-
-
-        document
-          .getElementById(
-            "transactionDate"
-          )
-          .value =
-          getToday();
-
-
-        document
-          .getElementById(
-            "transactionAmount"
-          )
-          .value =
-          "";
-
-
-        document
-          .getElementById(
-            "transactionNote"
-          )
-          .value =
-          "";
-
-
-        document
-          .getElementById(
-            "transactionCategory"
-          )
-          .value =
-          "Ăn uống";
-
+        document.getElementById("modalTitle").textContent = "Thêm giao dịch";
+        document.getElementById("transactionDate").value = getToday();
+        document.getElementById("transactionAmount").value = "";
+        document.getElementById("transactionNote").value = "";
+        document.getElementById("transactionCategory").value = "Ăn uống";
 
         updateTypeUI();
-
-
-        document
-          .getElementById(
-            "transactionModal"
-          )
-          .classList
-          .add("show");
-
+        document.getElementById("transactionModal").classList.add("show");
       };
 
+      /* =====================================
+         CLOSE TRANSACTION MODAL
+      ===================================== */
 
-    /* =====================================
-       CLOSE MODAL
-    ====================================== */
-
-    window.closeModal =
-      function () {
-
-        document
-          .getElementById(
-            "transactionModal"
-          )
-          .classList
-          .remove("show");
-
-
+      window.closeModal = function () {
+        document.getElementById("transactionModal").classList.remove("show");
         editingId = null;
-
       };
 
+      /* =====================================
+         TRANSACTION TYPE
+      ===================================== */
 
-    /* =====================================
-       TRANSACTION TYPE
-    ====================================== */
-
-    window.setTransactionType =
-      function (type) {
-
-        currentTransactionType =
-          type;
-
-
+      window.setTransactionType = function (type) {
+        currentTransactionType = type;
         updateTypeUI();
-
       };
 
+      function updateTypeUI() {
+        const incomeBtn = document.getElementById("incomeTypeBtn");
+        const expenseBtn = document.getElementById("expenseTypeBtn");
+        const categoryField = document.getElementById("categoryField");
 
-    function updateTypeUI() {
-
-      const incomeBtn =
-        document.getElementById(
-          "incomeTypeBtn"
+        incomeBtn.classList.toggle(
+          "active",
+          currentTransactionType === "income",
+        );
+        expenseBtn.classList.toggle(
+          "active",
+          currentTransactionType === "expense",
         );
 
+        categoryField.style.display =
+          currentTransactionType === "expense" ? "flex" : "none";
+      }
 
-      const expenseBtn =
-        document.getElementById(
-          "expenseTypeBtn"
-        );
+      /* =====================================
+         PAGE SWITCH
+      ===================================== */
 
+      window.switchPage = function (page) {
+        document.querySelectorAll(".page").forEach((element) => {
+          element.classList.remove("active");
+        });
 
-      const categoryField =
-        document.getElementById(
-          "categoryField"
-        );
+        document.querySelectorAll(".nav-btn").forEach((element) => {
+          element.classList.remove("active");
+        });
 
+        document.getElementById(page + "Page").classList.add("active");
 
-      incomeBtn.classList.toggle(
-        "active",
-        currentTransactionType ===
-          "income"
-      );
+        const nav = document.querySelector(`.nav-btn[data-page="${page}"]`);
+        if (nav) nav.classList.add("active");
 
-
-      expenseBtn.classList.toggle(
-        "active",
-        currentTransactionType ===
-          "expense"
-      );
-
-
-      categoryField.style.display =
-        currentTransactionType ===
-        "expense"
-          ? "flex"
-          : "none";
-
-    }
-
-
-    /* =====================================
-       PAGE SWITCH
-    ====================================== */
-
-    window.switchPage =
-      function (page) {
-
-        document
-          .querySelectorAll(".page")
-          .forEach(
-            element => {
-
-              element.classList.remove(
-                "active"
-              );
-
-            }
-          );
-
-
-        document
-          .querySelectorAll(".nav-btn")
-          .forEach(
-            element => {
-
-              element.classList.remove(
-                "active"
-              );
-
-            }
-          );
-
-
-        document
-          .getElementById(
-            page + "Page"
-          )
-          .classList
-          .add("active");
-
-
-        const nav =
-          document.querySelector(
-            `.nav-btn[data-page="${page}"]`
-          );
-
-
-        if (nav) {
-
-          nav.classList.add(
-            "active"
-          );
-
-        }
-
-
-        if (
-          page ===
-          "transactions"
-        ) {
-
-          renderTransactions();
-
-        }
-
+        if (page === "transactions") renderTransactions();
       };
 
+      /* =====================================
+         RENDER EVERYTHING
+      ===================================== */
 
-    /* =====================================
-       RENDER EVERYTHING
-    ====================================== */
+      function renderEverything() {
+        renderDashboard();
+        renderTransactions();
+      }
 
-    function renderEverything() {
+      /* =====================================
+         DASHBOARD
+      ===================================== */
 
-      renderDashboard();
+      function renderDashboard() {
+        const totalIncome = transactions
+          .filter((item) => item.type === "income")
+          .reduce((sum, item) => sum + Number(item.amount || 0), 0);
 
-      renderTransactions();
+        const totalExpense = transactions
+          .filter((item) => item.type === "expense")
+          .reduce((sum, item) => sum + Number(item.amount || 0), 0);
 
-    }
+        const balance = totalIncome - totalExpense;
+        const currentMonth = getCurrentMonth();
 
-
-    /* =====================================
-       DASHBOARD
-    ====================================== */
-
-    function renderDashboard() {
-
-      const totalIncome =
-        transactions
+        const monthExpense = transactions
           .filter(
-            item =>
-              item.type ===
-              "income"
+            (item) =>
+              item.type === "expense" &&
+              String(item.date || "").startsWith(currentMonth),
           )
-          .reduce(
-            (sum, item) =>
-              sum +
-              Number(
-                item.amount || 0
-              ),
+          .reduce((sum, item) => sum + Number(item.amount || 0), 0);
 
-            0
-          );
+        document.getElementById("balanceValue").textContent =
+          formatMoney(balance);
 
-
-      const totalExpense =
-        transactions
-          .filter(
-            item =>
-              item.type ===
-              "expense"
-          )
-          .reduce(
-            (sum, item) =>
-              sum +
-              Number(
-                item.amount || 0
-              ),
-
-            0
-          );
-
-
-      const balance =
-        totalIncome -
-        totalExpense;
-
-
-      const currentMonth =
-        getCurrentMonth();
-
-
-      const monthExpense =
-        transactions
-          .filter(
-            item =>
-              item.type ===
-                "expense" &&
-
-              String(
-                item.date || ""
-              )
-              .startsWith(
-                currentMonth
-              )
-          )
-          .reduce(
-            (sum, item) =>
-              sum +
-              Number(
-                item.amount || 0
-              ),
-
-            0
-          );
-
-
-      document
-        .getElementById(
-          "balanceValue"
-        )
-        .textContent =
-        formatMoney(
-          balance
+        const balanceElement = document.getElementById("balanceValue");
+        balanceElement.classList.remove("balance-positive", "balance-negative");
+        balanceElement.classList.add(
+          balance >= 0 ? "balance-positive" : "balance-negative",
         );
 
-
-      const balanceElement =
-        document
-          .getElementById(
-            "balanceValue"
-          );
-
-
-      balanceElement.classList.remove(
-        "balance-positive",
-        "balance-negative"
-      );
-
-
-      balanceElement.classList.add(
-        balance >= 0
-          ? "balance-positive"
-          : "balance-negative"
-      );
-
-
-      document
-        .getElementById(
-          "incomeValue"
-        )
-        .textContent =
-        formatMoney(
-          totalIncome
-        );
-
-
-      document
-        .getElementById(
-          "expenseValue"
-        )
-        .textContent =
-        formatMoney(
-          totalExpense
-        );
-
-
-      document
-        .getElementById(
-          "monthExpenseValue"
-        )
-        .textContent =
-        formatMoney(
-          monthExpense
-        );
-
-
-      renderWeeklyChart();
-
-      renderCategoryList();
-
-      renderRecentTransactions();
-
-    }
-
-
-    /* =====================================
-       WEEKLY CHART
-    ====================================== */
-
-    function renderWeeklyChart() {
-
-      const labels = [];
-
-      const incomeData = [];
-
-      const expenseData = [];
-
-
-      for (
-        let i = 6;
-        i >= 0;
-        i--
-      ) {
-
-        const date =
-          new Date();
-
-
-        date.setDate(
-          date.getDate() - i
-        );
-
-
-        const dateString =
-          toDateString(
-            date
-          );
-
-
-        labels.push(
-          formatShortDate(
-            date
-          )
-        );
-
-
-        const income =
-          transactions
-            .filter(
-              item =>
-                item.date ===
-                  dateString &&
-                item.type ===
-                  "income"
-            )
-            .reduce(
-              (sum, item) =>
-                sum +
-                Number(
-                  item.amount || 0
-                ),
-
-              0
-            );
-
-
-        const expense =
-          transactions
-            .filter(
-              item =>
-                item.date ===
-                  dateString &&
-                item.type ===
-                  "expense"
-            )
-            .reduce(
-              (sum, item) =>
-                sum +
-                Number(
-                  item.amount || 0
-                ),
-
-              0
-            );
-
-
-        incomeData.push(
-          income
-        );
-
-        expenseData.push(
-          expense
-        );
-
-      }
-
-
-      const canvas =
-        document.getElementById(
-          "weeklyChart"
-        );
-
-
-      const isDark =
-        document.body.classList.contains(
-          "dark"
-        );
-
-
-      if (weeklyChart) {
-
-        weeklyChart.destroy();
-
-      }
-
-
-      weeklyChart =
-        new Chart(
-          canvas,
-          {
-
-            type: "bar",
-
-            data: {
-
-              labels,
-
-              datasets: [
-
-                {
-
-                  label: "Thu",
-
-                  data:
-                    incomeData,
-
-                  backgroundColor:
-                    isDark
-                      ? "#4ade80"
-                      : "#16a34a",
-
-                  borderRadius: 6
-
-                },
-
-                {
-
-                  label: "Chi",
-
-                  data:
-                    expenseData,
-
-                  backgroundColor:
-                    isDark
-                      ? "#f87171"
-                      : "#dc2626",
-
-                  borderRadius: 6
-
-                }
-
-              ]
-
-            },
-
-            options: {
-
-              responsive: true,
-
-              maintainAspectRatio:
-                false,
-
-              interaction: {
-
-                mode:
-                  "index",
-
-                intersect:
-                  false
-
-              },
-
-              plugins: {
-
-                legend: {
-
-                  position:
-                    "bottom",
-
-                  labels: {
-
-                    color:
-                      isDark
-                        ? "#f3f4f6"
-                        : "#374151"
-
-                  }
-
-                }
-
-              },
-
-              scales: {
-
-                x: {
-
-                  grid: {
-                    display: false
-                  },
-
-                  ticks: {
-
-                    color:
-                      isDark
-                        ? "#9ca3af"
-                        : "#6b7280"
-
-                  }
-
-                },
-
-                y: {
-
-                  beginAtZero: true,
-
-                  ticks: {
-
-                    color:
-                      isDark
-                        ? "#9ca3af"
-                        : "#6b7280",
-
-                    callback:
-                      value =>
-                        formatCompactMoney(
-                          value
-                        )
-
-                  }
-
-                }
-
-              }
-
-            }
-
-          }
-        );
-
-    }
-
-
-    /* =====================================
-       CATEGORY LIST
-    ====================================== */
-
-    function renderCategoryList() {
-
-      const categories = [
-
-        {
-          name:
-            "Tiền trọ",
-
-          icon:
-            "🏠"
-        },
-
-        {
-          name:
-            "Tiền điện",
-
-          icon:
-            "⚡"
-        },
-
-        {
-          name:
-            "Ăn uống",
-
-          icon:
-            "🍜"
-        },
-
-        {
-          name:
-            "Mua sắm",
-
-          icon:
-            "🛍️"
-        }
-
-      ];
-
-
-      const currentMonth =
-        getCurrentMonth();
-
-
-      const values =
-        categories.map(
-          category => {
-
-            const amount =
-              transactions
-                .filter(
-                  item =>
-                    item.type ===
-                      "expense" &&
-
-                    item.category ===
-                      category.name &&
-
-                    String(
-                      item.date || ""
-                    )
-                    .startsWith(
-                      currentMonth
-                    )
-                )
-                .reduce(
-                  (sum, item) =>
-                    sum +
-                    Number(
-                      item.amount || 0
-                    ),
-
-                  0
-                );
-
-
-            return {
-
-              ...category,
-
-              amount
-
-            };
-
-          }
-        );
-
-
-      const max =
-        Math.max(
-          ...values.map(
-            item =>
-              item.amount
-          ),
-
-          1
-        );
-
-
-      const container =
-        document.getElementById(
-          "categoryList"
-        );
-
-
-      container.innerHTML =
-        values
-          .map(
-            item => {
-
-              const width =
-                item.amount > 0
-
-                  ? Math.max(
-                      5,
-
-                      (
-                        item.amount /
-                        max
-                      ) *
-                      100
-                    )
-
-                  : 0;
-
-
-              return `
-
-                <div class="category-row">
-
-                  <div class="category-icon">
-                    ${item.icon}
-                  </div>
-
-                  <div class="category-info">
-
-                    <div class="category-name">
-                      ${escapeHtml(
-                        item.name
-                      )}
-                    </div>
-
-                    <div class="category-bar">
-
-                      <div
-                        class="category-bar-fill"
-                        style="
-                          width:${width}%
-                        "
-                      ></div>
-
-                    </div>
-
-                  </div>
-
-                  <div class="category-amount">
-
-                    ${formatMoney(
-                      item.amount
-                    )}
-
-                  </div>
-
-                </div>
-
-              `;
-
-            }
-          )
-          .join("");
-
-    }
-
-
-    /* =====================================
-       RECENT TRANSACTIONS
-    ====================================== */
-
-    function renderRecentTransactions() {
-
-      const container =
-        document.getElementById(
-          "recentTransactions"
-        );
-
-
-      const recent =
-        [...transactions]
-
-          .sort(
-            (a, b) =>
-              String(
-                b.date || ""
-              )
-              .localeCompare(
-                String(
-                  a.date || ""
-                )
-              )
-          )
-
-          .slice(
-            0,
-            10
-          );
-
-
-      if (!recent.length) {
-
-        container.innerHTML = `
-
-          <div class="empty-state">
-            Chưa có giao dịch nào.
-          </div>
-
-        `;
-
-        return;
-
-      }
-
-
-      container.innerHTML =
-        recent
-          .map(
-            item =>
-              createTransactionItem(
-                item
-              )
-          )
-          .join("");
-
-    }
-
-
-    function createTransactionItem(
-      item
-    ) {
-
-      const isIncome =
-        item.type ===
-        "income";
-
-
-      const icon =
-        isIncome
-
-          ? "💰"
-
-          : getCategoryIcon(
-              item.category
-            );
-
-
-      const sign =
-        isIncome
-          ? "+"
-          : "-";
-
-
-      return `
-
-        <div class="transaction-item">
-
-          <div
-            class="
-              transaction-icon
-              ${
-                isIncome
-                  ? "income"
-                  : "expense"
-              }
-            "
-          >
-            ${icon}
-          </div>
-
-
-          <div class="transaction-info">
-
-            <div class="transaction-name">
-
-              ${
-                escapeHtml(
-                  item.note ||
-                  item.category ||
-                  (
-                    isIncome
-                      ? "Thu nhập"
-                      : "Chi tiêu"
-                  )
-                )
-              }
-
-            </div>
-
-
-            <div class="transaction-meta">
-
-              ${formatDate(
-                item.date
-              )}
-
-              ${
-                item.category
-
-                  ? " · " +
-                    escapeHtml(
-                      item.category
-                    )
-
-                  : ""
-              }
-
-            </div>
-
-          </div>
-
-
-          <div
-            class="
-              transaction-amount
-              ${
-                isIncome
-                  ? "income"
-                  : "expense"
-              }
-            "
-          >
-
-            ${sign}
-
-            ${formatMoney(
-              item.amount
-            )}
-
-          </div>
-
-        </div>
-
-      `;
-
-    }
-
-
-    /* =====================================
-       FILTER
-    ====================================== */
-
-    function getFilteredTransactions() {
-
-      const from =
-        document
-          .getElementById(
-            "filterFrom"
-          )
-          .value;
-
-
-      const to =
-        document
-          .getElementById(
-            "filterTo"
-          )
-          .value;
-
-
-      const type =
-        document
-          .getElementById(
-            "filterType"
-          )
-          .value;
-
-
-      const category =
-        document
-          .getElementById(
-            "filterCategory"
-          )
-          .value;
-
-
-      const search =
-        document
-          .getElementById(
-            "filterSearch"
-          )
-          .value
-          .toLowerCase()
-          .trim();
-
-
-      return transactions
-
-        .filter(
-          item => {
-
-            if (
-              from &&
-              String(
-                item.date || ""
-              ) < from
-            ) {
-
-              return false;
-
-            }
-
-
-            if (
-              to &&
-              String(
-                item.date || ""
-              ) > to
-            ) {
-
-              return false;
-
-            }
-
-
-            if (
-              type !== "all" &&
-              item.type !== type
-            ) {
-
-              return false;
-
-            }
-
-
-            if (
-              category !== "all" &&
-              item.category !==
-                category
-            ) {
-
-              return false;
-
-            }
-
-
-            if (search) {
-
-              const haystack =
-                [
-
-                  item.note,
-
-                  item.category,
-
-                  item.date
-
-                ]
-
-                  .filter(Boolean)
-
-                  .join(" ")
-
-                  .toLowerCase();
-
-
-              if (
-                !haystack.includes(
-                  search
-                )
-              ) {
-
-                return false;
-
-              }
-
-            }
-
-
-            return true;
-
-          }
-        )
-
-        .sort(
-          (a, b) =>
-            String(
-              b.date || ""
-            )
-            .localeCompare(
-              String(
-                a.date || ""
-              )
-            )
-        );
-
-    }
-
-
-    /* =====================================
-       RENDER TABLE
-    ====================================== */
-
-    function renderTransactions() {
-
-      const filtered =
-        getFilteredTransactions();
-
-
-      const tbody =
-        document.getElementById(
-          "transactionTableBody"
-        );
-
-
-      let income = 0;
-
-      let expense = 0;
-
-
-      filtered.forEach(
-        item => {
-
-          const amount =
-            Number(
-              item.amount || 0
-            );
-
-
-          if (
-            item.type ===
-            "income"
-          ) {
-
-            income += amount;
-
-          }
-
-          else {
-
-            expense += amount;
-
-          }
-
-        }
-      );
-
-
-      document
-        .getElementById(
-          "rangeIncome"
-        )
-        .textContent =
-        formatMoney(
-          income
-        );
-
-
-      document
-        .getElementById(
-          "rangeExpense"
-        )
-        .textContent =
-        formatMoney(
-          expense
-        );
-
-
-      document
-        .getElementById(
-          "rangeCount"
-        )
-        .textContent =
-        filtered.length;
-
-
-      if (!filtered.length) {
-
-        tbody.innerHTML = `
-
-          <tr>
-
-            <td
-              colspan="6"
-              class="empty-state"
-            >
-              Không có giao dịch
-              nào trong khoảng này.
-            </td>
-
-          </tr>
-
-        `;
-
-        return;
-
-      }
-
-
-      tbody.innerHTML =
-        filtered
-
-          .map(
-            item => {
-
-              const isIncome =
-                item.type ===
-                "income";
-
-
-              return `
-
-                <tr>
-
-                  <td>
-
-                    ${formatDate(
-                      item.date
-                    )}
-
-                  </td>
-
-
-                  <td>
-
-                    <span
-                      class="
-                        type-badge
-                        ${
-                          isIncome
-                            ? "income"
-                            : "expense"
-                        }
-                      "
-                    >
-
-                      ${
-                        isIncome
-                          ? "🟢 Thu"
-                          : "🔴 Chi"
-                      }
-
-                    </span>
-
-                  </td>
-
-
-                  <td>
-
-                    ${
-                      item.category
-
-                        ? `
-
-                          <span
-                            class="
-                              category-badge
-                            "
-                          >
-
-                            ${getCategoryIcon(
-                              item.category
-                            )}
-
-                            ${escapeHtml(
-                              item.category
-                            )}
-
-                          </span>
-
-                        `
-
-                        : "—"
-                    }
-
-                  </td>
-
-
-                  <td>
-
-                    ${escapeHtml(
-                      item.note ||
-                      "—"
-                    )}
-
-                  </td>
-
-
-                  <td>
-
-                    <strong
-                      style="
-                        color:${
-                          isIncome
-                            ? "var(--income)"
-                            : "var(--expense)"
-                        }
-                      "
-                    >
-
-                      ${
-                        isIncome
-                          ? "+"
-                          : "-"
-                      }
-
-                      ${formatMoney(
-                        item.amount
-                      )}
-
-                    </strong>
-
-                  </td>
-
-
-                  <td>
-
-                    <div class="actions">
-
-                      <button
-                        class="action-btn"
-                        onclick="
-                          editTransaction(
-                            '${item.id}'
-                          )
-                        "
-                      >
-                        Edit
-                      </button>
-
-
-                      <button
-                        class="
-                          action-btn
-                          delete
-                        "
-                        onclick="
-                          deleteTransaction(
-                            '${item.id}'
-                          )
-                        "
-                      >
-                        Delete
-                      </button>
-
-                    </div>
-
-                  </td>
-
-                </tr>
-
-              `;
-
-            }
-          )
-
-          .join("");
-
-    }
-
-
-    /* =====================================
-       FILTER EVENTS
-    ====================================== */
-
-    [
-
-      "filterFrom",
-
-      "filterTo",
-
-      "filterType",
-
-      "filterCategory",
-
-      "filterSearch"
-
-    ].forEach(
-      id => {
-
-        document
-          .getElementById(id)
-          .addEventListener(
-            "input",
-            renderTransactions
-          );
-
-
-        document
-          .getElementById(id)
-          .addEventListener(
-            "change",
-            renderTransactions
-          );
-
-      }
-    );
-
-
-    /* =====================================
-       DARK MODE
-    ====================================== */
-
-    window.toggleTheme =
-      function () {
-
-        const isDark =
-          document.body.classList.toggle(
-            "dark"
-          );
-
-
-        localStorage.setItem(
-          "money_log_theme",
-          isDark
-            ? "dark"
-            : "light"
-        );
-
-
-        updateThemeButton();
+        document.getElementById("incomeValue").textContent =
+          formatMoney(totalIncome);
+        document.getElementById("expenseValue").textContent =
+          formatMoney(totalExpense);
+        document.getElementById("monthExpenseValue").textContent =
+          formatMoney(monthExpense);
 
         renderWeeklyChart();
-
-      };
-
-
-    function loadTheme() {
-
-      const saved =
-        localStorage.getItem(
-          "money_log_theme"
-        );
-
-
-      if (
-        saved === "dark"
-      ) {
-
-        document.body.classList.add(
-          "dark"
-        );
-
+        renderCategoryList();
+        renderRecentTransactions();
       }
 
-
-      updateThemeButton();
-
-    }
-
-
-    function updateThemeButton() {
-
-      const button =
-        document.getElementById(
-          "themeBtn"
-        );
-
-
-      const isDark =
-        document.body.classList.contains(
-          "dark"
-        );
-
-
-      button.textContent =
-        isDark
-          ? "☀️ Light mode"
-          : "🌙 Dark mode";
-
-    }
-
-
-    /* =====================================
-       HELPERS
-    ====================================== */
-
-    function getToday() {
-
-      return toDateString(
-        new Date()
-      );
-
-    }
-
-
-    function toDateString(
-      date
-    ) {
-
-      const year =
-        date.getFullYear();
-
-
-      const month =
-        String(
-          date.getMonth() + 1
-        )
-        .padStart(
-          2,
-          "0"
-        );
-
-
-      const day =
-        String(
-          date.getDate()
-        )
-        .padStart(
-          2,
-          "0"
-        );
-
-
-      return (
-        year +
-        "-" +
-        month +
-        "-" +
-        day
-      );
-
-    }
-
-
-    function getCurrentMonth() {
-
-      return getToday()
-        .slice(
-          0,
-          7
-        );
-
-    }
-
-
-    function formatDate(
-      dateString
-    ) {
-
-      if (!dateString) {
-
-        return "—";
-
-      }
-
-
-      const parts =
-        String(
-          dateString
-        )
-        .split("-");
-
-
-      if (
-        parts.length !== 3
-      ) {
-
-        return dateString;
-
-      }
-
-
-      return (
-        parts[2] +
-        "/" +
-        parts[1] +
-        "/" +
-        parts[0]
-      );
-
-    }
-
-
-    function formatShortDate(
-      date
-    ) {
-
-      return (
-
-        String(
-          date.getDate()
-        )
-        .padStart(
-          2,
-          "0"
-        )
-
-        +
-
-        "/"
-
-        +
-
-        String(
-          date.getMonth() + 1
-        )
-        .padStart(
-          2,
-          "0"
-        )
-
-      );
-
-    }
-
-
-    function formatMoney(
-      value
-    ) {
-
-      return (
-
-        Number(
-          value || 0
-        )
-        .toLocaleString(
-          "vi-VN"
-        )
-
-        +
-
-        " ₫"
-
-      );
-
-    }
-
-
-    function formatCompactMoney(
-      value
-    ) {
-
-      const number =
-        Number(
-          value || 0
-        );
-
-
-      if (
-        Math.abs(number) >=
-        1000000
-      ) {
-
-        return (
-
-          Math.round(
-            number / 1000000
-          )
-
-          +
-
-          "tr"
-
-        );
-
-      }
-
-
-      if (
-        Math.abs(number) >=
-        1000
-      ) {
-
-        return (
-
-          Math.round(
-            number / 1000
-          )
-
-          +
-
-          "k"
-
-        );
-
-      }
-
-
-      return number;
-
-    }
-
-
-    function getCategoryIcon(
-      category
-    ) {
-
-      const icons = {
-
-        "Tiền trọ":
-          "🏠",
-
-        "Tiền điện":
-          "⚡",
-
-        "Ăn uống":
-          "🍜",
-
-        "Mua sắm":
-          "🛍️"
-
-      };
-
-
-      return (
-        icons[category] ||
-        "💸"
-      );
-
-    }
-
-
-    function escapeHtml(
-      value
-    ) {
-
-      return String(
-        value ?? ""
-      )
-
-        .replace(
-          /&/g,
-          "&amp;"
-        )
-
-        .replace(
-          /</g,
-          "&lt;"
-        )
-
-        .replace(
-          />/g,
-          "&gt;"
-        )
-
-        .replace(
-          /"/g,
-          "&quot;"
-        )
-
-        .replace(
-          /'/g,
-          "&#039;"
-        );
-
-    }
-
-
-    function setFirebaseStatus(
-      text,
-      type = ""
-    ) {
-
-      const element =
-        document.getElementById(
-          "firebaseStatus"
-        );
-
-
-      element.textContent =
-        text;
-
-
-      element.className =
-        "firebase-status";
-
-
-      if (type) {
-
-        element.classList.add(
-          type
-        );
-
-      }
-
-    }
-
-
-    /* =====================================
-       MODAL KEYBOARD
-    ====================================== */
-
-    document.addEventListener(
-      "keydown",
-      event => {
-
-        if (
-          event.key ===
-          "Escape"
-        ) {
-
-          closeModal();
-
+      /* =====================================
+         WEEKLY CHART
+      ===================================== */
+
+      function renderWeeklyChart() {
+        const labels = [];
+        const incomeData = [];
+        const expenseData = [];
+
+        for (let i = 6; i >= 0; i--) {
+          const date = new Date();
+          date.setDate(date.getDate() - i);
+
+          const dateString = toDateString(date);
+          labels.push(formatShortDate(date));
+
+          const income = transactions
+            .filter(
+              (item) => item.date === dateString && item.type === "income",
+            )
+            .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+
+          const expense = transactions
+            .filter(
+              (item) => item.date === dateString && item.type === "expense",
+            )
+            .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+
+          incomeData.push(income);
+          expenseData.push(expense);
         }
 
+        const canvas = document.getElementById("weeklyChart");
+        const isDark = document.body.classList.contains("dark");
+
+        if (weeklyChart) weeklyChart.destroy();
+
+        weeklyChart = new Chart(canvas, {
+          type: "bar",
+          data: {
+            labels,
+            datasets: [
+              {
+                label: "Thu",
+                data: incomeData,
+                backgroundColor: isDark ? "#4ade80" : "#16a34a",
+                borderRadius: 6,
+              },
+              {
+                label: "Chi",
+                data: expenseData,
+                backgroundColor: isDark ? "#f87171" : "#dc2626",
+                borderRadius: 6,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            interaction: {
+              mode: "index",
+              intersect: false,
+            },
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: {
+                  color: isDark ? "#f3f4f6" : "#374151",
+                },
+              },
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { color: isDark ? "#9ca3af" : "#6b7280" },
+              },
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  color: isDark ? "#9ca3af" : "#6b7280",
+                  callback: (value) => formatCompactMoney(value),
+                },
+              },
+            },
+          },
+        });
       }
-    );
 
+      /* =====================================
+         CATEGORY LIST
+      ===================================== */
 
-    /* =====================================
-       CLICK OUTSIDE MODAL
-    ====================================== */
+      function renderCategoryList() {
+        const categories = [
+          { name: "Tiền trọ", icon: "🏠" },
+          { name: "Tiền điện", icon: "⚡" },
+          { name: "Ăn uống", icon: "🍜" },
+          { name: "Mua sắm", icon: "🛍️" },
+        ];
 
-    document
-      .getElementById(
-        "transactionModal"
-      )
-      .addEventListener(
-        "click",
-        event => {
+        const currentMonth = getCurrentMonth();
 
-          if (
-            event.target.id ===
-            "transactionModal"
-          ) {
+        const values = categories.map((category) => {
+          const amount = transactions
+            .filter(
+              (item) =>
+                item.type === "expense" &&
+                item.category === category.name &&
+                String(item.date || "").startsWith(currentMonth),
+            )
+            .reduce((sum, item) => sum + Number(item.amount || 0), 0);
 
-            closeModal();
+          return { ...category, amount };
+        });
 
+        const max = Math.max(...values.map((item) => item.amount), 1);
+        const container = document.getElementById("categoryList");
+
+        container.innerHTML = values
+          .map((item) => {
+            const width =
+              item.amount > 0 ? Math.max(5, (item.amount / max) * 100) : 0;
+
+            return `
+            <div class="category-row">
+              <div class="category-icon">${item.icon}</div>
+              <div class="category-info">
+                <div class="category-name">${escapeHtml(item.name)}</div>
+                <div class="category-bar">
+                  <div class="category-bar-fill" style="width:${width}%"></div>
+                </div>
+              </div>
+              <div class="category-amount">${formatMoney(item.amount)}</div>
+            </div>
+          `;
+          })
+          .join("");
+      }
+
+      /* =====================================
+         RECENT TRANSACTIONS
+      ===================================== */
+
+      function renderRecentTransactions() {
+        const container = document.getElementById("recentTransactions");
+
+        const recent = [...transactions]
+          .sort((a, b) =>
+            String(b.date || "").localeCompare(String(a.date || "")),
+          )
+          .slice(0, 10);
+
+        if (!recent.length) {
+          container.innerHTML = `
+            <div class="empty-state">Chưa có giao dịch nào.</div>
+          `;
+          return;
+        }
+
+        container.innerHTML = recent
+          .map((item) => createTransactionItem(item))
+          .join("");
+      }
+
+      function createTransactionItem(item) {
+        const isIncome = item.type === "income";
+        const icon = isIncome ? "💰" : getCategoryIcon(item.category);
+        const sign = isIncome ? "+" : "-";
+
+        return `
+          <div class="transaction-item">
+            <div class="transaction-icon ${isIncome ? "income" : "expense"}">
+              ${icon}
+            </div>
+            <div class="transaction-info">
+              <div class="transaction-name">
+                ${escapeHtml(item.note || item.category || (isIncome ? "Thu nhập" : "Chi tiêu"))}
+              </div>
+              <div class="transaction-meta">
+                ${formatDate(item.date)}
+                ${item.category ? " · " + escapeHtml(item.category) : ""}
+              </div>
+            </div>
+            <div class="transaction-amount ${isIncome ? "income" : "expense"}">
+              ${sign}${formatMoney(item.amount)}
+            </div>
+          </div>
+        `;
+      }
+
+      /* =====================================
+         FILTER
+      ===================================== */
+
+      function getFilteredTransactions() {
+        const from = document.getElementById("filterFrom").value;
+        const to = document.getElementById("filterTo").value;
+        const type = document.getElementById("filterType").value;
+        const category = document.getElementById("filterCategory").value;
+        const search = document
+          .getElementById("filterSearch")
+          .value.toLowerCase()
+          .trim();
+
+        return transactions
+          .filter((item) => {
+            if (from && String(item.date || "") < from) return false;
+            if (to && String(item.date || "") > to) return false;
+            if (type !== "all" && item.type !== type) return false;
+            if (category !== "all" && item.category !== category) return false;
+
+            if (search) {
+              const haystack = [item.note, item.category, item.date]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase();
+
+              if (!haystack.includes(search)) return false;
+            }
+
+            return true;
+          })
+          .sort((a, b) =>
+            String(b.date || "").localeCompare(String(a.date || "")),
+          );
+      }
+
+      /* =====================================
+         RENDER TABLE
+      ===================================== */
+
+      function renderTransactions() {
+        const filtered = getFilteredTransactions();
+        const tbody = document.getElementById("transactionTableBody");
+
+        let income = 0;
+        let expense = 0;
+
+        filtered.forEach((item) => {
+          const amount = Number(item.amount || 0);
+
+          if (item.type === "income") {
+            income += amount;
+          } else {
+            expense += amount;
           }
+        });
 
+        document.getElementById("rangeIncome").textContent =
+          formatMoney(income);
+        document.getElementById("rangeExpense").textContent =
+          formatMoney(expense);
+        document.getElementById("rangeCount").textContent = filtered.length;
+
+        if (!filtered.length) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" class="empty-state">
+                Không có giao dịch nào trong khoảng này.
+              </td>
+            </tr>
+          `;
+          return;
         }
-      );
 
+        tbody.innerHTML = filtered
+          .map((item) => {
+            const isIncome = item.type === "income";
+            const safeId = escapeHtml(item.id);
 
-    /* =====================================
-       INITIAL
-    ====================================== */
+            return `
+            <tr>
+              <td>${formatDate(item.date)}</td>
+              <td>
+                <span class="type-badge ${isIncome ? "income" : "expense"}">
+                  ${isIncome ? "🟢 Thu" : "🔴 Chi"}
+                </span>
+              </td>
+              <td>
+                ${
+                  item.category
+                    ? `<span class="category-badge">${getCategoryIcon(item.category)} ${escapeHtml(item.category)}</span>`
+                    : "—"
+                }
+              </td>
+              <td>${escapeHtml(item.note || "—")}</td>
+              <td>
+                <strong style="color:${isIncome ? "var(--income)" : "var(--expense)"}">
+                  ${isIncome ? "+" : "-"}${formatMoney(item.amount)}
+                </strong>
+              </td>
+              <td>
+                <div class="actions">
+                  <button class="action-btn" data-edit-id="${safeId}">Edit</button>
+                  <button class="action-btn delete" data-delete-id="${safeId}">Delete</button>
+                </div>
+              </td>
+            </tr>
+          `;
+          })
+          .join("");
 
-    loadTheme();
+        // Gắn sự kiện bằng listener thay vì nhúng ID trực tiếp vào onclick.
+        tbody.querySelectorAll("[data-edit-id]").forEach((button) => {
+          button.addEventListener("click", () => {
+            window.editTransaction(button.dataset.editId);
+          });
+        });
 
+        tbody.querySelectorAll("[data-delete-id]").forEach((button) => {
+          button.addEventListener("click", () => {
+            window.deleteTransaction(button.dataset.deleteId);
+          });
+        });
+      }
 
-    document
-      .getElementById(
-        "filterFrom"
-      )
-      .value =
-      getCurrentMonth() +
-      "-01";
+      /* =====================================
+         FILTER EVENTS
+      ===================================== */
 
+      [
+        "filterFrom",
+        "filterTo",
+        "filterType",
+        "filterCategory",
+        "filterSearch",
+      ].forEach((id) => {
+        document
+          .getElementById(id)
+          .addEventListener("input", renderTransactions);
+        document
+          .getElementById(id)
+          .addEventListener("change", renderTransactions);
+      });
 
-    document
-      .getElementById(
-        "filterTo"
-      )
-      .value =
-      getToday();
+      /* =====================================
+         DARK MODE
+      ===================================== */
 
+      window.toggleTheme = function () {
+        const isDark = document.body.classList.toggle("dark");
+        localStorage.setItem("money_log_theme", isDark ? "dark" : "light");
+        updateThemeButton();
+        renderWeeklyChart();
+      };
 
-    updateTypeUI();
+      function loadTheme() {
+        const saved = localStorage.getItem("money_log_theme");
+        if (saved === "dark") document.body.classList.add("dark");
+        updateThemeButton();
+      }
 
-  </script>
+      function updateThemeButton() {
+        const button = document.getElementById("themeBtn");
+        const isDark = document.body.classList.contains("dark");
+        button.textContent = isDark ? "☀️ Light mode" : "🌙 Dark mode";
+      }
 
-</body>
+      /* =====================================
+         HELPERS
+      ===================================== */
+
+      function getToday() {
+        return toDateString(new Date());
+      }
+
+      function toDateString(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return year + "-" + month + "-" + day;
+      }
+
+      function getCurrentMonth() {
+        return getToday().slice(0, 7);
+      }
+
+      function formatDate(dateString) {
+        if (!dateString) return "—";
+
+        const parts = String(dateString).split("-");
+        if (parts.length !== 3) return dateString;
+
+        return parts[2] + "/" + parts[1] + "/" + parts[0];
+      }
+
+      function formatShortDate(date) {
+        return (
+          String(date.getDate()).padStart(2, "0") +
+          "/" +
+          String(date.getMonth() + 1).padStart(2, "0")
+        );
+      }
+
+      function formatMoney(value) {
+        return Number(value || 0).toLocaleString("vi-VN") + " ₫";
+      }
+
+      function formatCompactMoney(value) {
+        const number = Number(value || 0);
+
+        if (Math.abs(number) >= 1000000) {
+          return Math.round(number / 1000000) + "tr";
+        }
+
+        if (Math.abs(number) >= 1000) {
+          return Math.round(number / 1000) + "k";
+        }
+
+        return number;
+      }
+
+      function getCategoryIcon(category) {
+        const icons = {
+          "Tiền trọ": "🏠",
+          "Tiền điện": "⚡",
+          "Ăn uống": "🍜",
+          "Mua sắm": "🛍️",
+        };
+
+        return icons[category] || "💸";
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function setFirebaseStatus(text, type = "") {
+        const element = document.getElementById("firebaseStatus");
+        element.textContent = text;
+        element.className = "firebase-status";
+
+        if (type) element.classList.add(type);
+      }
+
+      /* =====================================
+         KEYBOARD / CLICK OUTSIDE MODALS
+      ===================================== */
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          const appDialog = document.getElementById("appDialogBackdrop");
+
+          if (appDialog.classList.contains("show")) {
+            window.closeAppDialog(false);
+          } else {
+            window.closeModal();
+          }
+        }
+      });
+
+      document
+        .getElementById("transactionModal")
+        .addEventListener("click", (event) => {
+          if (event.target.id === "transactionModal") {
+            window.closeModal();
+          }
+        });
+
+      /* =====================================
+         INITIAL
+      ===================================== */
+
+      loadTheme();
+
+      document.getElementById("filterFrom").value = getCurrentMonth() + "-01";
+      document.getElementById("filterTo").value = getToday();
+
+      updateTypeUI();
+    </script>
+  </body>
 </html>
