@@ -977,10 +977,54 @@
           grid-template-columns: 1fr;
         }
       }
+      #appStartupScreen {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg);
+      }
+
+      #appStartupScreen.hidden {
+        display: none !important;
+      }
+
+      .app-startup-card {
+        width: min(360px, calc(100% - 40px));
+        padding: 28px;
+        text-align: center;
+        border-radius: 20px;
+        background: var(--card);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+      }
+
+      .app-startup-icon {
+        font-size: 42px;
+        margin-bottom: 12px;
+      }
+
+      .app-startup-title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .app-startup-text {
+        opacity: 0.7;
+      }
     </style>
   </head>
 
   <body>
+    <div id="appStartupScreen">
+      <div class="app-startup-card">
+        <div class="app-startup-icon">🔐</div>
+        <div class="app-startup-title">Money Log</div>
+        <div class="app-startup-text">Đang kiểm tra...</div>
+      </div>
+    </div>
     <div class="app">
       <aside class="sidebar">
         <div class="brand">
@@ -1012,7 +1056,21 @@
           </button>
         </nav>
 
+        <!-- <div class="sidebar-bottom">
+          <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">
+            🌙 Dark mode
+          </button>
+        </div> -->
         <div class="sidebar-bottom">
+          <button
+            class="theme-btn"
+            id="currentAccountBtn"
+            onclick="openAccountSwitcher()"
+            style="margin-bottom: 8px"
+          >
+            👤 Account
+          </button>
+
           <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">
             🌙 Dark mode
           </button>
@@ -1183,12 +1241,120 @@
           </div>
 
           <div class="settings-grid">
+            <!-- ADMIN: ACCOUNT MANAGEMENT -->
+            <div
+              id="adminAccountSettingsCard"
+              class="card settings-card"
+              style="display: none; grid-column: 1 / -1"
+            >
+              <div class="panel-title">👑 Quản lý Account</div>
+
+              <div class="settings-description">
+                Chỉ Admin mới có thể thay đổi role và đặt lại mật khẩu App Lock
+                của các Account.
+              </div>
+
+              <div style="margin: 12px 0">
+                <button
+                  id="createAccountBtn"
+                  class="primary-btn"
+                  type="button"
+                  style="width: 100%"
+                  onclick="showCreateAccountForm()"
+                >
+                  ＋ Create Account
+                </button>
+              </div>
+
+              <div
+                id="createAccountForm"
+                style="display: none; margin-top: 18px"
+              >
+                <div class="field">
+                  <label for="newAccountName">Tên Account</label>
+                  <input
+                    id="newAccountName"
+                    type="text"
+                    placeholder="Ví dụ: Personal"
+                    autocomplete="off"
+                  />
+                </div>
+
+                <div class="field">
+                  <label for="newAccountPassword">Mật khẩu App Lock</label>
+                  <input
+                    id="newAccountPassword"
+                    type="password"
+                    placeholder="Ít nhất 4 ký tự"
+                    autocomplete="new-password"
+                    minlength="4"
+                  />
+                </div>
+
+                <div class="field">
+                  <label for="confirmNewAccountPassword"
+                    >Xác nhận mật khẩu</label
+                  >
+                  <input
+                    id="confirmNewAccountPassword"
+                    type="password"
+                    placeholder="Nhập lại mật khẩu"
+                    autocomplete="new-password"
+                    minlength="4"
+                  />
+                </div>
+
+                <div style="display: flex; gap: 8px; margin-top: 14px">
+                  <button
+                    class="secondary-btn"
+                    type="button"
+                    onclick="hideCreateAccountForm()"
+                    style="flex: 1"
+                  >
+                    Hủy
+                  </button>
+
+                  <button
+                    class="primary-btn"
+                    type="button"
+                    onclick="createAccount()"
+                    style="flex: 1"
+                  >
+                    Tạo Account
+                  </button>
+                </div>
+
+                <div
+                  id="adminCreateAccountError"
+                  class="app-lock-error"
+                  role="alert"
+                ></div>
+              </div>
+
+              <div
+                id="adminAccountMessage"
+                class="settings-description"
+                role="status"
+                style="white-space: pre-wrap; margin-top: 10px"
+              ></div>
+
+              <div
+                id="adminAccountList"
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  gap: 12px;
+                  margin-top: 12px;
+                "
+              ></div>
+            </div>
+
             <div class="card settings-card">
               <div class="panel-title">🔒 App Lock</div>
               <div class="settings-description">
-                Money Log tự khóa sau 8 tiếng kể từ lúc mở khóa thành công. Nếu
-                tải lại trang trong thời hạn này, ứng dụng sẽ tiếp tục phiên
-                hiện tại.
+                Account <strong id="settingsAccountName">—</strong>
+                tự khóa sau 8 tiếng kể từ lúc mở khóa thành công. Mỗi Account có
+                App Lock riêng.
               </div>
 
               <div class="panel-subtitle">Thời gian còn lại</div>
@@ -1257,7 +1423,7 @@
       </main>
     </div>
 
-    <div id="appLockScreen" class="app-lock-screen">
+    <div id="appLockScreen" class="app-lock-screen hidden">
       <div class="app-lock-card">
         <div class="app-lock-icon">🔐</div>
         <div id="lockTitle" class="app-lock-title">Money Log đang khóa</div>
@@ -1289,7 +1455,20 @@
     <div id="firebaseStatus" class="firebase-status">
       Connecting Firebase...
     </div>
+    <!-- ACCOUNT SELECTOR -->
+    <div id="accountScreen" class="app-lock-screen hidden">
+      <div class="app-lock-card">
+        <div class="app-lock-icon">👤</div>
 
+        <div class="app-lock-title">Chọn Account</div>
+
+        <div class="app-lock-description">Chọn account bạn muốn sử dụng.</div>
+
+        <div id="accountList"></div>
+
+        <div id="accountScreenError" class="app-lock-error" role="alert"></div>
+      </div>
+    </div>
     <!-- ADD / EDIT TRANSACTION MODAL -->
     <div id="transactionModal" class="modal-backdrop">
       <div
@@ -1410,9 +1589,11 @@
         deleteDoc,
         doc,
         getDoc,
+        getDocs,
         setDoc,
         onSnapshot,
         serverTimestamp,
+        writeBatch,
       } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
       const firebaseConfig = {
@@ -1544,22 +1725,38 @@
             window.closeAppDialog(false);
           }
         });
-
       /* =====================================
-   APP LOCK + FIREBASE INITIALIZATION
+   MULTI ACCOUNT + APP LOCK
 ===================================== */
 
       const LOCK_DURATION_MS = 8 * 60 * 60 * 1000;
+
+      const SELECTED_ACCOUNT_KEY = "money_log_selected_account";
       const LOCK_EXPIRY_KEY = "money_log_app_lock_expiry";
 
       let unsubscribeTransactions = null;
+      let isSettingUpPassword = false;
       let lockExpiry = 0;
       let lockTimer = null;
+
       let lockConfigExists = false;
       let lockPasswordHash = null;
+
       let isAppUnlocked = false;
-      let isSettingUpPassword = false;
       let lockActionInProgress = false;
+
+      let currentAccountId = null;
+      let currentAccountName = "";
+      let currentAccountRole = "user";
+
+      // true khi màn hình chọn Account được mở bởi Admin
+      let accountScreenAdminMode = false;
+
+      let accounts = [];
+
+      /* =====================================
+   PASSWORD
+===================================== */
 
       function hashPassword(password) {
         return crypto.subtle
@@ -1570,27 +1767,739 @@
               .join(""),
           );
       }
-      function showLockScreen(message = "") {
+
+      /* =====================================
+   ACCOUNT PATH HELPERS
+===================================== */
+
+      function getCurrentAccountRef() {
+        if (!db || !currentAccountId) {
+          throw new Error("Chưa chọn Account.");
+        }
+
+        return doc(db, "accounts", currentAccountId);
+      }
+
+      function getAccountTransactionsRef() {
+        if (!db || !currentAccountId) {
+          throw new Error("Chưa chọn Account.");
+        }
+
+        return collection(db, "accounts", currentAccountId, "transactions");
+      }
+
+      function getAccountTransactionRef(id) {
+        if (!db || !currentAccountId) {
+          throw new Error("Chưa chọn Account.");
+        }
+
+        return doc(db, "accounts", currentAccountId, "transactions", id);
+      }
+
+      function getAccountLockRef() {
+        if (!db || !currentAccountId) {
+          throw new Error("Chưa chọn Account.");
+        }
+
+        return doc(db, "accounts", currentAccountId, "settings", "appLock");
+      }
+
+      function getAccountProfileRef() {
+        if (!db || !currentAccountId) {
+          throw new Error("Chưa chọn Account.");
+        }
+
+        return doc(db, "accounts", currentAccountId, "profile");
+      }
+
+      /* =====================================
+   ACCOUNT UI
+===================================== */
+
+      function updateCurrentAccountButton() {
+        const button = document.getElementById("currentAccountBtn");
+
+        if (!button) return;
+
+        const isAdminUnlocked = isAppUnlocked && currentAccountRole === "admin";
+
+        // Chỉ Admin đang unlock mới thấy nút Switch Account
+        button.style.display = isAdminUnlocked ? "" : "none";
+
+        if (!isAdminUnlocked) {
+          return;
+        }
+
+        button.textContent = "👤 " + (currentAccountName || "Account");
+      }
+
+      function showAccountScreen(adminMode = false) {
+        accountScreenAdminMode = Boolean(adminMode);
+
+        document.getElementById("accountScreen").classList.remove("hidden");
+
+        document.getElementById("appLockScreen").classList.add("hidden");
+      }
+
+      function hideAccountScreen() {
+        document.getElementById("accountScreen").classList.add("hidden");
+      }
+
+      window.showCreateAccountForm = function () {
+        document.getElementById("createAccountForm").style.display = "block";
+
+        document.getElementById("newAccountName").focus();
+      };
+      window.hideCreateAccountForm = function () {
+        document.getElementById("createAccountForm").style.display = "none";
+
+        document.getElementById("newAccountName").value = "";
+        document.getElementById("newAccountPassword").value = "";
+        document.getElementById("confirmNewAccountPassword").value = "";
+
+        const accountError = document.getElementById("accountScreenError");
+        const adminError = document.getElementById("adminCreateAccountError");
+
+        if (accountError) accountError.textContent = "";
+        if (adminError) adminError.textContent = "";
+      };
+      async function loadAccounts() {
+        if (!db) return [];
+
+        const snapshot = await getDocs(collection(db, "accounts"));
+
+        const loadedAccounts = snapshot.docs
+          .map((item) => ({
+            id: item.id,
+            ...item.data(),
+          }))
+          .sort((a, b) =>
+            String(a.name || "").localeCompare(String(b.name || "")),
+          );
+
+        // Account cũ chưa có role:
+        // nếu chưa có Admin nào thì Account đầu tiên sẽ trở thành Admin.
+        const hasAdmin = loadedAccounts.some(
+          (account) => account.role === "admin",
+        );
+
+        if (!hasAdmin && loadedAccounts.length) {
+          const firstAccount = loadedAccounts[0];
+
+          await updateDoc(doc(db, "accounts", firstAccount.id), {
+            role: "admin",
+            updatedAt: serverTimestamp(),
+          });
+
+          firstAccount.role = "admin";
+        }
+
+        accounts = loadedAccounts.map((account) => ({
+          ...account,
+          role: account.role === "admin" ? "admin" : "user",
+        }));
+
+        return accounts;
+      }
+
+      function renderAccountList() {
+        const container = document.getElementById("accountList");
+
+        if (!container) return;
+
+        if (!accounts.length) {
+          container.innerHTML = `
+      <div class="empty-state">
+        Chưa có Account nào.
+      </div>
+    `;
+          return;
+        }
+
+        container.innerHTML = accounts
+          .map((account) => {
+            const safeId = escapeHtml(account.id);
+            const safeName = escapeHtml(account.name || "Unnamed Account");
+
+            return `
+        <button
+          type="button"
+          class="secondary-btn"
+          data-account-id="${safeId}"
+          style="
+            width:100%;
+            text-align:left;
+            margin-bottom:8px;
+            padding:14px;
+          "
+        >
+          👤 ${safeName}
+        </button>
+      `;
+          })
+          .join("");
+
+        container.querySelectorAll("[data-account-id]").forEach((button) => {
+          button.addEventListener("click", () => {
+            selectAccount(button.dataset.accountId);
+          });
+        });
+      }
+
+      /* =====================================
+   ADMIN ACCOUNT MANAGEMENT - SETTINGS
+===================================== */
+
+      async function renderAdminAccountSettings() {
+        const card = document.getElementById("adminAccountSettingsCard");
+        const list = document.getElementById("adminAccountList");
+        const message = document.getElementById("adminAccountMessage");
+
+        if (!card || !list || !message) return;
+
+        const isAdmin =
+          Boolean(db) &&
+          isAppUnlocked &&
+          Boolean(currentAccountId) &&
+          currentAccountRole === "admin";
+
+        card.style.display = isAdmin ? "" : "none";
+
+        if (!isAdmin) {
+          list.innerHTML = "";
+          message.textContent = "";
+          return;
+        }
+
+        message.textContent = "Đang tải danh sách Account...";
+        list.innerHTML = "";
+
+        try {
+          await loadAccounts();
+
+          // Chỉ tiếp tục nếu phiên hiện tại vẫn là Admin đã mở khóa.
+          if (!isAppUnlocked || currentAccountRole !== "admin") {
+            card.style.display = "none";
+            list.innerHTML = "";
+            return;
+          }
+
+          if (!accounts.length) {
+            message.textContent = "Chưa có Account nào.";
+            return;
+          }
+
+          message.textContent = "";
+
+          list.innerHTML = accounts
+            .map((account) => {
+              const id = escapeHtml(account.id);
+              const name = escapeHtml(account.name || "Unnamed Account");
+              const role = account.role === "admin" ? "admin" : "user";
+              const isCurrent = account.id === currentAccountId;
+
+              return `
+        <div
+          data-admin-account-row="${id}"
+          style="
+            border: 1px solid var(--border-color, #ddd);
+            border-radius: 10px;
+            padding: 14px;
+          "
+        >
+          <div style="font-weight: 600; margin-bottom: 8px;">
+            👤 ${name}${isCurrent ? " (Account hiện tại)" : ""}
+          </div>
+
+          <div class="field">
+            <label>Role</label>
+            <select data-account-role="${id}">
+              <option value="user" ${role === "user" ? "selected" : ""}>
+                User
+              </option>
+              <option value="admin" ${role === "admin" ? "selected" : ""}>
+                Admin
+              </option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Mật khẩu App Lock mới</label>
+            <input
+              type="password"
+              data-reset-password-for="${id}"
+              placeholder="Nhập mật khẩu mới (ít nhất 4 ký tự)"
+              minlength="4"
+              autocomplete="new-password"
+            />
+          </div>
+
+          <button
+            type="button"
+            class="secondary-btn"
+            data-reset-account="${id}"
+          >
+            🔑 Đặt lại App Lock
+          </button>
+        </div>
+      `;
+            })
+            .join("");
+
+          // Đổi role
+          list.querySelectorAll("[data-account-role]").forEach((select) => {
+            select.addEventListener("change", async () => {
+              await window.updateAccountRole(
+                select.dataset.accountRole,
+                select.value,
+              );
+            });
+          });
+
+          // Reset App Lock password
+          list.querySelectorAll("[data-reset-account]").forEach((button) => {
+            button.addEventListener("click", async () => {
+              await window.resetAccountAppLock(button.dataset.resetAccount);
+            });
+          });
+        } catch (error) {
+          console.error("Render admin account settings error:", error);
+          message.textContent =
+            "Không thể tải danh sách Account.\n" +
+            (error.message || "Lỗi không xác định.");
+        }
+      }
+
+      /* =====================================
+   UPDATE ACCOUNT ROLE
+===================================== */
+
+      window.updateAccountRole = async function (accountId, newRole) {
+        if (
+          !db ||
+          !isAppUnlocked ||
+          !currentAccountId ||
+          currentAccountRole !== "admin"
+        ) {
+          return;
+        }
+
+        if (!["admin", "user"].includes(newRole)) {
+          await renderAdminAccountSettings();
+          return;
+        }
+
+        try {
+          await loadAccounts();
+
+          const account = accounts.find((item) => item.id === accountId);
+
+          if (!account) {
+            throw new Error("Không tìm thấy Account.");
+          }
+
+          if (account.role === newRole) return;
+
+          // Không cho phép hạ quyền Admin cuối cùng.
+          const adminCount = accounts.filter(
+            (item) => item.role === "admin",
+          ).length;
+
+          if (
+            account.role === "admin" &&
+            newRole === "user" &&
+            adminCount <= 1
+          ) {
+            await window.showAppDialog({
+              title: "Không thể đổi role",
+              message:
+                "Đây là Admin cuối cùng. Hãy cấp quyền Admin cho một Account khác trước.",
+              type: "warning",
+            });
+
+            await renderAdminAccountSettings();
+            return;
+          }
+
+          const confirmed = await window.showAppDialog({
+            title: "Xác nhận đổi role",
+            message:
+              'Bạn có chắc muốn đổi Account "' +
+              (account.name || "Unnamed Account") +
+              '" thành ' +
+              newRole.toUpperCase() +
+              " không?",
+            type: "warning",
+            confirm: true,
+            confirmText: "Xác nhận",
+            cancelText: "Hủy",
+          });
+
+          if (!confirmed) {
+            await renderAdminAccountSettings();
+            return;
+          }
+
+          // Kiểm tra lại quyền trước khi ghi dữ liệu.
+          if (!isAppUnlocked || currentAccountRole !== "admin") {
+            await renderAdminAccountSettings();
+            return;
+          }
+
+          await updateDoc(doc(db, "accounts", accountId), {
+            role: newRole,
+            updatedAt: serverTimestamp(),
+          });
+
+          if (accountId === currentAccountId) {
+            currentAccountRole = newRole;
+            updateCurrentAccountButton();
+          }
+
+          await renderAdminAccountSettings();
+
+          await window.showAppDialog({
+            title: "Cập nhật thành công",
+            message:
+              'Role của Account "' +
+              (account.name || "Unnamed Account") +
+              '" đã được đổi thành ' +
+              newRole.toUpperCase() +
+              ".",
+            type: "success",
+          });
+        } catch (error) {
+          console.error("Update account role error:", error);
+
+          await window.showAppDialog({
+            title: "Không thể đổi role",
+            message: error.message || "Lỗi không xác định.",
+            type: "error",
+          });
+
+          await renderAdminAccountSettings();
+        }
+      };
+
+      /* =====================================
+   RESET ANOTHER ACCOUNT'S APP LOCK
+===================================== */
+
+      window.resetAccountAppLock = async function (accountId) {
+        if (
+          !db ||
+          !isAppUnlocked ||
+          !currentAccountId ||
+          currentAccountRole !== "admin"
+        ) {
+          return;
+        }
+
+        const row = document.querySelector(
+          `[data-admin-account-row="${accountId}"]`,
+        );
+
+        const passwordInput = row?.querySelector(
+          `[data-reset-password-for="${accountId}"]`,
+        );
+
+        if (!passwordInput) return;
+
+        const newPassword = passwordInput.value;
+
+        if (newPassword.length < 4) {
+          await window.showAppDialog({
+            title: "Mật khẩu chưa hợp lệ",
+            message: "Mật khẩu App Lock mới phải có ít nhất 4 ký tự.",
+            type: "warning",
+          });
+          return;
+        }
+
+        try {
+          await loadAccounts();
+
+          const account = accounts.find((item) => item.id === accountId);
+
+          if (!account) {
+            throw new Error("Không tìm thấy Account.");
+          }
+
+          const confirmed = await window.showAppDialog({
+            title: "Đặt lại App Lock?",
+            message:
+              'Bạn sẽ đặt mật khẩu App Lock mới cho Account "' +
+              (account.name || "Unnamed Account") +
+              '". Hãy đảm bảo bạn đã thông báo mật khẩu mới cho người sử dụng.',
+            type: "warning",
+            confirm: true,
+            confirmText: "Đặt lại mật khẩu",
+            cancelText: "Hủy",
+          });
+
+          if (!confirmed) return;
+
+          // Kiểm tra lại quyền trước khi ghi dữ liệu.
+          if (!isAppUnlocked || currentAccountRole !== "admin") {
+            return;
+          }
+
+          const passwordHash = await hashPassword(newPassword);
+
+          await setDoc(
+            doc(db, "accounts", accountId, "settings", "appLock"),
+            {
+              passwordHash,
+              updatedAt: serverTimestamp(),
+            },
+            { merge: true },
+          );
+
+          // Nếu reset chính Account đang sử dụng, cập nhật hash trong phiên hiện tại.
+          if (accountId === currentAccountId) {
+            lockPasswordHash = passwordHash;
+            lockConfigExists = true;
+          }
+
+          passwordInput.value = "";
+
+          await window.showAppDialog({
+            title: "Đặt lại thành công",
+            message:
+              'Mật khẩu App Lock của Account "' +
+              (account.name || "Unnamed Account") +
+              '" đã được cập nhật.',
+            type: "success",
+          });
+        } catch (error) {
+          console.error("Reset account App Lock error:", error);
+
+          await window.showAppDialog({
+            title: "Không thể đặt lại mật khẩu",
+            message: error.message || "Lỗi không xác định.",
+            type: "error",
+          });
+        }
+      };
+
+      window.openAccountSwitcher = async function () {
+        if (!db || !isAppUnlocked || currentAccountRole !== "admin") {
+          return;
+        }
+
+        const confirmed = await window.showAppDialog({
+          title: "Đổi Account?",
+          message:
+            "Account hiện tại sẽ được khóa.\n\n" +
+            "Bạn sẽ cần nhập App Lock của Account mới.",
+          type: "warning",
+          confirm: true,
+          confirmText: "Đổi Account",
+          cancelText: "Hủy",
+        });
+
+        if (!confirmed) return;
+
+        accountScreenAdminMode = true;
+
+        await lockCurrentAccountAndSwitch();
+      };
+
+      async function lockCurrentAccountAndSwitch() {
+        isAppUnlocked = false;
+        lockExpiry = 0;
+
+        clearInterval(lockTimer);
+        lockTimer = null;
+
+        localStorage.removeItem(LOCK_EXPIRY_KEY);
+
+        stopRealtimeListener();
+        clearSensitiveUI();
+
+        currentAccountId = null;
+        currentAccountName = "";
+        currentAccountRole = "user";
+        lockPasswordHash = null;
+        lockConfigExists = false;
+
+        updateCurrentAccountButton();
+
+        showAccountScreen(true);
+
+        await loadAccounts();
+        renderAccountList();
+      }
+
+      window.createAccount = async function () {
+        if (!db || !isAppUnlocked || currentAccountRole !== "admin") {
+          return;
+        }
+
+        const input = document.getElementById("newAccountName");
+        const passwordInput = document.getElementById("newAccountPassword");
+        const confirmInput = document.getElementById(
+          "confirmNewAccountPassword",
+        );
+        const errorBox =
+          document.getElementById("adminCreateAccountError") ||
+          document.getElementById("accountScreenError");
+
+        if (!input || !passwordInput || !confirmInput || !errorBox) {
+          console.error("Create Account form elements are missing.");
+          return;
+        }
+        const name = input.value.trim();
+        const password = passwordInput.value;
+        const confirmation = confirmInput.value;
+
+        errorBox.textContent = "";
+
+        if (!name) {
+          errorBox.textContent = "Vui lòng nhập tên Account.";
+          return;
+        }
+
+        if (password.length < 4) {
+          errorBox.textContent = "Mật khẩu App Lock cần có ít nhất 4 ký tự.";
+          return;
+        }
+
+        if (password !== confirmation) {
+          errorBox.textContent = "Mật khẩu xác nhận không khớp.";
+          return;
+        }
+
+        try {
+          const passwordHash = await hashPassword(password);
+
+          // Account mới luôn là User
+          const accountRef = await addDoc(collection(db, "accounts"), {
+            name,
+            role: "user",
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+          });
+
+          // Tạo App Lock luôn cho User mới
+          await setDoc(
+            doc(db, "accounts", accountRef.id, "settings", "appLock"),
+            {
+              passwordHash,
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+            },
+          );
+
+          input.value = "";
+          passwordInput.value = "";
+          confirmInput.value = "";
+
+          window.hideCreateAccountForm();
+
+          await loadAccounts();
+          renderAccountList();
+          await renderAdminAccountSettings();
+          await window.showAppDialog({
+            title: "Tạo Account thành công",
+            message:
+              'Account "' +
+              name +
+              '" đã được tạo.\n\n' +
+              "Account này là User và đã có App Lock.",
+            type: "success",
+          });
+        } catch (error) {
+          console.error("Create account error:", error);
+
+          errorBox.textContent =
+            "Không thể tạo Account.\n" + (error.message || "");
+        }
+      };
+
+      function updateSettingsAccountName() {
+        const element = document.getElementById("settingsAccountName");
+
+        if (element) {
+          element.textContent = currentAccountName || "—";
+        }
+      }
+      async function selectAccount(accountId) {
+        if (!db || lockActionInProgress) return;
+
+        const account = accounts.find((item) => item.id === accountId);
+        if (!account) return;
+
+        lockActionInProgress = true;
+
+        try {
+          currentAccountId = account.id;
+          currentAccountName = account.name || "Account";
+          currentAccountRole = account.role === "admin" ? "admin" : "user";
+
+          updateSettingsAccountName();
+          localStorage.setItem(SELECTED_ACCOUNT_KEY, currentAccountId);
+
+          lockPasswordHash = null;
+          lockConfigExists = false;
+          isAppUnlocked = false;
+          lockExpiry = 0;
+
+          localStorage.removeItem(LOCK_EXPIRY_KEY);
+
+          /*
+      Quan trọng:
+      KHÔNG hideAccountScreen() ở đây.
+
+      Giữ Account screen phía trước trong lúc
+      Firebase kiểm tra App Lock.
+    */
+          await initializeAccountLock();
+
+          /*
+      initializeAccountLock() đã xác định xong:
+      - có password → showLockScreen()
+      - chưa có password → showLockScreen(setup mode)
+
+      Lúc này mới ẩn Account screen.
+    */
+          hideAccountScreen();
+        } finally {
+          lockActionInProgress = false;
+        }
+      }
+
+      /* =====================================
+   APP LOCK SCREEN
+===================================== */
+
+      function showLockScreen(message = "", setupMode = false) {
         const screen = document.getElementById("appLockScreen");
+
         screen.classList.remove("hidden");
 
-        document.getElementById("lockTitle").textContent =
-          "Money Log đang khóa";
+        document.getElementById("lockTitle").textContent = setupMode
+          ? "Tạo App Lock"
+          : "Money Log đang khóa";
 
-        document.getElementById("lockDescription").textContent =
-          "Nhập mật khẩu để tiếp tục xem dữ liệu thu chi.";
+        document.getElementById("lockDescription").textContent = setupMode
+          ? "Tạo mật khẩu để bảo vệ Account này."
+          : "Nhập mật khẩu để tiếp tục xem dữ liệu thu chi.";
 
         document.getElementById("lockPassword").value = "";
 
         document.getElementById("lockError").textContent =
           typeof message === "string" ? message : "";
 
-        document.getElementById("lockSubmitBtn").textContent = "Mở khóa";
+        document.getElementById("lockSubmitBtn").textContent = setupMode
+          ? "Tạo App Lock"
+          : "Mở khóa";
 
         setTimeout(() => {
-          document.getElementById("lockPassword").focus();
+          document.getElementById("lockPassword")?.focus();
         }, 0);
       }
+
       function hideLockScreen() {
         document.getElementById("appLockScreen").classList.add("hidden");
       }
@@ -1605,17 +2514,47 @@
 
         closeModal();
 
-        // Xóa dữ liệu đang hiển thị trước khi che giao diện.
         document.getElementById("balanceValue").textContent = "—";
+
         document.getElementById("incomeValue").textContent = "—";
+
         document.getElementById("expenseValue").textContent = "—";
+
         document.getElementById("monthExpenseValue").textContent = "—";
+
         document.getElementById("categoryList").innerHTML = "";
+
         document.getElementById("recentTransactions").innerHTML = "";
+
         document.getElementById("transactionTableBody").innerHTML = "";
+
         document.getElementById("rangeIncome").textContent = "—";
+
         document.getElementById("rangeExpense").textContent = "—";
+
         document.getElementById("rangeCount").textContent = "—";
+
+        const adminAccountCard = document.getElementById(
+          "adminAccountSettingsCard",
+        );
+
+        const adminAccountList = document.getElementById("adminAccountList");
+
+        const adminAccountMessage = document.getElementById(
+          "adminAccountMessage",
+        );
+
+        if (adminAccountCard) {
+          adminAccountCard.style.display = "none";
+        }
+
+        if (adminAccountList) {
+          adminAccountList.innerHTML = "";
+        }
+
+        if (adminAccountMessage) {
+          adminAccountMessage.textContent = "";
+        }
       }
 
       function stopRealtimeListener() {
@@ -1625,13 +2564,20 @@
         }
       }
 
+      /* =====================================
+   LOCK COUNTDOWN
+===================================== */
+
       function updateLockCountdown() {
         const countdown = document.getElementById("lockCountdown");
+
         const status = document.getElementById("lockStatusText");
 
         if (!isAppUnlocked || !lockExpiry) {
           countdown.textContent = "Đang khóa";
+
           status.textContent = "Mở khóa để bắt đầu phiên 8 tiếng.";
+
           return;
         }
 
@@ -1643,8 +2589,11 @@
         }
 
         const totalSeconds = Math.ceil(remaining / 1000);
+
         const hours = Math.floor(totalSeconds / 3600);
+
         const minutes = Math.floor((totalSeconds % 3600) / 60);
+
         const seconds = totalSeconds % 60;
 
         countdown.textContent =
@@ -1659,14 +2608,27 @@
 
       function startLockCountdown() {
         clearInterval(lockTimer);
+
         updateLockCountdown();
+
         lockTimer = setInterval(updateLockCountdown, 1000);
       }
 
-      async function startRealtimeListener() {
-        if (!db || !isAppUnlocked || unsubscribeTransactions) return;
+      /* =====================================
+   REALTIME LISTENER
+===================================== */
 
-        const transactionsRef = collection(db, "transactions");
+      async function startRealtimeListener() {
+        if (
+          !db ||
+          !isAppUnlocked ||
+          !currentAccountId ||
+          unsubscribeTransactions
+        ) {
+          return;
+        }
+
+        const transactionsRef = getAccountTransactionsRef();
 
         unsubscribeTransactions = onSnapshot(
           transactionsRef,
@@ -1683,10 +2645,12 @@
             );
 
             renderEverything();
+
             setFirebaseStatus("● Firebase connected", "ok");
           },
           (error) => {
             console.error("Firestore listener error:", error);
+
             setFirebaseStatus("● Firestore error", "error");
 
             window.showAppDialog({
@@ -1700,8 +2664,14 @@
         );
       }
 
+      /* =====================================
+   UNLOCK ACCOUNT
+===================================== */
+
       async function unlockApp() {
-        if (!db || lockActionInProgress) return;
+        if (!db || !currentAccountId || lockActionInProgress) {
+          return;
+        }
 
         lockActionInProgress = true;
 
@@ -1711,63 +2681,66 @@
           if (password.length < 4) {
             document.getElementById("lockError").textContent =
               "Mật khẩu cần có ít nhất 4 ký tự.";
+
             return;
           }
 
+          const enteredHash = await hashPassword(password);
+
           if (isSettingUpPassword) {
-            const confirmation = document.getElementById(
-              "lockPasswordConfirm",
-            ).value;
-
-            if (password !== confirmation) {
-              document.getElementById("lockError").textContent =
-                "Mật khẩu xác nhận không khớp.";
-              return;
-            }
-
-            const passwordHash = await hashPassword(password);
-
             await setDoc(
-              doc(db, "settings", "appLock"),
+              getAccountLockRef(),
               {
-                passwordHash,
+                passwordHash: enteredHash,
                 updatedAt: serverTimestamp(),
               },
               { merge: true },
             );
 
-            lockPasswordHash = passwordHash;
-            lockConfigExists = true;
-          } else {
-            const enteredHash = await hashPassword(password);
+            lockPasswordHash = enteredHash;
 
+            lockConfigExists = true;
+
+            isSettingUpPassword = false;
+          } else {
             if (enteredHash !== lockPasswordHash) {
               document.getElementById("lockError").textContent =
                 "Mật khẩu không chính xác. Vui lòng thử lại.";
+
               document.getElementById("lockPassword").value = "";
+
               return;
             }
           }
 
           isAppUnlocked = true;
+          // Refresh Admin Account Management after successful unlock
+          void renderAdminAccountSettings();
           lockExpiry = Date.now() + LOCK_DURATION_MS;
 
-          // Chỉ lưu thời hạn phiên, không lưu mật khẩu hoặc hash.
           localStorage.setItem(LOCK_EXPIRY_KEY, String(lockExpiry));
 
           hideLockScreen();
+
+          updateCurrentAccountButton();
+
           startLockCountdown();
+
           await startRealtimeListener();
         } catch (error) {
           console.error("App Lock error:", error);
 
           document.getElementById("lockError").textContent =
             "Không thể xác thực hoặc lưu mật khẩu trên Firebase.\n" +
-            (error.message || "Vui lòng kiểm tra Firestore Rules và thử lại.");
+            (error.message || "Vui lòng kiểm tra Firestore Rules.");
         } finally {
           lockActionInProgress = false;
         }
       }
+
+      /* =====================================
+   LOCK CURRENT ACCOUNT
+===================================== */
 
       window.lockApp = async function (showMessage = false) {
         if (lockActionInProgress) return;
@@ -1779,21 +2752,42 @@
         lockTimer = null;
 
         localStorage.removeItem(LOCK_EXPIRY_KEY);
+        localStorage.removeItem(SELECTED_ACCOUNT_KEY);
 
         stopRealtimeListener();
         clearSensitiveUI();
 
-        showLockScreen(false);
-        updateLockCountdown();
+        // Xóa Account hiện tại để lần mở tiếp theo
+        // phải chọn Account lại.
+        currentAccountId = null;
+        currentAccountName = "";
+        currentAccountRole = "user";
 
-        if (showMessage) {
-          setFirebaseStatus("● App locked", "");
-        }
+        lockPasswordHash = null;
+        lockConfigExists = false;
+
+        updateCurrentAccountButton();
+
+        // Quay về màn hình chọn Account
+        showAccountScreen(false);
+
+        await loadAccounts();
+        renderAccountList();
+
+        setFirebaseStatus("● Chọn Account", "");
       };
 
-      async function initializeAppLock() {
+      /* =====================================
+   ACCOUNT LOCK INITIALIZATION
+===================================== */
+
+      async function initializeAccountLock() {
+        if (!db || !currentAccountId) {
+          return;
+        }
+
         try {
-          const lockDoc = await getDoc(doc(db, "settings", "appLock"));
+          const lockDoc = await getDoc(getAccountLockRef());
 
           lockPasswordHash = lockDoc.exists()
             ? lockDoc.data().passwordHash || null
@@ -1803,64 +2797,355 @@
 
           if (!lockConfigExists) {
             localStorage.removeItem(LOCK_EXPIRY_KEY);
-            showLockScreen(true);
+
+            isSettingUpPassword = true;
+
+            showLockScreen("Hãy tạo mật khẩu App Lock cho Account này.", true);
+
             updateLockCountdown();
+
             setFirebaseStatus("● Set up App Lock", "");
+
             return;
           }
 
-          const savedExpiry = Number(
+          isSettingUpPassword = false;
+
+          const savedLockExpiry = Number(
             localStorage.getItem(LOCK_EXPIRY_KEY) || 0,
           );
 
-          // Khôi phục phiên đã mở khóa sau F5 nếu chưa hết hạn.
-          if (savedExpiry > Date.now()) {
+          if (savedLockExpiry > Date.now()) {
+            /*
+    Vẫn còn thời gian unlock
+    → giữ nguyên trạng thái.
+  */
             isAppUnlocked = true;
-            lockExpiry = savedExpiry;
+            lockExpiry = savedLockExpiry;
 
             hideLockScreen();
+            updateCurrentAccountButton();
             startLockCountdown();
-            await startRealtimeListener();
+
+            setFirebaseStatus("● Firebase connected", "ok");
+
             return;
           }
 
+          /*
+  Đã hết thời gian unlock
+  → lock lại.
+*/
+          isAppUnlocked = false;
+          lockExpiry = 0;
+
           localStorage.removeItem(LOCK_EXPIRY_KEY);
+
           showLockScreen(false);
           updateLockCountdown();
+
+          setFirebaseStatus("● App locked", "");
+
+          localStorage.removeItem(LOCK_EXPIRY_KEY);
+
+          isAppUnlocked = false;
+
+          showLockScreen(false);
+
+          updateLockCountdown();
+
           setFirebaseStatus("● App locked", "");
         } catch (error) {
-          console.error("App Lock initialization error:", error);
+          console.error("Account App Lock initialization error:", error);
+
           setFirebaseStatus("● App Lock error", "error");
 
           showLockScreen(
-            false,
-            "Không thể kiểm tra cấu hình App Lock trên Firebase.\n" +
-              "Vui lòng kiểm tra kết nối và quyền truy cập Firestore.",
+            "Không thể kiểm tra App Lock của Account này.\n" +
+              (error.message || ""),
           );
         }
       }
+
+      function hideStartupScreen() {
+        document.getElementById("appStartupScreen")?.classList.add("hidden");
+      }
+      /* =====================================
+   ACCOUNT INITIALIZATION
+===================================== */
+
+      async function initializeAccounts() {
+        if (!db) return;
+
+        try {
+          await loadAccounts();
+
+          /*
+      Nếu chưa có accounts:
+      tạo Account đầu tiên và migrate dữ liệu cũ.
+    */
+          if (!accounts.length) {
+            await migrateLegacyData();
+            await loadAccounts();
+          }
+
+          renderAccountList();
+
+          /*
+      ============================================
+      RESTORE ACCOUNT SAU KHI F5 / RELOAD
+      ============================================
+    */
+
+          const savedAccountId = localStorage.getItem(SELECTED_ACCOUNT_KEY);
+
+          const savedLockExpiry = Number(
+            localStorage.getItem(LOCK_EXPIRY_KEY) || 0,
+          );
+
+          const savedAccount = accounts.find(
+            (account) => account.id === savedAccountId,
+          );
+
+          /*
+      Có Account đã chọn trước đó
+      → restore Account đó.
+    */
+          if (savedAccount) {
+            currentAccountId = savedAccount.id;
+            currentAccountName = savedAccount.name || "Account";
+            currentAccountRole =
+              savedAccount.role === "admin" ? "admin" : "user";
+
+            lockPasswordHash = null;
+            lockConfigExists = false;
+
+            updateSettingsAccountName();
+            updateCurrentAccountButton();
+
+            /*
+        Kiểm tra App Lock config trước.
+      */
+            await initializeAccountLock();
+
+            /*
+        Nếu thời gian unlock vẫn còn:
+        → giữ nguyên trạng thái unlocked sau F5.
+      */
+            if (lockConfigExists && savedLockExpiry > Date.now()) {
+              isAppUnlocked = true;
+              lockExpiry = savedLockExpiry;
+
+              hideAccountScreen();
+              hideLockScreen();
+
+              updateCurrentAccountButton();
+              startLockCountdown();
+              await startRealtimeListener();
+
+              setFirebaseStatus("● Firebase connected", "ok");
+
+              return;
+            }
+
+            /*
+        Nếu đã hết 8 tiếng:
+        → lock lại và yêu cầu password.
+      */
+            if (
+              lockConfigExists &&
+              (!savedLockExpiry || savedLockExpiry <= Date.now())
+            ) {
+              isAppUnlocked = false;
+              lockExpiry = 0;
+
+              localStorage.removeItem(LOCK_EXPIRY_KEY);
+
+              hideAccountScreen();
+              showLockScreen(false);
+              updateLockCountdown();
+
+              updateCurrentAccountButton();
+
+              setFirebaseStatus("● App locked", "");
+
+              return;
+            }
+
+            /*
+        Account chưa có App Lock:
+        initializeAccountLock() đã xử lý setup mode.
+      */
+            hideAccountScreen();
+
+            return;
+          }
+
+          /*
+      ============================================
+      CHƯA CÓ ACCOUNT ĐƯỢC CHỌN
+      ============================================
+    */
+
+          currentAccountId = null;
+          currentAccountName = "";
+          currentAccountRole = "user";
+
+          lockPasswordHash = null;
+          lockConfigExists = false;
+          isAppUnlocked = false;
+          lockExpiry = 0;
+
+          localStorage.removeItem(LOCK_EXPIRY_KEY);
+
+          updateCurrentAccountButton();
+
+          showAccountScreen(false);
+
+          await loadAccounts();
+          renderAccountList();
+
+          setFirebaseStatus("● Chọn Account", "");
+        } catch (error) {
+          console.error("Account initialization error:", error);
+
+          setFirebaseStatus("● Account error", "error");
+
+          document.getElementById("accountScreenError").textContent =
+            "Không thể tải danh sách Account.\n" + (error.message || "");
+        } finally {
+          hideStartupScreen();
+        }
+      }
+
+      /* =====================================
+   LEGACY DATA MIGRATION
+===================================== */
+
+      async function migrateLegacyData() {
+        if (!db) return;
+
+        /*
+    Kiểm tra dữ liệu cũ.
+  */
+        const oldTransactions = await getDocs(collection(db, "transactions"));
+
+        const oldLockDoc = await getDoc(doc(db, "settings", "appLock"));
+
+        /*
+    Tạo Account đầu tiên.
+  */
+        const accountRef = await addDoc(collection(db, "accounts"), {
+          name: "hien",
+          role: "admin",
+
+          migratedFromLegacy: true,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        });
+
+        const accountId = accountRef.id;
+
+        /*
+    Copy App Lock cũ.
+  */
+        if (oldLockDoc.exists()) {
+          const oldLockData = oldLockDoc.data();
+
+          await setDoc(doc(db, "accounts", accountId, "settings", "appLock"), {
+            ...oldLockData,
+            migratedAt: serverTimestamp(),
+          });
+        }
+
+        /*
+    Copy transactions cũ.
+  */
+        if (!oldTransactions.empty) {
+          let batch = writeBatch(db);
+
+          let count = 0;
+
+          for (const oldDoc of oldTransactions.docs) {
+            const targetRef = doc(
+              db,
+              "accounts",
+              accountId,
+              "transactions",
+              oldDoc.id,
+            );
+
+            batch.set(targetRef, oldDoc.data());
+
+            count++;
+
+            /*
+        Firestore batch tối đa 500 writes.
+      */
+            if (count === 450) {
+              await batch.commit();
+
+              batch = writeBatch(db);
+
+              count = 0;
+            }
+          }
+
+          if (count > 0) {
+            await batch.commit();
+          }
+        }
+
+        /*
+    Chọn Account vừa tạo.
+  */
+        currentAccountId = accountId;
+
+        currentAccountName = "Personal";
+        currentAccountRole = "admin";
+        localStorage.setItem(SELECTED_ACCOUNT_KEY, accountId);
+
+        /*
+    KHÔNG xóa dữ liệu cũ.
+    Giữ nguyên để rollback nếu cần.
+  */
+      }
+
+      /* =====================================
+   LOCK FORM
+===================================== */
 
       document
         .getElementById("lockForm")
         .addEventListener("submit", async (event) => {
           event.preventDefault();
+
           await unlockApp();
         });
+
+      /* =====================================
+   CHANGE PASSWORD
+===================================== */
 
       document
         .getElementById("changePasswordForm")
         .addEventListener("submit", async (event) => {
           event.preventDefault();
 
-          if (!isAppUnlocked || !db) return;
+          if (!isAppUnlocked || !db || !currentAccountId) {
+            return;
+          }
 
           const currentPassword = document.getElementById(
             "currentLockPassword",
           ).value;
+
           const newPassword = document.getElementById("newLockPassword").value;
+
           const confirmation = document.getElementById(
             "confirmLockPassword",
           ).value;
+
           const button = document.getElementById("changePasswordBtn");
 
           if (newPassword.length < 4) {
@@ -1869,6 +3154,7 @@
               message: "Mật khẩu mới cần có ít nhất 4 ký tự.",
               type: "warning",
             });
+
             return;
           }
 
@@ -1878,6 +3164,7 @@
               message: "Vui lòng nhập lại mật khẩu xác nhận.",
               type: "warning",
             });
+
             return;
           }
 
@@ -1893,13 +3180,14 @@
                 message: "Mật khẩu hiện tại không chính xác.",
                 type: "error",
               });
+
               return;
             }
 
             const newHash = await hashPassword(newPassword);
 
             await setDoc(
-              doc(db, "settings", "appLock"),
+              getAccountLockRef(),
               {
                 passwordHash: newHash,
                 updatedAt: serverTimestamp(),
@@ -1913,7 +3201,10 @@
 
             await window.showAppDialog({
               title: "Đổi mật khẩu thành công",
-              message: "Mật khẩu App Lock mới đã được lưu vào Firebase.",
+              message:
+                'Mật khẩu App Lock của Account "' +
+                currentAccountName +
+                '" đã được cập nhật.',
               type: "success",
             });
           } catch (error) {
@@ -1932,19 +3223,26 @@
           }
         });
 
+      /* =====================================
+   FIREBASE INITIALIZATION
+===================================== */
+
       try {
         const app = initializeApp(firebaseConfig);
+
         db = getFirestore(app);
 
-        setFirebaseStatus("● Checking App Lock...", "");
-        await initializeAppLock();
+        setFirebaseStatus("● Checking Accounts...", "");
+
+        await initializeAccounts();
       } catch (error) {
         console.error("Firebase initialization error:", error);
+
         setFirebaseStatus("Firebase connection error", "error");
 
         showLockScreen(
-          false,
-          "Không thể khởi tạo Firebase. Vui lòng kiểm tra cấu hình và tải lại trang.",
+          "Không thể khởi tạo Firebase.\n" +
+            "Vui lòng kiểm tra cấu hình và tải lại trang.",
         );
       }
       /* =====================================
@@ -2084,10 +3382,20 @@
         saveButton.textContent = "Đang lưu...";
 
         try {
+          if (!currentAccountId || !isAppUnlocked) {
+            await window.showAppDialog({
+              title: "Account đang khóa",
+              message: "Vui lòng mở khóa Account trước khi lưu giao dịch.",
+              type: "warning",
+            });
+
+            return;
+          }
+
           if (editingId) {
-            await updateDoc(doc(db, "transactions", editingId), data);
+            await updateDoc(getAccountTransactionRef(editingId), data);
           } else {
-            await addDoc(collection(db, "transactions"), {
+            await addDoc(getAccountTransactionsRef(), {
               ...data,
               createdAt: serverTimestamp(),
             });
@@ -2159,8 +3467,7 @@
         if (!confirmed) return;
 
         try {
-          await deleteDoc(doc(db, "transactions", id));
-
+          await deleteDoc(getAccountTransactionRef(id));
           await window.showAppDialog({
             title: "Đã xóa giao dịch",
             message: "Giao dịch đã được xóa thành công.",
@@ -2277,6 +3584,10 @@
 
         const nav = document.querySelector(`.nav-btn[data-page="${page}"]`);
         if (nav) nav.classList.add("active");
+
+        if (page === "settings") {
+          void renderAdminAccountSettings();
+        }
 
         if (page === "transactions") renderTransactions();
       };
