@@ -1015,6 +1015,31 @@
       .app-startup-text {
         opacity: 0.7;
       }
+
+      .kpi-split {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.kpi-source-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.kpi-source-label {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.kpi-source-row .kpi-value {
+  font-size: 19px;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
     </style>
   </head>
 
@@ -1185,24 +1210,69 @@
             </button>
           </div>
 
-          <div class="kpi-grid">
-            <div class="card kpi">
-              <div class="kpi-label">Số dư</div>
-              <div id="balanceValue" class="kpi-value">0 ₫</div>
-            </div>
-            <div class="card kpi">
-              <div class="kpi-label">Tổng thu</div>
-              <div id="incomeValue" class="kpi-value income">0 ₫</div>
-            </div>
-            <div class="card kpi">
-              <div class="kpi-label">Tổng chi</div>
-              <div id="expenseValue" class="kpi-value expense">0 ₫</div>
-            </div>
-            <div class="card kpi">
-              <div class="kpi-label">Chi tháng này</div>
-              <div id="monthExpenseValue" class="kpi-value expense">0 ₫</div>
-            </div>
-          </div>
+         <div class="kpi-grid">
+
+  <!-- SỐ DƯ -->
+  <div class="card kpi">
+    <div class="kpi-label">Số dư</div>
+    <div class="kpi-split">
+      <div class="kpi-source-row">
+        <span class="kpi-source-label">💵 Tiền mặt</span>
+        <div id="balanceCashValue" class="kpi-value">0 ₫</div>
+      </div>
+      <div class="kpi-source-row">
+        <span class="kpi-source-label">🏦 Ngân hàng</span>
+        <div id="balanceBankValue" class="kpi-value">0 ₫</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TỔNG THU -->
+  <div class="card kpi">
+    <div class="kpi-label">Tổng thu</div>
+    <div class="kpi-split">
+      <div class="kpi-source-row">
+        <span class="kpi-source-label">💵 Tiền mặt</span>
+        <div id="incomeCashValue" class="kpi-value income">0 ₫</div>
+      </div>
+      <div class="kpi-source-row">
+        <span class="kpi-source-label">🏦 Ngân hàng</span>
+        <div id="incomeBankValue" class="kpi-value income">0 ₫</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TỔNG CHI -->
+  <div class="card kpi">
+    <div class="kpi-label">Tổng chi</div>
+    <div class="kpi-split">
+      <div class="kpi-source-row">
+        <span class="kpi-source-label">💵 Tiền mặt</span>
+        <div id="expenseCashValue" class="kpi-value expense">0 ₫</div>
+      </div>
+      <div class="kpi-source-row">
+        <span class="kpi-source-label">🏦 Ngân hàng</span>
+        <div id="expenseBankValue" class="kpi-value expense">0 ₫</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHI THÁNG NÀY -->
+  <div class="card kpi">
+    <div class="kpi-label">Chi tháng này</div>
+    <div class="kpi-split">
+      <div class="kpi-source-row">
+        <span class="kpi-source-label">💵 Tiền mặt</span>
+        <div id="monthExpenseCashValue" class="kpi-value expense">0 ₫</div>
+      </div>
+      <div class="kpi-source-row">
+        <span class="kpi-source-label">🏦 Ngân hàng</span>
+        <div id="monthExpenseBankValue" class="kpi-value expense">0 ₫</div>
+      </div>
+    </div>
+  </div>
+
+</div>
 
           <div class="dashboard-grid">
             <div class="card panel">
@@ -2650,14 +2720,19 @@ let lockTimer = null;
 
         closeModal();
 
-        document.getElementById("balanceValue").textContent = "—";
-
-        document.getElementById("incomeValue").textContent = "—";
-
-        document.getElementById("expenseValue").textContent = "—";
-
-        document.getElementById("monthExpenseValue").textContent = "—";
-
+       [
+  "balanceCashValue",
+  "balanceBankValue",
+  "incomeCashValue",
+  "incomeBankValue",
+  "expenseCashValue",
+  "expenseBankValue",
+  "monthExpenseCashValue",
+  "monthExpenseBankValue",
+].forEach((id) => {
+  const element = document.getElementById(id);
+  if (element) element.textContent = "—";
+});
         document.getElementById("categoryList").innerHTML = "";
 
         document.getElementById("recentTransactions").innerHTML = "";
@@ -4392,47 +4467,97 @@ window.deleteTransaction = async function (id) {
          DASHBOARD
       ===================================== */
 
-      function renderDashboard() {
-        const totalIncome = transactions
-          .filter((item) => item.type === "income")
-          .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+     function renderDashboard() {
+  const currentMonth = getCurrentMonth();
 
-        const totalExpense = transactions
-          .filter((item) => item.type === "expense")
-          .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+  // Tính tổng theo từng nguồn tiền
+  function getTotal(source, type, monthOnly = false) {
+    return transactions
+      .filter((item) => {
+        const itemSource = item.source || "cash";
 
-        const balance = totalIncome - totalExpense;
-        const currentMonth = getCurrentMonth();
-
-        const monthExpense = transactions
-          .filter(
-            (item) =>
-              item.type === "expense" &&
-              String(item.date || "").startsWith(currentMonth),
+        return (
+          itemSource === source &&
+          item.type === type &&
+          (
+            !monthOnly ||
+            String(item.date || "").startsWith(currentMonth)
           )
-          .reduce((sum, item) => sum + Number(item.amount || 0), 0);
-
-        document.getElementById("balanceValue").textContent =
-          formatMoney(balance);
-
-        const balanceElement = document.getElementById("balanceValue");
-        balanceElement.classList.remove("balance-positive", "balance-negative");
-        balanceElement.classList.add(
-          balance >= 0 ? "balance-positive" : "balance-negative",
         );
+      })
+      .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+  }
 
-        document.getElementById("incomeValue").textContent =
-          formatMoney(totalIncome);
-        document.getElementById("expenseValue").textContent =
-          formatMoney(totalExpense);
-        document.getElementById("monthExpenseValue").textContent =
-          formatMoney(monthExpense);
+  // TIỀN MẶT
+  const cashIncome = getTotal("cash", "income");
+  const cashExpense = getTotal("cash", "expense");
+  const cashMonthExpense = getTotal("cash", "expense", true);
 
-        renderWeeklyChart();
-renderCategoryList();
-renderSourceList();
-renderRecentTransactions();
-      }
+  const cashBalance = cashIncome - cashExpense;
+
+  // NGÂN HÀNG
+  const bankIncome = getTotal("bank", "income");
+  const bankExpense = getTotal("bank", "expense");
+  const bankMonthExpense = getTotal("bank", "expense", true);
+
+  const bankBalance = bankIncome - bankExpense;
+
+  // Cập nhật giao diện
+  const values = {
+    balanceCashValue: cashBalance,
+    balanceBankValue: bankBalance,
+
+    incomeCashValue: cashIncome,
+    incomeBankValue: bankIncome,
+
+    expenseCashValue: cashExpense,
+    expenseBankValue: bankExpense,
+
+    monthExpenseCashValue: cashMonthExpense,
+    monthExpenseBankValue: bankMonthExpense,
+  };
+
+  Object.entries(values).forEach(([id, value]) => {
+    const element = document.getElementById(id);
+
+    if (!element) return;
+
+    element.textContent = formatMoney(value);
+  });
+
+  // Màu sắc số dư
+  const cashBalanceElement =
+    document.getElementById("balanceCashValue");
+
+  const bankBalanceElement =
+    document.getElementById("balanceBankValue");
+
+  [cashBalanceElement, bankBalanceElement].forEach((element) => {
+    if (!element) return;
+
+    element.classList.remove(
+      "balance-positive",
+      "balance-negative"
+    );
+  });
+
+  cashBalanceElement?.classList.add(
+    cashBalance >= 0
+      ? "balance-positive"
+      : "balance-negative"
+  );
+
+  bankBalanceElement?.classList.add(
+    bankBalance >= 0
+      ? "balance-positive"
+      : "balance-negative"
+  );
+
+  renderWeeklyChart();
+  renderCategoryList();
+  renderSourceList();
+  renderRecentTransactions();
+}
 
       /* =====================================
          WEEKLY CHART
