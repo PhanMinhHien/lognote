@@ -3123,7 +3123,36 @@ window.toggleAdminNotifications = function () {
     renderAdminNotifications();
   }
 }
+// =====================================
+// CLOSE ADMIN NOTIFICATIONS WHEN CLICK OUTSIDE
+// =====================================
 
+document.addEventListener("click", function (event) {
+  const panel = document.getElementById(
+    "adminNotificationPanel"
+  );
+
+  const toggleButton = document.getElementById(
+    "adminNotificationBtn"
+  );
+
+  if (!panel) return;
+
+  const isVisible = panel.style.display !== "none";
+
+  if (!isVisible) return;
+
+  // Click bên trong panel hoặc nút toggle thì không đóng
+  if (
+    panel.contains(event.target) ||
+    toggleButton?.contains(event.target)
+  ) {
+    return;
+  }
+
+  // Click bên ngoài thì đóng panel
+  panel.style.display = "none";
+});
 
 /* =====================================
    DELETE SINGLE ADMIN NOTIFICATION
