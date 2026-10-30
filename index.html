@@ -1547,7 +1547,7 @@
   />
 </div>
 
-<div class="field">
+<div id="sourceField" class="field">
   <label for="transactionSource">Nguồn tiền</label>
   <select id="transactionSource">
     <option value="cash">💵 Tiền mặt</option>
@@ -1562,6 +1562,8 @@
               <option value="Tiền điện">⚡ Tiền điện</option>
               <option value="Ăn uống">🍜 Ăn uống</option>
               <option value="Mua sắm">🛍️ Mua sắm</option>
+                <option value="Khác">📦 Khác</option>
+
             </select>
           </div>
 
@@ -3381,7 +3383,9 @@
         const note = document.getElementById("transactionNote").value.trim();
 
 const source =
-  document.getElementById("transactionSource")?.value || "cash";
+  currentTransactionType === "income"
+    ? document.getElementById("transactionSource").value
+    : "";
 
 const category =
   currentTransactionType === "expense"
@@ -3533,51 +3537,80 @@ const category =
          EDIT TRANSACTION
       ===================================== */
 
-      window.editTransaction = function (id) {
-        const transaction = transactions.find((item) => item.id === id);
-        if (!transaction) return;
+     window.editTransaction = function (id) {
+  const transaction = transactions.find((item) => item.id === id);
+  if (!transaction) return;
 
-        editingId = id;
-        currentTransactionType = transaction.type || "income";
+  editingId = id;
+  currentTransactionType = transaction.type || "income";
 
-        document.getElementById("modalTitle").textContent = "Sửa giao dịch";
-        document.getElementById("transactionDate").value =
-          transaction.date || "";
-        document.getElementById("transactionAmount").value =
-          transaction.amount != null
-            ? formatMoneyInput(transaction.amount)
-            : "";
-        document.getElementById("transactionNote").value =
-  transaction.note || "";
+  document.getElementById("modalTitle").textContent = "Sửa giao dịch";
 
-document.getElementById("transactionCategory").value =
-  transaction.category || "Ăn uống";
+  // Common fields
+  document.getElementById("transactionDate").value =
+    transaction.date || "";
 
-document.getElementById("transactionSource").value =
-  transaction.source || "cash";
+  document.getElementById("transactionAmount").value =
+    transaction.amount != null
+      ? formatMoneyInput(transaction.amount)
+      : "";
 
-updateTypeUI();
-        document.getElementById("transactionModal").classList.add("show");
-      };
+  document.getElementById("transactionNote").value =
+    transaction.note || "";
+
+  // Chỉ load đúng data của type hiện tại
+  if (currentTransactionType === "income") {
+    document.getElementById("transactionSource").value =
+      transaction.source || "cash";
+  } else {
+    document.getElementById("transactionCategory").value =
+      transaction.category || "Ăn uống";
+  }
+
+  // Update UI
+  updateTypeUI();
+
+  // EDIT MODE:
+  // Chỉ hiện đúng type của giao dịch, không cho đổi Thu/Chi
+  const incomeBtn = document.getElementById("incomeTypeBtn");
+  const expenseBtn = document.getElementById("expenseTypeBtn");
+
+  if (currentTransactionType === "income") {
+    incomeBtn.style.display = "block";
+    expenseBtn.style.display = "none";
+  } else {
+    incomeBtn.style.display = "none";
+    expenseBtn.style.display = "block";
+  }
+
+  document.getElementById("transactionModal").classList.add("show");
+};
 
       /* =====================================
          OPEN ADD MODAL
       ===================================== */
 
-      window.openAddModal = function () {
-        editingId = null;
-        currentTransactionType = "income";
+     window.openAddModal = function () {
+  editingId = null;
+  currentTransactionType = "income";
 
-        document.getElementById("modalTitle").textContent = "Thêm giao dịch";
-       document.getElementById("transactionDate").value = getToday();
-document.getElementById("transactionAmount").value = "";
-document.getElementById("transactionNote").value = "";
-document.getElementById("transactionCategory").value = "Ăn uống";
-document.getElementById("transactionSource").value = "cash";
+  document.getElementById("modalTitle").textContent = "Thêm giao dịch";
 
-        updateTypeUI();
-        document.getElementById("transactionModal").classList.add("show");
-      };
+  document.getElementById("transactionDate").value = getToday();
+  document.getElementById("transactionAmount").value = "";
+  document.getElementById("transactionNote").value = "";
+  document.getElementById("transactionCategory").value = "Ăn uống";
+  document.getElementById("transactionSource").value = "cash";
+
+  // ADD MODE:
+  // Hiện cả Thu và Chi
+  document.getElementById("incomeTypeBtn").style.display = "block";
+  document.getElementById("expenseTypeBtn").style.display = "block";
+
+  updateTypeUI();
+
+  document.getElementById("transactionModal").classList.add("show");
+};
 
       /* =====================================
          CLOSE TRANSACTION MODAL
@@ -3597,23 +3630,35 @@ document.getElementById("transactionSource").value = "cash";
         updateTypeUI();
       };
 
-      function updateTypeUI() {
-        const incomeBtn = document.getElementById("incomeTypeBtn");
-        const expenseBtn = document.getElementById("expenseTypeBtn");
-        const categoryField = document.getElementById("categoryField");
+     function updateTypeUI() {
+  const incomeBtn = document.getElementById("incomeTypeBtn");
+  const expenseBtn = document.getElementById("expenseTypeBtn");
 
-        incomeBtn.classList.toggle(
-          "active",
-          currentTransactionType === "income",
-        );
-        expenseBtn.classList.toggle(
-          "active",
-          currentTransactionType === "expense",
-        );
+  const categoryField = document.getElementById("categoryField");
+  const sourceField = document.getElementById("sourceField");
 
-        categoryField.style.display =
-          currentTransactionType === "expense" ? "flex" : "none";
-      }
+  incomeBtn.classList.toggle(
+    "active",
+    currentTransactionType === "income"
+  );
+
+  expenseBtn.classList.toggle(
+    "active",
+    currentTransactionType === "expense"
+  );
+
+  // Thu → hiện Source, ẩn Category
+  if (currentTransactionType === "income") {
+    sourceField.style.display = "flex";
+    categoryField.style.display = "none";
+  }
+
+  // Chi → hiện Category, ẩn Source
+  else {
+    sourceField.style.display = "none";
+    categoryField.style.display = "flex";
+  }
+}
 
       /* =====================================
          PAGE SWITCH
