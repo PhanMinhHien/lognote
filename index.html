@@ -409,16 +409,17 @@
         margin-bottom: 18px;
       }
 
-      .filter-grid {
-        display: grid;
-        grid-template-columns:
-          minmax(150px, 1fr)
-          minmax(150px, 1fr)
-          minmax(140px, 0.8fr)
-          minmax(140px, 0.8fr)
-          minmax(200px, 1.4fr);
-        gap: 12px;
-      }
+    .filter-grid {
+  display: grid;
+  grid-template-columns:
+    minmax(140px, 1fr)
+    minmax(140px, 1fr)
+    minmax(130px, 0.8fr)
+    minmax(140px, 0.9fr)
+    minmax(140px, 0.9fr)
+    minmax(200px, 1.4fr);
+  gap: 12px;
+}
 
       .field {
         display: flex;
@@ -1122,14 +1123,33 @@
             </div>
 
             <div class="card panel">
-              <div class="panel-header">
-                <div>
-                  <div class="panel-title">Chi theo nhóm</div>
-                  <div class="panel-subtitle">Tháng hiện tại</div>
-                </div>
-              </div>
-              <div id="categoryList" class="category-list"></div>
-            </div>
+  <div class="panel-header">
+    <div>
+      <div class="panel-title">Chi theo nhóm</div>
+      <div class="panel-subtitle">Tháng hiện tại</div>
+    </div>
+  </div>
+
+  <div id="categoryList" class="category-list"></div>
+
+  <div
+    style="
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+    "
+  >
+    <div class="panel-title" style="font-size: 14px">
+      💳 Chi theo nguồn tiền
+    </div>
+
+    <div class="panel-subtitle" style="margin-top: 4px; margin-bottom: 14px">
+      Tháng hiện tại
+    </div>
+
+    <div id="sourceList" class="category-list"></div>
+  </div>
+</div>
           </div>
 
           <div class="card panel">
@@ -1189,6 +1209,14 @@
                 </select>
               </div>
               <div class="field">
+  <label for="filterSource">Nguồn tiền</label>
+  <select id="filterSource">
+    <option value="all">Tất cả nguồn tiền</option>
+    <option value="cash">💵 Tiền mặt</option>
+    <option value="bank">🏦 Ngân hàng</option>
+  </select>
+</div>
+              <div class="field">
                 <label for="filterSearch">Tìm kiếm</label>
                 <input
                   type="text"
@@ -1216,13 +1244,14 @@
               <table>
                 <thead>
                   <tr>
-                    <th>Ngày</th>
-                    <th>Loại</th>
-                    <th>Category</th>
-                    <th>Note</th>
-                    <th>Số tiền</th>
-                    <th>Actions</th>
-                  </tr>
+  <th>Ngày</th>
+  <th>Loại</th>
+  <th>Category</th>
+  <th>Nguồn tiền</th>
+  <th>Note</th>
+  <th>Số tiền</th>
+  <th>Actions</th>
+</tr>
                 </thead>
                 <tbody id="transactionTableBody"></tbody>
               </table>
@@ -1508,15 +1537,23 @@
           </div>
 
           <div class="field">
-            <label for="transactionAmount">Số tiền</label>
-            <input
-              type="number"
-              id="transactionAmount"
-              placeholder="Ví dụ: 500000"
-              min="0"
-              step="1000"
-            />
-          </div>
+  <label for="transactionAmount">Số tiền</label>
+  <input
+    type="number"
+    id="transactionAmount"
+    placeholder="Ví dụ: 500000"
+    min="0"
+    step="1000"
+  />
+</div>
+
+<div class="field">
+  <label for="transactionSource">Nguồn tiền</label>
+  <select id="transactionSource">
+    <option value="cash">💵 Tiền mặt</option>
+    <option value="bank">🏦 Ngân hàng</option>
+  </select>
+</div>
 
           <div id="categoryField" class="field">
             <label for="transactionCategory">Category</label>
@@ -2526,6 +2563,8 @@
 
         document.getElementById("recentTransactions").innerHTML = "";
 
+        document.getElementById("sourceList").innerHTML = "";
+
         document.getElementById("transactionTableBody").innerHTML = "";
 
         document.getElementById("rangeIncome").textContent = "—";
@@ -3341,10 +3380,13 @@
         const amount = parseMoneyInput(amountInput);
         const note = document.getElementById("transactionNote").value.trim();
 
-        const category =
-          currentTransactionType === "expense"
-            ? document.getElementById("transactionCategory").value
-            : "";
+const source =
+  document.getElementById("transactionSource")?.value || "cash";
+
+const category =
+  currentTransactionType === "expense"
+    ? document.getElementById("transactionCategory").value
+    : "";
 
         if (!date) {
           await window.showAppDialog({
@@ -3369,13 +3411,14 @@
         }
 
         const data = {
-          type: currentTransactionType,
-          amount: Math.round(amount),
-          date,
-          category,
-          note,
-          updatedAt: serverTimestamp(),
-        };
+  type: currentTransactionType,
+  amount: Math.round(amount),
+  date,
+  category,
+  source,
+  note,
+  updatedAt: serverTimestamp(),
+};
 
         const saveButton = document.getElementById("saveTransactionBtn");
         saveButton.disabled = true;
@@ -3505,11 +3548,15 @@
             ? formatMoneyInput(transaction.amount)
             : "";
         document.getElementById("transactionNote").value =
-          transaction.note || "";
-        document.getElementById("transactionCategory").value =
-          transaction.category || "Ăn uống";
+  transaction.note || "";
 
-        updateTypeUI();
+document.getElementById("transactionCategory").value =
+  transaction.category || "Ăn uống";
+
+document.getElementById("transactionSource").value =
+  transaction.source || "cash";
+
+updateTypeUI();
         document.getElementById("transactionModal").classList.add("show");
       };
 
@@ -3522,10 +3569,11 @@
         currentTransactionType = "income";
 
         document.getElementById("modalTitle").textContent = "Thêm giao dịch";
-        document.getElementById("transactionDate").value = getToday();
-        document.getElementById("transactionAmount").value = "";
-        document.getElementById("transactionNote").value = "";
-        document.getElementById("transactionCategory").value = "Ăn uống";
+       document.getElementById("transactionDate").value = getToday();
+document.getElementById("transactionAmount").value = "";
+document.getElementById("transactionNote").value = "";
+document.getElementById("transactionCategory").value = "Ăn uống";
+document.getElementById("transactionSource").value = "cash";
 
         updateTypeUI();
         document.getElementById("transactionModal").classList.add("show");
@@ -3642,8 +3690,9 @@
           formatMoney(monthExpense);
 
         renderWeeklyChart();
-        renderCategoryList();
-        renderRecentTransactions();
+renderCategoryList();
+renderSourceList();
+renderRecentTransactions();
       }
 
       /* =====================================
@@ -3785,6 +3834,66 @@
           .join("");
       }
 
+      function renderSourceList() {
+  const sources = [
+    { key: "cash", label: "Tiền mặt", icon: "💵" },
+    { key: "bank", label: "Ngân hàng", icon: "🏦" },
+  ];
+
+  const currentMonth = getCurrentMonth();
+
+  const values = sources.map((source) => {
+    const amount = transactions
+      .filter(
+        (item) =>
+          item.type === "expense" &&
+          (item.source || "cash") === source.key &&
+          String(item.date || "").startsWith(currentMonth),
+      )
+      .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+
+    return {
+      ...source,
+      amount,
+    };
+  });
+
+  const max = Math.max(...values.map((item) => item.amount), 1);
+  const container = document.getElementById("sourceList");
+
+  if (!container) return;
+
+  container.innerHTML = values
+    .map((item) => {
+      const width =
+        item.amount > 0 ? Math.max(5, (item.amount / max) * 100) : 0;
+
+      return `
+        <div class="category-row">
+          <div class="category-icon">${item.icon}</div>
+
+          <div class="category-info">
+            <div class="category-name">
+              ${escapeHtml(item.label)}
+            </div>
+
+            <div class="category-bar">
+              <div
+                class="category-bar-fill"
+                style="width:${width}%"
+              ></div>
+            </div>
+          </div>
+
+          <div class="category-amount">
+            ${formatMoney(item.amount)}
+          </div>
+        </div>
+      `;
+    })
+    .join("");
+}
+
       /* =====================================
          RECENT TRANSACTIONS
       ===================================== */
@@ -3824,10 +3933,11 @@
               <div class="transaction-name">
                 ${escapeHtml(item.note || item.category || (isIncome ? "Thu nhập" : "Chi tiêu"))}
               </div>
-              <div class="transaction-meta">
-                ${formatDate(item.date)}
-                ${item.category ? " · " + escapeHtml(item.category) : ""}
-              </div>
+             <div class="transaction-meta">
+  ${formatDate(item.date)}
+  ${item.category ? " · " + escapeHtml(item.category) : ""}
+  · ${getSourceLabel(item.source)}
+</div>
             </div>
             <div class="transaction-amount ${isIncome ? "income" : "expense"}">
               ${sign}${formatMoney(item.amount)}
@@ -3844,11 +3954,13 @@
         const from = document.getElementById("filterFrom").value;
         const to = document.getElementById("filterTo").value;
         const type = document.getElementById("filterType").value;
-        const category = document.getElementById("filterCategory").value;
-        const search = document
-          .getElementById("filterSearch")
-          .value.toLowerCase()
-          .trim();
+const category = document.getElementById("filterCategory").value;
+const source = document.getElementById("filterSource").value;
+
+const search = document
+  .getElementById("filterSearch")
+  .value.toLowerCase()
+  .trim();
 
         return transactions
           .filter((item) => {
@@ -3856,12 +3968,22 @@
             if (to && String(item.date || "") > to) return false;
             if (type !== "all" && item.type !== type) return false;
             if (category !== "all" && item.category !== category) return false;
-
+if (
+  source !== "all" &&
+  (item.source || "cash") !== source
+) {
+  return false;
+}
             if (search) {
-              const haystack = [item.note, item.category, item.date]
-                .filter(Boolean)
-                .join(" ")
-                .toLowerCase();
+              const haystack = [
+  item.note,
+  item.category,
+  item.date,
+  getSourceLabel(item.source),
+]
+  .filter(Boolean)
+  .join(" ")
+  .toLowerCase();
 
               if (!haystack.includes(search)) return false;
             }
@@ -3903,8 +4025,8 @@
         if (!filtered.length) {
           tbody.innerHTML = `
             <tr>
-              <td colspan="6" class="empty-state">
-                Không có giao dịch nào trong khoảng này.
+<td colspan="7" class="empty-state">
+                  Không có giao dịch nào trong khoảng này.
               </td>
             </tr>
           `;
@@ -3925,13 +4047,20 @@
                 </span>
               </td>
               <td>
-                ${
-                  item.category
-                    ? `<span class="category-badge">${getCategoryIcon(item.category)} ${escapeHtml(item.category)}</span>`
-                    : "—"
-                }
-              </td>
-              <td>${escapeHtml(item.note || "—")}</td>
+  ${
+    item.category
+      ? `<span class="category-badge">${getCategoryIcon(item.category)} ${escapeHtml(item.category)}</span>`
+      : "—"
+  }
+</td>
+
+<td>
+  <span class="category-badge">
+    ${getSourceLabel(item.source)}
+  </span>
+</td>
+
+<td>${escapeHtml(item.note || "—")}</td>
               <td>
                 <strong style="color:${isIncome ? "var(--income)" : "var(--expense)"}">
                   ${isIncome ? "+" : "-"}${formatMoney(item.amount)}
@@ -3967,12 +4096,13 @@
       ===================================== */
 
       [
-        "filterFrom",
-        "filterTo",
-        "filterType",
-        "filterCategory",
-        "filterSearch",
-      ].forEach((id) => {
+  "filterFrom",
+  "filterTo",
+  "filterType",
+  "filterCategory",
+  "filterSource",
+  "filterSearch",
+].forEach((id) => {
         document
           .getElementById(id)
           .addEventListener("input", renderTransactions);
@@ -4068,6 +4198,10 @@
 
         return icons[category] || "💸";
       }
+
+      function getSourceLabel(source) {
+  return source === "bank" ? "🏦 Ngân hàng" : "💵 Tiền mặt";
+}
 
       function escapeHtml(value) {
         return String(value ?? "")
