@@ -1016,10 +1016,11 @@
         opacity: 0.7;
       }
 
-      .kpi-split {
+    .kpi-split {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-top: 12px;
 }
 
 .kpi-source-row {
@@ -1036,9 +1037,22 @@
 }
 
 .kpi-source-row .kpi-value {
-  font-size: 19px;
+  font-size: 17px;
   text-align: right;
   overflow-wrap: anywhere;
+}
+
+.kpi-total-value {
+  font-size: 23px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  overflow-wrap: anywhere;
+}
+
+.kpi-divider {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 12px 0;
 }
     </style>
   </head>
@@ -1210,16 +1224,25 @@
             </button>
           </div>
 
-         <div class="kpi-grid">
+       <div class="kpi-grid">
 
   <!-- SỐ DƯ -->
   <div class="card kpi">
     <div class="kpi-label">Số dư</div>
+
+    <div id="balanceTotalValue"
+         class="kpi-total-value balance-positive">
+      0 ₫
+    </div>
+
+    <hr class="kpi-divider">
+
     <div class="kpi-split">
       <div class="kpi-source-row">
         <span class="kpi-source-label">💵 Tiền mặt</span>
         <div id="balanceCashValue" class="kpi-value">0 ₫</div>
       </div>
+
       <div class="kpi-source-row">
         <span class="kpi-source-label">🏦 Ngân hàng</span>
         <div id="balanceBankValue" class="kpi-value">0 ₫</div>
@@ -1230,11 +1253,20 @@
   <!-- TỔNG THU -->
   <div class="card kpi">
     <div class="kpi-label">Tổng thu</div>
+
+    <div id="incomeTotalValue"
+         class="kpi-total-value income">
+      0 ₫
+    </div>
+
+    <hr class="kpi-divider">
+
     <div class="kpi-split">
       <div class="kpi-source-row">
         <span class="kpi-source-label">💵 Tiền mặt</span>
         <div id="incomeCashValue" class="kpi-value income">0 ₫</div>
       </div>
+
       <div class="kpi-source-row">
         <span class="kpi-source-label">🏦 Ngân hàng</span>
         <div id="incomeBankValue" class="kpi-value income">0 ₫</div>
@@ -1245,11 +1277,20 @@
   <!-- TỔNG CHI -->
   <div class="card kpi">
     <div class="kpi-label">Tổng chi</div>
+
+    <div id="expenseTotalValue"
+         class="kpi-total-value expense">
+      0 ₫
+    </div>
+
+    <hr class="kpi-divider">
+
     <div class="kpi-split">
       <div class="kpi-source-row">
         <span class="kpi-source-label">💵 Tiền mặt</span>
         <div id="expenseCashValue" class="kpi-value expense">0 ₫</div>
       </div>
+
       <div class="kpi-source-row">
         <span class="kpi-source-label">🏦 Ngân hàng</span>
         <div id="expenseBankValue" class="kpi-value expense">0 ₫</div>
@@ -1260,11 +1301,20 @@
   <!-- CHI THÁNG NÀY -->
   <div class="card kpi">
     <div class="kpi-label">Chi tháng này</div>
+
+    <div id="monthExpenseTotalValue"
+         class="kpi-total-value expense">
+      0 ₫
+    </div>
+
+    <hr class="kpi-divider">
+
     <div class="kpi-split">
       <div class="kpi-source-row">
         <span class="kpi-source-label">💵 Tiền mặt</span>
         <div id="monthExpenseCashValue" class="kpi-value expense">0 ₫</div>
       </div>
+
       <div class="kpi-source-row">
         <span class="kpi-source-label">🏦 Ngân hàng</span>
         <div id="monthExpenseBankValue" class="kpi-value expense">0 ₫</div>
@@ -2720,18 +2770,31 @@ let lockTimer = null;
 
         closeModal();
 
-       [
+    [
+  "balanceTotalValue",
   "balanceCashValue",
   "balanceBankValue",
+
+  "incomeTotalValue",
   "incomeCashValue",
   "incomeBankValue",
+
+  "expenseTotalValue",
   "expenseCashValue",
   "expenseBankValue",
+
+  "monthExpenseTotalValue",
   "monthExpenseCashValue",
   "monthExpenseBankValue",
+
 ].forEach((id) => {
+
   const element = document.getElementById(id);
-  if (element) element.textContent = "—";
+
+  if (element) {
+    element.textContent = "—";
+  }
+
 });
         document.getElementById("categoryList").innerHTML = "";
 
@@ -4467,96 +4530,164 @@ window.deleteTransaction = async function (id) {
          DASHBOARD
       ===================================== */
 
-     function renderDashboard() {
+    function renderDashboard() {
+
   const currentMonth = getCurrentMonth();
 
-  // Tính tổng theo từng nguồn tiền
-  function getTotal(source, type, monthOnly = false) {
+  // Hàm tính tổng theo nguồn tiền và loại giao dịch
+  function getTransactionTotal(source, type, monthOnly = false) {
     return transactions
       .filter((item) => {
+
+        // Giao dịch cũ chưa có source mặc định là tiền mặt
         const itemSource = item.source || "cash";
 
-        return (
-          itemSource === source &&
-          item.type === type &&
-          (
-            !monthOnly ||
-            String(item.date || "").startsWith(currentMonth)
-          )
-        );
+        if (itemSource !== source) return false;
+
+        if (item.type !== type) return false;
+
+        if (
+          monthOnly &&
+          !String(item.date || "").startsWith(currentMonth)
+        ) {
+          return false;
+        }
+
+        return true;
       })
-      .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+      .reduce(
+        (sum, item) => sum + Number(item.amount || 0),
+        0
+      );
   }
 
+  // ==============================
   // TIỀN MẶT
-  const cashIncome = getTotal("cash", "income");
-  const cashExpense = getTotal("cash", "expense");
-  const cashMonthExpense = getTotal("cash", "expense", true);
+  // ==============================
+
+  const cashIncome = getTransactionTotal("cash", "income");
+  const cashExpense = getTransactionTotal("cash", "expense");
+
+  const cashMonthExpense = getTransactionTotal(
+    "cash",
+    "expense",
+    true
+  );
 
   const cashBalance = cashIncome - cashExpense;
 
+  // ==============================
   // NGÂN HÀNG
-  const bankIncome = getTotal("bank", "income");
-  const bankExpense = getTotal("bank", "expense");
-  const bankMonthExpense = getTotal("bank", "expense", true);
+  // ==============================
+
+  const bankIncome = getTransactionTotal("bank", "income");
+  const bankExpense = getTransactionTotal("bank", "expense");
+
+  const bankMonthExpense = getTransactionTotal(
+    "bank",
+    "expense",
+    true
+  );
 
   const bankBalance = bankIncome - bankExpense;
 
-  // Cập nhật giao diện
-  const values = {
+  // ==============================
+  // TỔNG CỘNG
+  // ==============================
+
+  const totalIncome = cashIncome + bankIncome;
+  const totalExpense = cashExpense + bankExpense;
+
+  const totalBalance = cashBalance + bankBalance;
+
+  const totalMonthExpense =
+    cashMonthExpense + bankMonthExpense;
+
+  // ==============================
+  // HIỂN THỊ DASHBOARD
+  // ==============================
+
+  const dashboardValues = {
+
+    // Số dư
+    balanceTotalValue: totalBalance,
     balanceCashValue: cashBalance,
     balanceBankValue: bankBalance,
 
+    // Tổng thu
+    incomeTotalValue: totalIncome,
     incomeCashValue: cashIncome,
     incomeBankValue: bankIncome,
 
+    // Tổng chi
+    expenseTotalValue: totalExpense,
     expenseCashValue: cashExpense,
     expenseBankValue: bankExpense,
 
+    // Chi tháng này
+    monthExpenseTotalValue: totalMonthExpense,
     monthExpenseCashValue: cashMonthExpense,
     monthExpenseBankValue: bankMonthExpense,
+
   };
 
-  Object.entries(values).forEach(([id, value]) => {
+  Object.entries(dashboardValues).forEach(([id, value]) => {
+
     const element = document.getElementById(id);
 
     if (!element) return;
 
     element.textContent = formatMoney(value);
+
   });
 
-  // Màu sắc số dư
-  const cashBalanceElement =
-    document.getElementById("balanceCashValue");
+  // ==============================
+  // MÀU SẮC SỐ DƯ
+  // ==============================
 
-  const bankBalanceElement =
-    document.getElementById("balanceBankValue");
+  const balanceElements = [
+    {
+      id: "balanceTotalValue",
+      value: totalBalance,
+    },
+    {
+      id: "balanceCashValue",
+      value: cashBalance,
+    },
+    {
+      id: "balanceBankValue",
+      value: bankBalance,
+    },
+  ];
 
-  [cashBalanceElement, bankBalanceElement].forEach((element) => {
+  balanceElements.forEach(({ id, value }) => {
+
+    const element = document.getElementById(id);
+
     if (!element) return;
 
     element.classList.remove(
       "balance-positive",
       "balance-negative"
     );
+
+    element.classList.add(
+      value >= 0
+        ? "balance-positive"
+        : "balance-negative"
+    );
+
   });
 
-  cashBalanceElement?.classList.add(
-    cashBalance >= 0
-      ? "balance-positive"
-      : "balance-negative"
-  );
-
-  bankBalanceElement?.classList.add(
-    bankBalance >= 0
-      ? "balance-positive"
-      : "balance-negative"
-  );
+  // ==============================
+  // CÁC PHẦN DASHBOARD KHÁC
+  // ==============================
 
   renderWeeklyChart();
   renderCategoryList();
   renderSourceList();
   renderRecentTransactions();
+
 }
 
       /* =====================================
