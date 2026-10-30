@@ -1071,11 +1071,106 @@
           >
             👤 Account
           </button>
-
+<button
+  class="theme-btn"
+  id="adminNotificationBtn"
+  onclick="toggleAdminNotifications()"
+  style="
+    margin-bottom: 8px;
+    display: none;
+    position: relative;
+  "
+>
+  🔔 Thông báo
+  <span
+    id="adminNotificationBadge"
+    style="
+      display: none;
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: 999px;
+      background: #ef4444;
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 18px;
+      text-align: center;
+    "
+  >
+    0
+  </span>
+</button>
           <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">
             🌙 Dark mode
           </button>
         </div>
+        <div
+  id="adminNotificationPanel"
+  style="
+    display: none;
+    position: fixed;
+    left: 220px;
+    bottom: 70px;
+    width: min(380px, calc(100vw - 240px));
+    max-height: 500px;
+    overflow-y: auto;
+    z-index: 9999;
+    background: var(--card);
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 14px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+    padding: 16px;
+  "
+>
+  <div
+    style="
+      margin-bottom: 12px;
+    "
+  >
+    <div style="font-size: 17px; font-weight: 700;">
+      🔔 Thông báo
+    </div>
+
+    
+<div style="
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+">
+  <button
+    class="theme-btn"
+    onclick="markAllAdminNotificationsRead()"
+    style="flex: 1;"
+  >
+    ✓ Đọc tất cả
+  </button>
+
+  <button
+    class="theme-btn"
+    onclick="deleteAllAdminNotifications()"
+    style="
+      flex: 1;
+      color: #ef4444;
+    "
+  >
+    🗑️ Xóa tất cả
+  </button>
+</div>
+
+<div id="adminNotificationList"></div>
+
+  </div>
+
+  <div id="adminNotificationList">
+    <div class="empty-state">
+      Chưa có thông báo.
+    </div>
+  </div>
+</div>
       </aside>
 
       <main class="main">
@@ -1772,11 +1867,13 @@
 
       const SELECTED_ACCOUNT_KEY = "money_log_selected_account";
       const LOCK_EXPIRY_KEY = "money_log_app_lock_expiry";
+let unsubscribeTransactions = null;
+let unsubscribeAdminNotifications = null;
+let adminNotifications = [];
 
-      let unsubscribeTransactions = null;
-      let isSettingUpPassword = false;
-      let lockExpiry = 0;
-      let lockTimer = null;
+let isSettingUpPassword = false;
+let lockExpiry = 0;
+let lockTimer = null;
 
       let lockConfigExists = false;
       let lockPasswordHash = null;
@@ -2656,6 +2753,461 @@
       }
 
       /* =====================================
+   ADMIN NOTIFICATIONS
+===================================== */
+
+function updateAdminNotificationUI() {
+  const button = document.getElementById("adminNotificationBtn");
+  const badge = document.getElementById("adminNotificationBadge");
+
+  if (!button || !badge) return;
+
+  const isAdmin =
+    isAppUnlocked &&
+    currentAccountId &&
+    currentAccountRole === "admin";
+
+  button.style.display = isAdmin ? "block" : "none";
+
+  if (!isAdmin) {
+    badge.style.display = "none";
+    return;
+  }
+
+  const unreadCount = adminNotifications.filter(
+    (item) => item.read !== true
+  ).length;
+
+  if (unreadCount > 0) {
+    badge.textContent = unreadCount > 99 ? "99+" : String(unreadCount);
+    badge.style.display = "block";
+  } else {
+    badge.style.display = "none";
+  }
+}
+
+/* =====================================
+   RENDER ADMIN NOTIFICATIONS
+===================================== */
+
+function renderAdminNotifications() {
+  const container = document.getElementById(
+    "adminNotificationList"
+  );
+
+  if (!container) return;
+
+  if (!adminNotifications.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        Không có thông báo mới.
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = adminNotifications
+    .map((notification) => {
+      const isExpense =
+        notification.transactionType === "expense";
+
+      const typeText = isExpense ? "Chi" : "Thu";
+
+      const eventType = notification.type;
+
+      let actionText = "";
+      let actionIcon = "";
+
+      if (eventType === "transaction_added") {
+        actionText = "đã thêm";
+        actionIcon = "➕";
+      } else if (eventType === "transaction_edited") {
+        actionText = "đã sửa";
+        actionIcon = "✏️";
+      } else if (eventType === "transaction_deleted") {
+        actionText = "đã xóa";
+        actionIcon = "🗑️";
+      } else {
+        return "";
+      }
+
+      const accountName = escapeHtml(
+        notification.accountName || "Account"
+      );
+
+      const categoryOrSource = escapeHtml(
+        notification.category ||
+        notification.source ||
+        "Giao dịch"
+      );
+
+      const amount = formatMoney(
+        Number(notification.amount || 0)
+      );
+
+      const note = notification.note
+        ? escapeHtml(notification.note)
+        : "";
+
+      const unreadStyle =
+        notification.read === true
+          ? ""
+          : "background: rgba(59,130,246,0.08);";
+
+      // Thông tin trước khi sửa
+      let previousInfo = "";
+
+      if (
+        eventType === "transaction_edited" &&
+        notification.previous
+      ) {
+        const previous = notification.previous;
+
+        const previousType =
+          previous.type === "expense" ? "Chi" : "Thu";
+
+        const previousCategory = escapeHtml(
+          previous.category ||
+          previous.source ||
+          "Giao dịch"
+        );
+
+        const previousAmount = formatMoney(
+          Number(previous.amount || 0)
+        );
+
+        previousInfo = `
+          <div style="
+            margin-top: 8px;
+            padding: 8px;
+            border-radius: 8px;
+            background: rgba(128,128,128,0.08);
+            font-size: 12px;
+          ">
+            <div style="font-weight: 700; margin-bottom: 4px;">
+              Trước khi sửa
+            </div>
+            <div>
+              ${previousType} · ${previousCategory}
+              · ${previousAmount}
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div
+          style="
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border: 1px solid var(--border-color, #ddd);
+            ${unreadStyle}
+          "
+        >
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              gap: 10px;
+            "
+          >
+            <div style="min-width: 0;">
+              <div style="font-weight: 700;">
+                ${actionIcon}
+                ${actionText} giao dịch ${typeText}
+              </div>
+
+              <div style="margin-top: 4px;">
+                <strong>${accountName}</strong>
+              </div>
+            </div>
+
+            <div style="
+  display: flex;
+  align-items: center;
+  gap: 8px;
+">
+  <div style="
+    font-weight: 700;
+    white-space: nowrap;
+    color: ${isExpense ? "#ef4444" : "#16a34a"};
+  ">
+    ${amount}
+  </div>
+
+  <button
+    class="theme-btn"
+    onclick="deleteAdminNotification('${notification.id}')"
+    title="Xóa thông báo"
+    style="
+      padding: 5px 8px;
+      color: #ef4444;
+      min-width: 32px;
+    "
+  >
+    🗑️
+  </button>
+</div>
+          </div>
+
+          <div
+            style="
+              margin-top: 6px;
+              font-size: 13px;
+              opacity: 0.8;
+            "
+          >
+            ${categoryOrSource}
+            ${note ? " · " + note : ""}
+          </div>
+
+          ${previousInfo}
+        </div>
+      `;
+    })
+    .join("");
+}
+
+
+window.toggleAdminNotifications = function () {
+  const panel = document.getElementById(
+    "adminNotificationPanel"
+  );
+
+  if (!panel) return;
+
+  const isVisible = panel.style.display !== "none";
+
+  panel.style.display = isVisible ? "none" : "block";
+
+  if (!isVisible) {
+    renderAdminNotifications();
+  }
+}
+
+
+/* =====================================
+   DELETE SINGLE ADMIN NOTIFICATION
+===================================== */
+
+window.deleteAdminNotification = async function (id) {
+  if (
+    !db ||
+    !isAppUnlocked ||
+    currentAccountRole !== "admin"
+  ) {
+    return;
+  }
+
+  const confirmed = await window.showAppDialog({
+    title: "Xóa thông báo?",
+    message: "Bạn có chắc muốn xóa thông báo này không?",
+    type: "danger",
+    confirm: true,
+    confirmText: "Xóa",
+    cancelText: "Hủy",
+  });
+
+  if (!confirmed) return;
+
+  try {
+    await deleteDoc(
+      doc(db, "notifications", id)
+    );
+
+  } catch (error) {
+    console.error("Delete notification error:", error);
+
+    await window.showAppDialog({
+      title: "Không thể xóa thông báo",
+      message: error.message || "Lỗi không xác định.",
+      type: "error",
+    });
+  }
+};
+
+/* =====================================
+   DELETE ALL ADMIN NOTIFICATIONS
+===================================== */
+
+window.deleteAllAdminNotifications = async function () {
+  if (
+    !db ||
+    !isAppUnlocked ||
+    currentAccountRole !== "admin"
+  ) {
+    return;
+  }
+
+  if (!adminNotifications.length) return;
+
+  const confirmed = await window.showAppDialog({
+    title: "Xóa tất cả thông báo?",
+    message:
+      "Bạn có chắc muốn xóa toàn bộ " +
+      adminNotifications.length +
+      " thông báo không?\n\nThao tác này không thể hoàn tác.",
+    type: "danger",
+    confirm: true,
+    confirmText: "Xóa tất cả",
+    cancelText: "Hủy",
+  });
+
+  if (!confirmed) return;
+
+  try {
+    const batch = writeBatch(db);
+
+    adminNotifications.forEach((notification) => {
+      batch.delete(
+        doc(db, "notifications", notification.id)
+      );
+    });
+
+    await batch.commit();
+
+    await window.showAppDialog({
+      title: "Đã xóa thông báo",
+      message: "Toàn bộ thông báo đã được xóa.",
+      type: "success",
+    });
+
+  } catch (error) {
+    console.error("Delete all notifications error:", error);
+
+    await window.showAppDialog({
+      title: "Không thể xóa thông báo",
+      message: error.message || "Lỗi không xác định.",
+      type: "error",
+    });
+  }
+};
+
+window.markAllAdminNotificationsRead = async function () {
+  if (
+    !db ||
+    !isAppUnlocked ||
+    currentAccountRole !== "admin"
+  ) {
+    return;
+  }
+
+  try {
+    const unread = adminNotifications.filter(
+      (item) => item.read !== true
+    );
+
+    if (!unread.length) return;
+
+    const batch = writeBatch(db);
+
+    unread.forEach((notification) => {
+      batch.update(
+        doc(db, "notifications", notification.id),
+        {
+          read: true,
+          readAt: serverTimestamp(),
+        }
+      );
+    });
+
+    await batch.commit();
+
+  } catch (error) {
+    console.error(
+      "Mark notifications read error:",
+      error
+    );
+  }
+};
+
+function stopAdminNotificationListener() {
+  if (unsubscribeAdminNotifications) {
+    unsubscribeAdminNotifications();
+    unsubscribeAdminNotifications = null;
+  }
+
+  adminNotifications = [];
+  updateAdminNotificationUI();
+  renderAdminNotifications();
+
+  const panel = document.getElementById(
+    "adminNotificationPanel"
+  );
+
+  if (panel) {
+    panel.style.display = "none";
+  }
+}
+
+/* =====================================
+   START ADMIN NOTIFICATION LISTENER
+===================================== */
+
+function startAdminNotificationListener() {
+  if (
+    !db ||
+    !isAppUnlocked ||
+    !currentAccountId ||
+    currentAccountRole !== "admin" ||
+    unsubscribeAdminNotifications
+  ) {
+    updateAdminNotificationUI();
+    return;
+  }
+
+  const notificationsRef = collection(
+    db,
+    "notifications"
+  );
+
+  unsubscribeAdminNotifications = onSnapshot(
+    notificationsRef,
+    (snapshot) => {
+      if (
+        !isAppUnlocked ||
+        currentAccountRole !== "admin"
+      ) {
+        return;
+      }
+
+      adminNotifications = snapshot.docs
+        .map((item) => ({
+          id: item.id,
+          ...item.data(),
+        }))
+        .filter((item) =>
+          [
+            "transaction_added",
+            "transaction_edited",
+            "transaction_deleted",
+          ].includes(item.type)
+        )
+        .sort((a, b) => {
+          const aTime =
+            a.createdAt?.toMillis?.() || 0;
+
+          const bTime =
+            b.createdAt?.toMillis?.() || 0;
+
+          return bTime - aTime;
+        });
+
+      renderAdminNotifications();
+      updateAdminNotificationUI();
+    },
+    (error) => {
+      console.error(
+        "Admin notification listener error:",
+        error
+      );
+    }
+  );
+}
+
+
+      /* =====================================
    REALTIME LISTENER
 ===================================== */
 
@@ -2767,7 +3319,8 @@
 
           startLockCountdown();
 
-          await startRealtimeListener();
+         await startRealtimeListener();
+startAdminNotificationListener();
         } catch (error) {
           console.error("App Lock error:", error);
 
@@ -2795,8 +3348,9 @@
         localStorage.removeItem(LOCK_EXPIRY_KEY);
         localStorage.removeItem(SELECTED_ACCOUNT_KEY);
 
-        stopRealtimeListener();
-        clearSensitiveUI();
+       stopRealtimeListener();
+stopAdminNotificationListener();
+clearSensitiveUI();
 
         // Xóa Account hiện tại để lần mở tiếp theo
         // phải chọn Account lại.
@@ -2982,8 +3536,8 @@
 
               updateCurrentAccountButton();
               startLockCountdown();
-              await startRealtimeListener();
-
+await startRealtimeListener();
+startAdminNotificationListener();
               setFirebaseStatus("● Firebase connected", "ok");
 
               return;
@@ -3359,179 +3913,319 @@
           input.setSelectionRange(newPosition, newPosition);
         });
       }
-      /* =====================================
-         SAVE TRANSACTION
-      ===================================== */
 
-      window.saveTransaction = async function () {
-        if (!db) {
-          await window.showAppDialog({
-            title: "Chưa kết nối Firebase",
-            message:
-              "Firebase chưa được kết nối. Vui lòng kiểm tra kết nối và thử lại.",
-            type: "error",
-          });
-          return;
+
+/* =====================================
+   CREATE ADMIN NOTIFICATION
+===================================== */
+
+async function createAdminTransactionNotification(
+  eventType,
+  transactionId,
+  transaction,
+  previousTransaction = null
+) {
+  // Admin tự thao tác thì không thông báo
+  if (
+    !db ||
+    !currentAccountId ||
+    currentAccountRole === "admin"
+  ) {
+    return;
+  }
+
+  try {
+    await addDoc(
+      collection(db, "notifications"),
+      {
+        type: eventType,
+
+        accountId: currentAccountId,
+        accountName: currentAccountName || "Account",
+
+        transactionId,
+
+        transactionType: transaction.type || "income",
+
+        amount: Number(transaction.amount || 0),
+
+        category: transaction.category || "",
+        source: transaction.source || "",
+        note: transaction.note || "",
+        date: transaction.date || "",
+
+        // Chỉ có dữ liệu này khi sửa giao dịch
+        previous: previousTransaction
+          ? {
+              type: previousTransaction.type || "income",
+              amount: Number(previousTransaction.amount || 0),
+              category: previousTransaction.category || "",
+              source: previousTransaction.source || "",
+              note: previousTransaction.note || "",
+              date: previousTransaction.date || "",
+            }
+          : null,
+
+        read: false,
+        createdAt: serverTimestamp(),
+      }
+    );
+  } catch (error) {
+    // Không làm mất trạng thái thành công của giao dịch
+    console.error(
+      "Create admin notification error:",
+      error
+    );
+  }
+}
+
+      
+/* =====================================
+   SAVE TRANSACTION
+===================================== */
+
+window.saveTransaction = async function () {
+  if (!db) {
+    await window.showAppDialog({
+      title: "Chưa kết nối Firebase",
+      message:
+        "Firebase chưa được kết nối. Vui lòng kiểm tra kết nối và thử lại.",
+      type: "error",
+    });
+    return;
+  }
+
+  const date = document.getElementById("transactionDate").value;
+
+  const amountInput = document
+    .getElementById("transactionAmount")
+    .value.trim();
+
+  const amount = parseMoneyInput(amountInput);
+
+  const note = document
+    .getElementById("transactionNote")
+    .value.trim();
+
+  const source =
+    currentTransactionType === "income"
+      ? document.getElementById("transactionSource").value
+      : "";
+
+  const category =
+    currentTransactionType === "expense"
+      ? document.getElementById("transactionCategory").value
+      : "";
+
+  if (!date) {
+    await window.showAppDialog({
+      title: "Thiếu ngày giao dịch",
+      message: "Vui lòng chọn ngày cho giao dịch.",
+      type: "warning",
+    });
+    return;
+  }
+
+  if (
+    amountInput === "" ||
+    !Number.isSafeInteger(amount) ||
+    amount <= 0
+  ) {
+    await window.showAppDialog({
+      title: "Số tiền không hợp lệ",
+      message: "Vui lòng nhập số tiền nguyên lớn hơn 0.",
+      type: "warning",
+    });
+    return;
+  }
+
+  const data = {
+    type: currentTransactionType,
+    amount: Math.round(amount),
+    date,
+    category,
+    source,
+    note,
+    updatedAt: serverTimestamp(),
+  };
+
+  const saveButton = document.getElementById("saveTransactionBtn");
+
+  saveButton.disabled = true;
+  saveButton.textContent = "Đang lưu...";
+
+  try {
+    if (!currentAccountId || !isAppUnlocked) {
+      await window.showAppDialog({
+        title: "Account đang khóa",
+        message:
+          "Vui lòng mở khóa Account trước khi lưu giao dịch.",
+        type: "warning",
+      });
+
+      return;
+    }
+
+    if (editingId) {
+      // ==============================
+      // EDIT TRANSACTION
+      // ==============================
+
+      const transactionId = editingId;
+
+      // Lấy dữ liệu cũ trước khi cập nhật
+      const previousTransaction = transactions.find(
+        (item) => item.id === transactionId
+      );
+
+      await updateDoc(
+        getAccountTransactionRef(transactionId),
+        data
+      );
+
+      // Thông báo khi User sửa giao dịch
+      await createAdminTransactionNotification(
+        "transaction_edited",
+        transactionId,
+        data,
+        previousTransaction || null
+      );
+
+    } else {
+      // ==============================
+      // ADD TRANSACTION
+      // ==============================
+
+      const transactionRef = await addDoc(
+        getAccountTransactionsRef(),
+        {
+          ...data,
+          createdAt: serverTimestamp(),
         }
+      );
 
-        const date = document.getElementById("transactionDate").value;
-        const amountInput = document
-          .getElementById("transactionAmount")
-          .value.trim();
+      // Thông báo khi User thêm giao dịch
+      await createAdminTransactionNotification(
+        "transaction_added",
+        transactionRef.id,
+        data
+      );
+    }
 
-        const amount = parseMoneyInput(amountInput);
-        const note = document.getElementById("transactionNote").value.trim();
+    closeModal();
 
-const source =
-  currentTransactionType === "income"
-    ? document.getElementById("transactionSource").value
-    : "";
+    await window.showAppDialog({
+      title: "Lưu thành công",
+      message: editingId
+        ? "Giao dịch đã được cập nhật thành công."
+        : "Giao dịch mới đã được lưu thành công.",
+      type: "success",
+    });
 
-const category =
-  currentTransactionType === "expense"
-    ? document.getElementById("transactionCategory").value
-    : "";
+  } catch (error) {
+    console.error("Save transaction error:", error);
 
-        if (!date) {
-          await window.showAppDialog({
-            title: "Thiếu ngày giao dịch",
-            message: "Vui lòng chọn ngày cho giao dịch.",
-            type: "warning",
-          });
-          return;
-        }
+    await window.showAppDialog({
+      title: "Không thể lưu giao dịch",
+      message:
+        "Đã xảy ra lỗi khi lưu giao dịch.\n\n" +
+        (error.message || "Lỗi không xác định."),
+      type: "error",
+    });
 
-        if (
-          amountInput === "" ||
-          !Number.isSafeInteger(amount) ||
-          amount <= 0
-        ) {
-          await window.showAppDialog({
-            title: "Số tiền không hợp lệ",
-            message: "Vui lòng nhập số tiền nguyên lớn hơn 0.",
-            type: "warning",
-          });
-          return;
-        }
-
-        const data = {
-  type: currentTransactionType,
-  amount: Math.round(amount),
-  date,
-  category,
-  source,
-  note,
-  updatedAt: serverTimestamp(),
+  } finally {
+    saveButton.disabled = false;
+    saveButton.textContent = "Lưu giao dịch";
+  }
 };
 
-        const saveButton = document.getElementById("saveTransactionBtn");
-        saveButton.disabled = true;
-        saveButton.textContent = "Đang lưu...";
 
-        try {
-          if (!currentAccountId || !isAppUnlocked) {
-            await window.showAppDialog({
-              title: "Account đang khóa",
-              message: "Vui lòng mở khóa Account trước khi lưu giao dịch.",
-              type: "warning",
-            });
+    
+/* =====================================
+   DELETE TRANSACTION
+===================================== */
 
-            return;
-          }
+window.deleteTransaction = async function (id) {
+  if (!db) {
+    await window.showAppDialog({
+      title: "Chưa kết nối Firebase",
+      message: "Không thể xóa vì Firebase chưa được kết nối.",
+      type: "error",
+    });
+    return;
+  }
 
-          if (editingId) {
-            await updateDoc(getAccountTransactionRef(editingId), data);
-          } else {
-            await addDoc(getAccountTransactionsRef(), {
-              ...data,
-              createdAt: serverTimestamp(),
-            });
-          }
+  if (!currentAccountId || !isAppUnlocked) {
+    await window.showAppDialog({
+      title: "Account đang khóa",
+      message: "Vui lòng mở khóa Account trước khi xóa giao dịch.",
+      type: "warning",
+    });
+    return;
+  }
 
-          closeModal();
+  const transaction = transactions.find(
+    (item) => item.id === id
+  );
 
-          await window.showAppDialog({
-            title: "Lưu thành công",
-            message: editingId
-              ? "Giao dịch đã được cập nhật thành công."
-              : "Giao dịch mới đã được lưu thành công.",
-            type: "success",
-          });
-        } catch (error) {
-          console.error("Save transaction error:", error);
+  if (!transaction) {
+    await window.showAppDialog({
+      title: "Không tìm thấy giao dịch",
+      message:
+        "Giao dịch này có thể đã bị xóa hoặc không còn tồn tại.",
+      type: "warning",
+    });
+    return;
+  }
 
-          await window.showAppDialog({
-            title: "Không thể lưu giao dịch",
-            message:
-              "Đã xảy ra lỗi khi lưu giao dịch.\n\n" +
-              (error.message || "Lỗi không xác định."),
-            type: "error",
-          });
-        } finally {
-          saveButton.disabled = false;
-          saveButton.textContent = "Lưu giao dịch";
-        }
-      };
+  const confirmed = await window.showAppDialog({
+    title: "Xóa giao dịch?",
+    message:
+      "Bạn có chắc muốn xóa giao dịch này không?\n\n" +
+      (transaction.note || transaction.category || "Giao dịch") +
+      "\nLoại: " +
+      (transaction.type === "income" ? "Thu" : "Chi") +
+      "\nSố tiền: " +
+      formatMoney(transaction.amount) +
+      "\n\nThao tác này không thể hoàn tác.",
+    type: "danger",
+    confirm: true,
+    confirmText: "Xóa giao dịch",
+    cancelText: "Hủy",
+  });
 
-      /* =====================================
-         DELETE TRANSACTION
-      ===================================== */
+  if (!confirmed) return;
 
-      window.deleteTransaction = async function (id) {
-        if (!db) {
-          await window.showAppDialog({
-            title: "Chưa kết nối Firebase",
-            message: "Không thể xóa vì Firebase chưa được kết nối.",
-            type: "error",
-          });
-          return;
-        }
+  try {
+    // Xóa giao dịch khỏi Firebase
+    await deleteDoc(getAccountTransactionRef(id));
 
-        const transaction = transactions.find((item) => item.id === id);
-        if (!transaction) {
-          await window.showAppDialog({
-            title: "Không tìm thấy giao dịch",
-            message: "Giao dịch này có thể đã bị xóa hoặc không còn tồn tại.",
-            type: "warning",
-          });
-          return;
-        }
+    // Tạo notification cho Admin
+    await createAdminTransactionNotification(
+      "transaction_deleted",
+      id,
+      transaction
+    );
 
-        const confirmed = await window.showAppDialog({
-          title: "Xóa giao dịch?",
-          message:
-            "Bạn có chắc muốn xóa giao dịch này không?\n\n" +
-            (transaction.note || transaction.category || "Giao dịch") +
-            "\nSố tiền: " +
-            formatMoney(transaction.amount) +
-            "\n\nThao tác này không thể hoàn tác.",
-          type: "danger",
-          confirm: true,
-          confirmText: "Xóa giao dịch",
-          cancelText: "Hủy",
-        });
+    await window.showAppDialog({
+      title: "Đã xóa giao dịch",
+      message: "Giao dịch đã được xóa thành công.",
+      type: "success",
+    });
 
-        if (!confirmed) return;
+  } catch (error) {
+    console.error("Delete error:", error);
 
-        try {
-          await deleteDoc(getAccountTransactionRef(id));
-          await window.showAppDialog({
-            title: "Đã xóa giao dịch",
-            message: "Giao dịch đã được xóa thành công.",
-            type: "success",
-          });
-        } catch (error) {
-          console.error("Delete error:", error);
+    await window.showAppDialog({
+      title: "Không thể xóa giao dịch",
+      message:
+        "Đã xảy ra lỗi khi xóa giao dịch.\n\n" +
+        (error.message || "Lỗi không xác định."),
+      type: "error",
+    });
+  }
+};
 
-          await window.showAppDialog({
-            title: "Không thể xóa giao dịch",
-            message:
-              "Đã xảy ra lỗi khi xóa giao dịch.\n\n" +
-              (error.message || "Lỗi không xác định."),
-            type: "error",
-          });
-        }
-      };
 
       /* =====================================
          EDIT TRANSACTION
