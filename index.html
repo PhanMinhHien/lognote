@@ -286,18 +286,6 @@
         align-items: center;
         gap: 12px;
       }
-
-      .category-icon {
-        width: 38px;
-        height: 38px;
-        border-radius: 10px;
-        background: var(--primary-soft);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-      }
-
       .category-info {
         flex: 1;
         min-width: 0;
@@ -1313,6 +1301,165 @@
         border-top: 1px solid var(--border);
         margin: 12px 0;
       }
+
+    /* =====================================
+   CATEGORY SETTINGS
+===================================== */
+
+.category-add-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  margin-bottom: 18px;
+}
+
+.category-add-row input {
+  flex: 1;
+  min-width: 0;
+  height: 48px;
+  box-sizing: border-box;
+
+  padding: 0 16px;
+}
+
+.category-add-row button {
+  height: 48px;
+  padding: 0 22px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* Category list */
+
+.category-settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.category-settings-row {
+  display: flex;
+  align-items: center;
+  min-height: 58px;
+  box-sizing: border-box;
+
+  padding: 9px 12px 9px 16px;
+
+  border: 1px solid var(--border);
+  border-radius: 14px;
+
+  background: var(--bg);
+}
+
+.category-settings-name {
+  flex: 1;
+  min-width: 0;
+
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+
+  overflow-wrap: anywhere;
+}
+
+.category-settings-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+.category-settings-btn {
+  min-width: 58px;
+  height: 38px;
+
+  padding: 0 12px;
+
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  background: var(--card);
+  color: var(--text);
+
+  cursor: pointer;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.category-settings-btn:hover {
+  background: var(--primary-soft);
+}
+
+.category-settings-btn:active {
+  transform: scale(0.97);
+}
+
+/* Delete button */
+
+.category-settings-btn.danger {
+  color: var(--expense);
+}
+.category-edit-input {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+
+  padding: 0 12px;
+
+  border: 1px solid var(--border);
+  border-radius: 9px;
+
+  background: var(--card);
+  color: var(--text);
+
+  font-size: 15px;
+  font-weight: 700;
+
+  outline: none;
+}
+
+.category-edit-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-soft);
+}
+/* Mobile */
+
+@media (max-width: 760px) {
+  .category-add-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .category-add-row input,
+  .category-add-row button {
+    width: 100%;
+  }
+
+  .category-settings-row {
+    min-height: 0;
+    padding: 12px;
+  }
+
+  .category-settings-actions {
+    margin-left: 8px;
+  }
+
+  .category-settings-btn {
+    min-width: 52px;
+    height: 36px;
+    padding: 0 10px;
+  }
+}
     </style>
   </head>
 
@@ -1658,13 +1805,8 @@
               <div class="field">
                 <label for="filterCategory">Category</label>
                 <select id="filterCategory">
-                  <option value="all">Tất cả</option>
-                  <option value="Tiền trọ">🏠 Tiền trọ</option>
-                  <option value="Tiền điện">⚡ Tiền điện</option>
-                  <option value="Ăn uống">🍜 Ăn uống</option>
-                  <option value="Mua sắm">🛍️ Mua sắm</option>
-                  <option value="Khác">📦 Khác</option>
-                </select>
+  <option value="all">Tất cả</option>
+</select>
               </div>
               <div class="field">
                 <label for="filterSource">Nguồn tiền</label>
@@ -1848,7 +1990,41 @@
                 🔒 Khóa ngay
               </button>
             </div>
+<div class="card settings-card">
+  <div class="panel-title">Categories</div>
 
+  <div class="settings-description">
+    Quản lý các nhóm chi tiêu riêng cho Account
+    <strong id="categorySettingsAccountName">—</strong>.
+  </div>
+
+  <div class="category-add-row">
+    <input
+      id="newCategoryName"
+      type="text"
+      placeholder="Tên Category mới..."
+      autocomplete="off"
+      maxlength="50"
+    />
+
+    <button
+      id="addCategoryBtn"
+      class="primary-btn"
+      type="button"
+      onclick="addCategory()"
+    >
+      ＋ Thêm
+    </button>
+  </div>
+
+  <div id="categorySettingsList"></div>
+
+  <div
+    id="categorySettingsMessage"
+    class="settings-description"
+    role="status"
+  ></div>
+</div>
             <div class="card settings-card">
               <div class="panel-title">🔑 Đổi mật khẩu App Lock</div>
               <div class="settings-description">
@@ -2007,13 +2183,7 @@
 
           <div id="categoryField" class="field">
             <label for="transactionCategory">Category</label>
-            <select id="transactionCategory">
-              <option value="Tiền trọ">🏠 Tiền trọ</option>
-              <option value="Tiền điện">⚡ Tiền điện</option>
-              <option value="Ăn uống">🍜 Ăn uống</option>
-              <option value="Mua sắm">🛍️ Mua sắm</option>
-              <option value="Khác">📦 Khác</option>
-            </select>
+           <select id="transactionCategory"></select>
           </div>
 
           <div class="field">
@@ -2244,6 +2414,16 @@
 
       let accounts = [];
 
+      let accountCategories = [];
+
+const DEFAULT_CATEGORIES = [
+  "Tiền trọ",
+  "Tiền điện",
+  "Ăn uống",
+  "Mua sắm",
+  "Khác",
+];
+
       /* =====================================
    PASSWORD
 ===================================== */
@@ -2301,7 +2481,773 @@
 
         return doc(db, "accounts", currentAccountId, "profile");
       }
+function getAccountCategoriesRef() {
+  if (!db || !currentAccountId) {
+    throw new Error("Chưa chọn Account.");
+  }
 
+  return doc(
+    db,
+    "accounts",
+    currentAccountId,
+    "settings",
+    "categories",
+  );
+}
+
+/* =====================================
+   ACCOUNT CATEGORIES
+===================================== */
+
+function createCategoryId() {
+  if (crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+
+  return (
+    Date.now().toString(36) +
+    Math.random().toString(36).slice(2)
+  );
+}
+
+function normalizeCategories(categories) {
+  if (!Array.isArray(categories)) {
+    return [];
+  }
+
+  const result = [];
+  const seen = new Set();
+
+  categories.forEach((item) => {
+    let id = "";
+    let name = "";
+
+    if (typeof item === "string") {
+      name = item.trim();
+      id = createCategoryId();
+    } else if (item && typeof item === "object") {
+      id = String(item.id || createCategoryId());
+      name = String(item.name || "").trim();
+    }
+
+    if (!name) return;
+
+    const key = name.toLowerCase();
+
+    if (seen.has(key)) return;
+
+    seen.add(key);
+
+    result.push({
+      id,
+      name,
+    });
+  });
+
+  return result;
+}
+
+async function loadAccountCategories() {
+  if (!db || !currentAccountId) {
+    accountCategories = [];
+    return [];
+  }
+
+  try {
+    const categoryRef = getAccountCategoriesRef();
+    const categorySnap = await getDoc(categoryRef);
+
+    if (!categorySnap.exists()) {
+      accountCategories = DEFAULT_CATEGORIES.map((name) => ({
+        id: createCategoryId(),
+        name,
+      }));
+
+      await setDoc(categoryRef, {
+        categories: accountCategories,
+        updatedAt: serverTimestamp(),
+      });
+
+      return accountCategories;
+    }
+
+    const data = categorySnap.data();
+
+    const normalized = normalizeCategories(
+      data.categories,
+    );
+
+    if (!normalized.length) {
+      accountCategories = DEFAULT_CATEGORIES.map((name) => ({
+        id: createCategoryId(),
+        name,
+      }));
+
+      await setDoc(categoryRef, {
+        categories: accountCategories,
+        updatedAt: serverTimestamp(),
+      });
+
+      return accountCategories;
+    }
+
+    accountCategories = normalized;
+
+    return accountCategories;
+  } catch (error) {
+    console.error(
+      "Load account categories error:",
+      error,
+    );
+
+    accountCategories = [];
+
+    throw error;
+  }
+}
+
+async function saveAccountCategories() {
+  if (
+    !db ||
+    !currentAccountId ||
+    !isAppUnlocked
+  ) {
+    return;
+  }
+
+  await setDoc(
+    getAccountCategoriesRef(),
+    {
+      categories: accountCategories,
+      updatedAt: serverTimestamp(),
+    },
+    { merge: true },
+  );
+}
+function renderCategoryOptions(
+  selectedValue = "",
+) {
+  const select = document.getElementById(
+    "transactionCategory",
+  );
+
+  if (!select) return;
+
+  const categories = [...accountCategories];
+
+  /*
+    Transaction cũ có Category đã bị xóa:
+    vẫn giữ Category cũ trong dropdown khi edit.
+  */
+  if (
+    selectedValue &&
+    !categories.some(
+      (category) =>
+        category.name === selectedValue,
+    )
+  ) {
+    categories.push({
+      id: "__legacy__",
+      name: selectedValue,
+    });
+  }
+
+  select.innerHTML = categories
+    .map(
+      (category) => `
+        <option value="${escapeHtml(category.name)}">
+          ${escapeHtml(category.name)}
+        </option>
+      `,
+    )
+    .join("");
+
+  if (selectedValue) {
+    select.value = selectedValue;
+  }
+
+  if (!select.value && categories.length) {
+    select.value = categories[0].name;
+  }
+}
+function renderCategoryFilterOptions(
+  selectedValue = "all",
+) {
+  const select = document.getElementById(
+    "filterCategory",
+  );
+
+  if (!select) return;
+
+  select.innerHTML = `
+    <option value="all">Tất cả</option>
+
+    ${accountCategories
+      .map(
+        (category) => `
+          <option value="${escapeHtml(category.name)}">
+            ${escapeHtml(category.name)}
+          </option>
+        `,
+      )
+      .join("")}
+  `;
+
+  select.value = selectedValue;
+
+  if (select.value !== selectedValue) {
+    select.value = "all";
+  }
+}
+function refreshCategoryUI() {
+  const transactionCategory =
+    document.getElementById(
+      "transactionCategory",
+    );
+
+  const selectedTransactionCategory =
+    transactionCategory?.value || "";
+
+  const filterCategory =
+    document.getElementById(
+      "filterCategory",
+    );
+
+  const selectedFilterCategory =
+    filterCategory?.value || "all";
+
+  renderCategoryOptions(
+    selectedTransactionCategory,
+  );
+
+  renderCategoryFilterOptions(
+    selectedFilterCategory,
+  );
+
+  renderCategorySettings();
+  renderCategoryList();
+}
+/* =====================================
+   CATEGORY SETTINGS UI
+===================================== */
+
+function updateCategorySettingsAccountName() {
+  const element = document.getElementById(
+    "categorySettingsAccountName",
+  );
+
+  if (element) {
+    element.textContent =
+      currentAccountName || "—";
+  }
+}
+
+function renderCategorySettings() {
+  const list = document.getElementById("categorySettingsList");
+
+  const message = document.getElementById(
+    "categorySettingsMessage",
+  );
+
+  if (!list) return;
+
+  updateCategorySettingsAccountName();
+
+  if (!isAppUnlocked || !currentAccountId) {
+    list.innerHTML = "";
+
+    if (message) {
+      message.textContent = "";
+    }
+
+    return;
+  }
+
+  if (!accountCategories.length) {
+    list.innerHTML = `
+      <div class="empty-state">
+        Chưa có Category nào.
+      </div>
+    `;
+
+    return;
+  }
+
+  if (message) {
+    message.textContent = "";
+  }
+
+  list.innerHTML = `
+    <div class="category-settings-list">
+      ${accountCategories
+        .map(
+          (category) => `
+            <div
+              class="category-settings-row"
+              data-category-row="${escapeHtml(category.id)}"
+            >
+              <div class="category-settings-name">
+                ${escapeHtml(category.name)}
+              </div>
+
+              <div class="category-settings-actions">
+                <button
+                  type="button"
+                  class="category-settings-btn"
+                  data-edit-category="${escapeHtml(category.id)}"
+                >
+                  Sửa
+                </button>
+
+                <button
+                  type="button"
+                  class="category-settings-btn danger"
+                  data-delete-category="${escapeHtml(category.id)}"
+                >
+                  Xóa
+                </button>
+              </div>
+            </div>
+          `,
+        )
+        .join("")}
+    </div>
+  `;
+
+  list
+    .querySelectorAll("[data-edit-category]")
+    .forEach((button) => {
+      button.addEventListener("click", () => {
+        editCategory(button.dataset.editCategory);
+      });
+    });
+
+  list
+    .querySelectorAll("[data-delete-category]")
+    .forEach((button) => {
+      button.addEventListener("click", () => {
+        deleteCategory(button.dataset.deleteCategory);
+      });
+    });
+}
+
+async function addCategory() {
+  if (
+    !db ||
+    !isAppUnlocked ||
+    !currentAccountId
+  ) {
+    return;
+  }
+
+  const input = document.getElementById(
+    "newCategoryName",
+  );
+
+  if (!input) return;
+
+  const name = input.value.trim();
+
+  if (!name) {
+    await window.showAppDialog({
+      title: "Thiếu tên Category",
+      message: "Vui lòng nhập tên Category.",
+      type: "warning",
+    });
+
+    input.focus();
+    return;
+  }
+
+  const exists = accountCategories.some(
+    (category) =>
+      category.name.toLowerCase() ===
+      name.toLowerCase(),
+  );
+
+  if (exists) {
+    await window.showAppDialog({
+      title: "Category đã tồn tại",
+      message:
+        `Category "${name}" đã tồn tại trong Account này.`,
+      type: "warning",
+    });
+
+    input.focus();
+    return;
+  }
+
+  try {
+    accountCategories.push({
+      id: createCategoryId(),
+      name,
+    });
+
+    await saveAccountCategories();
+
+    input.value = "";
+
+    refreshCategoryUI();
+
+    await window.showAppDialog({
+      title: "Đã thêm Category",
+      message:
+        `Category "${name}" đã được thêm.`,
+      type: "success",
+    });
+  } catch (error) {
+    console.error(
+      "Add category error:",
+      error,
+    );
+
+    await window.showAppDialog({
+      title: "Không thể thêm Category",
+      message:
+        error.message ||
+        "Lỗi không xác định.",
+      type: "error",
+    });
+  }
+}
+
+async function updateTransactionsCategory(
+  oldCategoryName,
+  newCategoryName,
+) {
+  if (
+    !db ||
+    !currentAccountId ||
+    !isAppUnlocked
+  ) {
+    return;
+  }
+
+  const matchingTransactions =
+    transactions.filter(
+      (item) =>
+        item.category === oldCategoryName,
+    );
+
+  if (!matchingTransactions.length) {
+    return;
+  }
+
+  await Promise.all(
+    matchingTransactions.map((item) =>
+      updateDoc(
+        getAccountTransactionRef(item.id),
+        {
+          category: newCategoryName,
+          updatedAt: serverTimestamp(),
+        },
+      ),
+    ),
+  );
+
+  // Cập nhật local state ngay,
+  // không cần chờ realtime listener.
+  transactions = transactions.map(
+    (item) =>
+      item.category === oldCategoryName
+        ? {
+            ...item,
+            category: newCategoryName,
+          }
+        : item,
+  );
+}
+
+async function editCategory(categoryId) {
+  if (
+    !db ||
+    !isAppUnlocked ||
+    !currentAccountId
+  ) {
+    return;
+  }
+
+  const category = accountCategories.find(
+    (item) => item.id === categoryId,
+  );
+
+  if (!category) return;
+
+  const row = document.querySelector(
+    `[data-category-row="${CSS.escape(categoryId)}"]`,
+  );
+
+  if (!row) return;
+
+  row.innerHTML = `
+    <input
+      type="text"
+      class="category-edit-input"
+      value="${escapeHtml(category.name)}"
+      maxlength="50"
+      autocomplete="off"
+    />
+
+    <div class="category-settings-actions">
+      <button
+        type="button"
+        class="category-settings-btn"
+        data-save-category
+      >
+        Lưu
+      </button>
+
+      <button
+        type="button"
+        class="category-settings-btn"
+        data-cancel-category
+      >
+        Hủy
+      </button>
+    </div>
+  `;
+
+  const input = row.querySelector(
+    ".category-edit-input",
+  );
+
+  const saveButton = row.querySelector(
+    "[data-save-category]",
+  );
+
+  const cancelButton = row.querySelector(
+    "[data-cancel-category]",
+  );
+
+  input.focus();
+  input.select();
+
+  cancelButton.addEventListener("click", () => {
+    renderCategorySettings();
+  });
+
+  saveButton.addEventListener(
+    "click",
+    async () => {
+      const name = input.value.trim();
+
+      if (!name) {
+        await window.showAppDialog({
+          title: "Tên Category không hợp lệ",
+          message:
+            "Tên Category không được để trống.",
+          type: "warning",
+        });
+
+        input.focus();
+        return;
+      }
+
+      const duplicate =
+        accountCategories.some(
+          (item) =>
+            item.id !== categoryId &&
+            item.name.toLowerCase() ===
+              name.toLowerCase(),
+        );
+
+      if (duplicate) {
+        await window.showAppDialog({
+          title: "Category đã tồn tại",
+          message:
+            `Category "${name}" đã tồn tại.`,
+          type: "warning",
+        });
+
+        input.focus();
+        return;
+      }
+
+      try {
+      const oldName = category.name;
+
+// Cập nhật Category trong các transaction cũ trước
+await updateTransactionsCategory(
+  oldName,
+  name,
+);
+
+// Sau đó mới đổi tên Category
+category.name = name;
+
+await saveAccountCategories();
+
+refreshCategoryUI();
+
+// Render lại Transactions ngay
+renderTransactions();
+
+// Render lại Dashboard
+renderDashboard();
+        await window.showAppDialog({
+          title: "Đã cập nhật Category",
+          message:
+            `"${oldName}" → "${name}"`,
+          type: "success",
+        });
+      } catch (error) {
+        console.error(
+          "Edit category error:",
+          error,
+        );
+
+        await window.showAppDialog({
+          title: "Không thể sửa Category",
+          message:
+            error.message ||
+            "Lỗi không xác định.",
+          type: "error",
+        });
+
+        renderCategorySettings();
+      }
+    },
+  );
+
+  input.addEventListener(
+    "keydown",
+    (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        saveButton.click();
+      }
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        renderCategorySettings();
+      }
+    },
+  );
+}
+async function clearTransactionsCategory(
+  categoryName,
+) {
+  if (
+    !db ||
+    !currentAccountId ||
+    !isAppUnlocked
+  ) {
+    return;
+  }
+
+  const matchingTransactions =
+    transactions.filter(
+      (item) =>
+        item.category === categoryName,
+    );
+
+  if (!matchingTransactions.length) {
+    return;
+  }
+
+  await Promise.all(
+    matchingTransactions.map((item) =>
+      updateDoc(
+        getAccountTransactionRef(item.id),
+        {
+          category: "",
+          updatedAt: serverTimestamp(),
+        },
+      ),
+    ),
+  );
+
+  transactions = transactions.map(
+    (item) =>
+      item.category === categoryName
+        ? {
+            ...item,
+            category: "",
+          }
+        : item,
+  );
+}
+async function deleteCategory(categoryId) {
+  if (
+    !db ||
+    !isAppUnlocked ||
+    !currentAccountId
+  ) {
+    return;
+  }
+
+  if (accountCategories.length <= 1) {
+    await window.showAppDialog({
+      title: "Không thể xóa",
+      message:
+        "Account phải có ít nhất 1 Category.",
+      type: "warning",
+    });
+
+    return;
+  }
+
+  const category = accountCategories.find(
+    (item) => item.id === categoryId,
+  );
+
+  if (!category) return;
+
+  const confirmed =
+    await window.showAppDialog({
+      title: "Xóa Category?",
+      message:
+        `Bạn có chắc muốn xóa Category "${category.name}"?\n\n` +
+        "Các giao dịch cũ sẽ không bị xóa.",
+      type: "danger",
+      confirm: true,
+      confirmText: "Xóa Category",
+      cancelText: "Hủy",
+    });
+
+  if (!confirmed) return;
+
+try {
+  // Xóa Category khỏi các transaction cũ
+  // nhưng KHÔNG xóa transaction.
+  await clearTransactionsCategory(
+    category.name,
+  );
+
+  accountCategories =
+    accountCategories.filter(
+      (item) => item.id !== categoryId,
+    );
+
+  await saveAccountCategories();
+
+  refreshCategoryUI();
+
+  // Cập nhật giao diện ngay
+  renderTransactions();
+  renderDashboard();
+
+    await window.showAppDialog({
+      title: "Đã xóa Category",
+      message:
+        `Category "${category.name}" đã được xóa.`,
+      type: "success",
+    });
+  } catch (error) {
+    console.error(
+      "Delete category error:",
+      error,
+    );
+
+    await window.showAppDialog({
+      title: "Không thể xóa Category",
+      message:
+        error.message ||
+        "Lỗi không xác định.",
+      type: "error",
+    });
+  }
+}
       /* =====================================
    ACCOUNT UI
 ===================================== */
@@ -3072,7 +4018,7 @@
           currentAccountId = account.id;
           currentAccountName = account.name || "Account";
           currentAccountRole = account.role === "admin" ? "admin" : "user";
-
+accountCategories = [];
           updateSettingsAccountName();
           localStorage.setItem(SELECTED_ACCOUNT_KEY, currentAccountId);
 
@@ -3140,8 +4086,9 @@
         document.getElementById("appLockScreen").classList.add("hidden");
       }
 
-      function clearSensitiveUI() {
-        transactions = [];
+     function clearSensitiveUI() {
+  transactions = [];
+  accountCategories = [];
 
         if (weeklyChart) {
           weeklyChart.destroy();
@@ -3786,9 +4733,16 @@
           }
           isAppUnlocked = true;
 
-          // =====================================
-          // UPDATE LAST LOGIN
-          // =====================================
+// =====================================
+// LOAD ACCOUNT CATEGORIES
+// =====================================
+
+await loadAccountCategories();
+refreshCategoryUI();
+
+// =====================================
+// UPDATE LAST LOGIN
+// =====================================
 
           await updateDoc(doc(db, "accounts", currentAccountId), {
             lastLoginAt: serverTimestamp(),
@@ -4015,21 +4969,32 @@
         Nếu thời gian unlock vẫn còn:
         → giữ nguyên trạng thái unlocked sau F5.
       */
-            if (lockConfigExists && savedLockExpiry > Date.now()) {
-              isAppUnlocked = true;
-              lockExpiry = savedLockExpiry;
+           if (
+  lockConfigExists &&
+  savedLockExpiry > Date.now()
+) {
+  isAppUnlocked = true;
+  lockExpiry = savedLockExpiry;
 
-              hideAccountScreen();
-              hideLockScreen();
+  await loadAccountCategories();
+  refreshCategoryUI();
 
-              updateCurrentAccountButton();
-              startLockCountdown();
-              await startRealtimeListener();
-              startAdminNotificationListener();
-              setFirebaseStatus("● Firebase connected", "ok");
+  hideAccountScreen();
+  hideLockScreen();
 
-              return;
-            }
+  updateCurrentAccountButton();
+  startLockCountdown();
+
+  await startRealtimeListener();
+  startAdminNotificationListener();
+
+  setFirebaseStatus(
+    "● Firebase connected",
+    "ok",
+  );
+
+  return;
+}
 
             /*
         Nếu đã hết 8 tiếng:
@@ -4713,10 +5678,11 @@
           transaction.source || "cash";
 
         // Category chỉ áp dụng cho Chi
-        if (currentTransactionType === "expense") {
-          document.getElementById("transactionCategory").value =
-            transaction.category || "Ăn uống";
-        }
+      if (currentTransactionType === "expense") {
+  renderCategoryOptions(
+    transaction.category || "",
+  );
+}
 
         // Update UI
         updateTypeUI();
@@ -4750,8 +5716,9 @@
         document.getElementById("transactionDate").value = getToday();
         document.getElementById("transactionAmount").value = "";
         document.getElementById("transactionNote").value = "";
-        document.getElementById("transactionCategory").value = "Ăn uống";
-        document.getElementById("transactionSource").value = "cash";
+renderCategoryOptions(
+  accountCategories[0]?.name || "",
+);        document.getElementById("transactionSource").value = "cash";
 
         // ADD MODE:
         // Hiện cả Thu và Chi
@@ -4831,9 +5798,13 @@
         const nav = document.querySelector(`.nav-btn[data-page="${page}"]`);
         if (nav) nav.classList.add("active");
 
-        if (page === "settings") {
-          void renderAdminAccountSettings();
-        }
+      if (page === "settings") {
+  updateSettingsAccountName();
+  updateCategorySettingsAccountName();
+  renderCategorySettings();
+
+  void renderAdminAccountSettings();
+}
 
         if (page === "transactions") renderTransactions();
       };
@@ -4842,10 +5813,11 @@
          RENDER EVERYTHING
       ===================================== */
 
-      function renderEverything() {
-        renderDashboard();
-        renderTransactions();
-      }
+    function renderEverything() {
+  renderDashboard();
+  renderTransactions();
+  renderCategoryList();
+}
 
       /* =====================================
          DASHBOARD
@@ -5077,53 +6049,85 @@
          CATEGORY LIST
       ===================================== */
 
-      function renderCategoryList() {
-        const categories = [
-          { name: "Tiền trọ", icon: "🏠" },
-          { name: "Tiền điện", icon: "⚡" },
-          { name: "Ăn uống", icon: "🍜" },
-          { name: "Mua sắm", icon: "🛍️" },
-          { name: "Khác", icon: "📦" },
-        ];
+     function renderCategoryList() {
+  const container =
+    document.getElementById("categoryList");
 
-        const currentMonth = getCurrentMonth();
+  if (!container) return;
 
-        const values = categories.map((category) => {
-          const amount = transactions
-            .filter(
-              (item) =>
-                item.type === "expense" &&
-                item.category === category.name &&
-                String(item.date || "").startsWith(currentMonth),
+  if (!accountCategories.length) {
+    container.innerHTML = "";
+    return;
+  }
+
+  const currentMonth = getCurrentMonth();
+
+  const values = accountCategories.map(
+    (category) => {
+      const amount = transactions
+        .filter(
+          (item) =>
+            item.type === "expense" &&
+            item.category === category.name &&
+            String(item.date || "").startsWith(
+              currentMonth,
+            ),
+        )
+        .reduce(
+          (sum, item) =>
+            sum + Number(item.amount || 0),
+          0,
+        );
+
+      return {
+        name: category.name,
+        amount,
+      };
+    },
+  );
+
+  const max = Math.max(
+    ...values.map(
+      (item) => item.amount,
+    ),
+    1,
+  );
+
+  container.innerHTML = values
+    .map((item) => {
+      const width =
+        item.amount > 0
+          ? Math.max(
+              5,
+              (item.amount / max) * 100,
             )
-            .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+          : 0;
 
-          return { ...category, amount };
-        });
+      return `
+        <div class="category-row">
 
-        const max = Math.max(...values.map((item) => item.amount), 1);
-        const container = document.getElementById("categoryList");
-
-        container.innerHTML = values
-          .map((item) => {
-            const width =
-              item.amount > 0 ? Math.max(5, (item.amount / max) * 100) : 0;
-
-            return `
-            <div class="category-row">
-              <div class="category-icon">${item.icon}</div>
-              <div class="category-info">
-                <div class="category-name">${escapeHtml(item.name)}</div>
-                <div class="category-bar">
-                  <div class="category-bar-fill" style="width:${width}%"></div>
-                </div>
-              </div>
-              <div class="category-amount">${formatMoney(item.amount)}</div>
+          <div class="category-info">
+            <div class="category-name">
+              ${escapeHtml(item.name)}
             </div>
-          `;
-          })
-          .join("");
-      }
+
+            <div class="category-bar">
+              <div
+                class="category-bar-fill"
+                style="width:${width}%"
+              ></div>
+            </div>
+          </div>
+
+          <div class="category-amount">
+            ${formatMoney(item.amount)}
+          </div>
+
+        </div>
+      `;
+    })
+    .join("");
+}
 
       function renderSourceList() {
         const sources = [
@@ -5211,31 +6215,46 @@
       }
 
       function createTransactionItem(item) {
-        const isIncome = item.type === "income";
-        const icon = isIncome ? "💰" : getCategoryIcon(item.category);
-        const sign = isIncome ? "+" : "-";
+  const isIncome = item.type === "income";
+  const sign = isIncome ? "+" : "-";
 
-        return `
-          <div class="transaction-item">
-            <div class="transaction-icon ${isIncome ? "income" : "expense"}">
-              ${icon}
-            </div>
-            <div class="transaction-info">
-              <div class="transaction-name">
-                ${escapeHtml(item.note || item.category || (isIncome ? "Thu nhập" : "Chi tiêu"))}
-              </div>
-             <div class="transaction-meta">
-  ${formatDate(item.date)}
-  ${item.category ? " · " + escapeHtml(item.category) : ""}
-  · ${getSourceLabel(item.source)}
-</div>
-            </div>
-            <div class="transaction-amount ${isIncome ? "income" : "expense"}">
-              ${sign}${formatMoney(item.amount)}
-            </div>
-          </div>
-        `;
-      }
+  return `
+    <div class="transaction-item">
+
+      <div class="transaction-info">
+        <div class="transaction-name">
+          ${escapeHtml(
+            item.note ||
+              item.category ||
+              (isIncome
+                ? "Thu nhập"
+                : "Chi tiêu"),
+          )}
+        </div>
+
+        <div class="transaction-meta">
+          ${formatDate(item.date)}
+          ${
+            item.category
+              ? " · " +
+                escapeHtml(item.category)
+              : ""
+          }
+          · ${getSourceLabel(item.source)}
+        </div>
+      </div>
+
+      <div
+        class="transaction-amount ${
+          isIncome ? "income" : "expense"
+        }"
+      >
+        ${sign}${formatMoney(item.amount)}
+      </div>
+
+    </div>
+  `;
+}
 
       /* =====================================
          FILTER
@@ -5334,10 +6353,10 @@
                   ${isIncome ? "🟢 Thu" : "🔴 Chi"}
                 </span>
               </td>
-              <td>
+           <td>
   ${
     item.category
-      ? `<span class="category-badge">${getCategoryIcon(item.category)} ${escapeHtml(item.category)}</span>`
+      ? `<span class="category-badge">${escapeHtml(item.category)}</span>`
       : "—"
   }
 </td>
@@ -5474,17 +6493,6 @@
         }
 
         return number;
-      }
-
-      function getCategoryIcon(category) {
-        const icons = {
-          "Tiền trọ": "🏠",
-          "Tiền điện": "⚡",
-          "Ăn uống": "🍜",
-          "Mua sắm": "🛍️",
-        };
-
-        return icons[category] || "💸";
       }
 
       function getSourceLabel(source) {
