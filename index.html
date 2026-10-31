@@ -4174,15 +4174,13 @@ window.saveTransaction = async function () {
     .getElementById("transactionNote")
     .value.trim();
 
-  const source =
-    currentTransactionType === "income"
-      ? document.getElementById("transactionSource").value
-      : "";
+const source =
+  document.getElementById("transactionSource").value || "cash";
 
-  const category =
-    currentTransactionType === "expense"
-      ? document.getElementById("transactionCategory").value
-      : "";
+const category =
+  currentTransactionType === "expense"
+    ? document.getElementById("transactionCategory").value
+    : "";
 
   if (!date) {
     await window.showAppDialog({
@@ -4207,14 +4205,14 @@ window.saveTransaction = async function () {
   }
 
   const data = {
-    type: currentTransactionType,
-    amount: Math.round(amount),
-    date,
-    category,
-    source,
-    note,
-    updatedAt: serverTimestamp(),
-  };
+  type: currentTransactionType,
+  amount: Math.round(amount),
+  date,
+  category,
+  source,
+  note,
+  updatedAt: serverTimestamp(),
+};
 
   const saveButton = document.getElementById("saveTransactionBtn");
 
@@ -4420,13 +4418,15 @@ window.deleteTransaction = async function (id) {
     transaction.note || "";
 
   // Chỉ load đúng data của type hiện tại
-  if (currentTransactionType === "income") {
-    document.getElementById("transactionSource").value =
-      transaction.source || "cash";
-  } else {
-    document.getElementById("transactionCategory").value =
-      transaction.category || "Ăn uống";
-  }
+// Load Source cho cả Thu và Chi
+document.getElementById("transactionSource").value =
+  transaction.source || "cash";
+
+// Category chỉ áp dụng cho Chi
+if (currentTransactionType === "expense") {
+  document.getElementById("transactionCategory").value =
+    transaction.category || "Ăn uống";
+}
 
   // Update UI
   updateTypeUI();
@@ -4491,7 +4491,7 @@ window.deleteTransaction = async function (id) {
         updateTypeUI();
       };
 
-     function updateTypeUI() {
+    function updateTypeUI() {
   const incomeBtn = document.getElementById("incomeTypeBtn");
   const expenseBtn = document.getElementById("expenseTypeBtn");
 
@@ -4508,16 +4508,18 @@ window.deleteTransaction = async function (id) {
     currentTransactionType === "expense"
   );
 
-  // Thu → hiện Source, ẩn Category
-  if (currentTransactionType === "income") {
-    sourceField.style.display = "flex";
-    categoryField.style.display = "none";
-  }
+  // =====================================
+  // NGUỒN TIỀN: LUÔN HIỆN CHO CẢ THU VÀ CHI
+  // =====================================
+  sourceField.style.display = "flex";
 
-  // Chi → hiện Category, ẩn Source
-  else {
-    sourceField.style.display = "none";
+  // =====================================
+  // CATEGORY: CHỈ HIỆN CHO CHI
+  // =====================================
+  if (currentTransactionType === "expense") {
     categoryField.style.display = "flex";
+  } else {
+    categoryField.style.display = "none";
   }
 }
 
