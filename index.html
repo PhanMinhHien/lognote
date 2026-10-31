@@ -2509,6 +2509,17 @@ function createCategoryId() {
     Math.random().toString(36).slice(2)
   );
 }
+function sortCategories(categories) {
+  return [...categories].sort((a, b) =>
+    String(a.name || "").localeCompare(
+      String(b.name || ""),
+      "vi",
+      {
+        sensitivity: "base",
+      },
+    ),
+  );
+}
 
 function normalizeCategories(categories) {
   if (!Array.isArray(categories)) {
@@ -2544,7 +2555,7 @@ function normalizeCategories(categories) {
     });
   });
 
-  return result;
+  return sortCategories(result);
 }
 
 async function loadAccountCategories() {
@@ -2633,8 +2644,7 @@ function renderCategoryOptions(
 
   if (!select) return;
 
-  const categories = [...accountCategories];
-
+const categories = sortCategories(accountCategories);
   /*
     Transaction cũ có Category đã bị xóa:
     vẫn giữ Category cũ trong dropdown khi edit.
@@ -2682,15 +2692,15 @@ function renderCategoryFilterOptions(
   select.innerHTML = `
     <option value="all">Tất cả</option>
 
-    ${accountCategories
-      .map(
-        (category) => `
-          <option value="${escapeHtml(category.name)}">
-            ${escapeHtml(category.name)}
-          </option>
-        `,
-      )
-      .join("")}
+    ${sortCategories(accountCategories)
+  .map(
+    (category) => `
+      <option value="${escapeHtml(category.name)}">
+        ${escapeHtml(category.name)}
+      </option>
+    `,
+  )
+  .join("")}
   `;
 
   select.value = selectedValue;
@@ -2779,8 +2789,8 @@ function renderCategorySettings() {
 
   list.innerHTML = `
     <div class="category-settings-list">
-      ${accountCategories
-        .map(
+      ${sortCategories(accountCategories)
+  .map(
           (category) => `
             <div
               class="category-settings-row"
