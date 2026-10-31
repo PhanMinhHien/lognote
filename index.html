@@ -409,17 +409,17 @@
         margin-bottom: 18px;
       }
 
-    .filter-grid {
-  display: grid;
-  grid-template-columns:
-    minmax(140px, 1fr)
-    minmax(140px, 1fr)
-    minmax(130px, 0.8fr)
-    minmax(140px, 0.9fr)
-    minmax(140px, 0.9fr)
-    minmax(200px, 1.4fr);
-  gap: 12px;
-}
+      .filter-grid {
+        display: grid;
+        grid-template-columns:
+          minmax(140px, 1fr)
+          minmax(140px, 1fr)
+          minmax(130px, 0.8fr)
+          minmax(140px, 0.9fr)
+          minmax(140px, 0.9fr)
+          minmax(200px, 1.4fr);
+        gap: 12px;
+      }
 
       .field {
         display: flex;
@@ -978,6 +978,112 @@
           grid-template-columns: 1fr;
         }
       }
+
+      /* =====================================
+   ADMIN ACCOUNT TABLE
+===================================== */
+
+      .admin-account-table-wrap {
+        width: 100%;
+        overflow-x: auto;
+        margin-top: 12px;
+      }
+
+      .admin-account-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 760px;
+      }
+
+      .admin-account-table th {
+        text-align: left;
+        padding: 14px 16px;
+        background: var(--primary);
+        color: var(--bg);
+        font-weight: 800;
+        white-space: nowrap;
+      }
+
+      .admin-account-table td {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border-color, #ddd);
+        vertical-align: middle;
+      }
+
+      .admin-account-table tbody tr:hover {
+        background: var(--primary-soft);
+      }
+
+      .admin-account-name {
+        font-weight: 700;
+      }
+
+      .admin-account-current {
+        color: var(--muted);
+        font-size: 12px;
+        margin-left: 5px;
+      }
+
+      .admin-account-role {
+        font-weight: 700;
+      }
+
+      .admin-account-status {
+        font-weight: 700;
+      }
+
+      .admin-account-action-btn {
+        width: 38px;
+        height: 38px;
+        padding: 0;
+        border: 0;
+        border-radius: 10px;
+        background: var(--primary-soft);
+        cursor: pointer;
+        font-size: 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .admin-account-action-btn:hover {
+        background: var(--primary);
+      }
+
+      .admin-account-action-panel {
+        display: none;
+        padding: 16px;
+        background: var(--primary-soft);
+        border-bottom: 1px solid var(--border-color, #ddd);
+      }
+
+      .admin-account-action-panel.open {
+        display: table-cell;
+      }
+
+      .admin-account-action-inner {
+        display: grid;
+        grid-template-columns: minmax(140px, 220px) minmax(180px, 1fr) auto;
+        gap: 12px;
+        align-items: end;
+      }
+
+      .admin-account-action-inner .field {
+        margin-bottom: 0;
+      }
+
+      .admin-account-action-inner label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      @media (max-width: 760px) {
+        .admin-account-action-inner {
+          grid-template-columns: 1fr;
+        }
+      }
       #appStartupScreen {
         position: fixed;
         inset: 0;
@@ -1016,44 +1122,44 @@
         opacity: 0.7;
       }
 
-    .kpi-split {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 12px;
-}
+      .kpi-split {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 12px;
+      }
 
-.kpi-source-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-}
+      .kpi-source-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+      }
 
-.kpi-source-label {
-  color: var(--muted);
-  font-size: 12px;
-  white-space: nowrap;
-}
+      .kpi-source-label {
+        color: var(--muted);
+        font-size: 12px;
+        white-space: nowrap;
+      }
 
-.kpi-source-row .kpi-value {
-  font-size: 17px;
-  text-align: right;
-  overflow-wrap: anywhere;
-}
+      .kpi-source-row .kpi-value {
+        font-size: 17px;
+        text-align: right;
+        overflow-wrap: anywhere;
+      }
 
-.kpi-total-value {
-  font-size: 23px;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  overflow-wrap: anywhere;
-}
+      .kpi-total-value {
+        font-size: 23px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        overflow-wrap: anywhere;
+      }
 
-.kpi-divider {
-  border: 0;
-  border-top: 1px solid var(--border);
-  margin: 12px 0;
-}
+      .kpi-divider {
+        border: 0;
+        border-top: 1px solid var(--border);
+        margin: 12px 0;
+      }
     </style>
   </head>
 
@@ -1110,106 +1216,85 @@
           >
             👤 Account
           </button>
-<button
-  class="theme-btn"
-  id="adminNotificationBtn"
-  onclick="toggleAdminNotifications()"
-  style="
-    margin-bottom: 8px;
-    display: none;
-    position: relative;
-  "
->
-  🔔 Thông báo
-  <span
-    id="adminNotificationBadge"
-    style="
-      display: none;
-      position: absolute;
-      top: 6px;
-      right: 8px;
-      min-width: 18px;
-      height: 18px;
-      padding: 0 5px;
-      border-radius: 999px;
-      background: #ef4444;
-      color: white;
-      font-size: 11px;
-      font-weight: 700;
-      line-height: 18px;
-      text-align: center;
-    "
-  >
-    0
-  </span>
-</button>
+          <button
+            class="theme-btn"
+            id="adminNotificationBtn"
+            onclick="toggleAdminNotifications()"
+            style="margin-bottom: 8px; display: none; position: relative"
+          >
+            🔔 Thông báo
+            <span
+              id="adminNotificationBadge"
+              style="
+                display: none;
+                position: absolute;
+                top: 6px;
+                right: 8px;
+                min-width: 18px;
+                height: 18px;
+                padding: 0 5px;
+                border-radius: 999px;
+                background: #ef4444;
+                color: white;
+                font-size: 11px;
+                font-weight: 700;
+                line-height: 18px;
+                text-align: center;
+              "
+            >
+              0
+            </span>
+          </button>
           <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">
             🌙 Dark mode
           </button>
         </div>
         <div
-  id="adminNotificationPanel"
-  style="
-    display: none;
-    position: fixed;
-    left: 220px;
-    bottom: 70px;
-    width: min(380px, calc(100vw - 240px));
-    max-height: 500px;
-    overflow-y: auto;
-    z-index: 9999;
-    background: var(--card);
-    border: 1px solid var(--border-color, #ddd);
-    border-radius: 14px;
-    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
-    padding: 16px;
-  "
->
-  <div
-    style="
-      margin-bottom: 12px;
-    "
-  >
-    <div style="font-size: 17px; font-weight: 700;">
-      🔔 Thông báo
-    </div>
+          id="adminNotificationPanel"
+          style="
+            display: none;
+            position: fixed;
+            left: 220px;
+            bottom: 70px;
+            width: min(380px, calc(100vw - 240px));
+            max-height: 500px;
+            overflow-y: auto;
+            z-index: 9999;
+            background: var(--card);
+            border: 1px solid var(--border-color, #ddd);
+            border-radius: 14px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+            padding: 16px;
+          "
+        >
+          <div style="margin-bottom: 12px">
+            <div style="font-size: 17px; font-weight: 700">🔔 Thông báo</div>
 
-    
-<div style="
-  display: flex;
-  gap: 8px;
-  margin: 10px 0;
-">
-  <button
-    class="theme-btn"
-    onclick="markAllAdminNotificationsRead()"
-    style="flex: 1;"
-  >
-    ✓ Đọc tất cả
-  </button>
+            <div style="display: flex; gap: 8px; margin: 10px 0">
+              <button
+                class="theme-btn"
+                onclick="markAllAdminNotificationsRead()"
+                style="flex: 1"
+              >
+                ✓ Đọc tất cả
+              </button>
 
-  <button
-    class="theme-btn"
-    onclick="deleteAllAdminNotifications()"
-    style="
-      flex: 1;
-      color: #ef4444;
-    "
-  >
-    🗑️ Xóa tất cả
-  </button>
-</div>
+              <button
+                class="theme-btn"
+                onclick="deleteAllAdminNotifications()"
+                style="flex: 1; color: #ef4444"
+              >
+                🗑️ Xóa tất cả
+              </button>
+            </div>
 
-<div id="adminNotificationList"></div>
+            <div id="adminNotificationList"></div>
+          </div>
 
-  </div>
-
-  <div id="adminNotificationList">
-    <div class="empty-state">
-      Chưa có thông báo.
-    </div>
-  </div>
-</div>
+          <div id="adminNotificationList">
+            <div class="empty-state">Chưa có thông báo.</div>
+          </div>
+        </div>
       </aside>
 
       <main class="main">
@@ -1224,105 +1309,106 @@
             </button>
           </div>
 
-       <div class="kpi-grid">
+          <div class="kpi-grid">
+            <!-- SỐ DƯ -->
+            <div class="card kpi">
+              <div class="kpi-label">Số dư</div>
 
-  <!-- SỐ DƯ -->
-  <div class="card kpi">
-    <div class="kpi-label">Số dư</div>
+              <div
+                id="balanceTotalValue"
+                class="kpi-total-value balance-positive"
+              >
+                0 ₫
+              </div>
 
-    <div id="balanceTotalValue"
-         class="kpi-total-value balance-positive">
-      0 ₫
-    </div>
+              <hr class="kpi-divider" />
 
-    <hr class="kpi-divider">
+              <div class="kpi-split">
+                <div class="kpi-source-row">
+                  <span class="kpi-source-label">💵 Tiền mặt</span>
+                  <div id="balanceCashValue" class="kpi-value">0 ₫</div>
+                </div>
 
-    <div class="kpi-split">
-      <div class="kpi-source-row">
-        <span class="kpi-source-label">💵 Tiền mặt</span>
-        <div id="balanceCashValue" class="kpi-value">0 ₫</div>
-      </div>
+                <div class="kpi-source-row">
+                  <span class="kpi-source-label">🏦 Ngân hàng</span>
+                  <div id="balanceBankValue" class="kpi-value">0 ₫</div>
+                </div>
+              </div>
+            </div>
 
-      <div class="kpi-source-row">
-        <span class="kpi-source-label">🏦 Ngân hàng</span>
-        <div id="balanceBankValue" class="kpi-value">0 ₫</div>
-      </div>
-    </div>
-  </div>
+            <!-- TỔNG THU -->
+            <div class="card kpi">
+              <div class="kpi-label">Tổng thu</div>
 
-  <!-- TỔNG THU -->
-  <div class="card kpi">
-    <div class="kpi-label">Tổng thu</div>
+              <div id="incomeTotalValue" class="kpi-total-value income">
+                0 ₫
+              </div>
 
-    <div id="incomeTotalValue"
-         class="kpi-total-value income">
-      0 ₫
-    </div>
+              <hr class="kpi-divider" />
 
-    <hr class="kpi-divider">
+              <div class="kpi-split">
+                <div class="kpi-source-row">
+                  <span class="kpi-source-label">💵 Tiền mặt</span>
+                  <div id="incomeCashValue" class="kpi-value income">0 ₫</div>
+                </div>
 
-    <div class="kpi-split">
-      <div class="kpi-source-row">
-        <span class="kpi-source-label">💵 Tiền mặt</span>
-        <div id="incomeCashValue" class="kpi-value income">0 ₫</div>
-      </div>
+                <div class="kpi-source-row">
+                  <span class="kpi-source-label">🏦 Ngân hàng</span>
+                  <div id="incomeBankValue" class="kpi-value income">0 ₫</div>
+                </div>
+              </div>
+            </div>
 
-      <div class="kpi-source-row">
-        <span class="kpi-source-label">🏦 Ngân hàng</span>
-        <div id="incomeBankValue" class="kpi-value income">0 ₫</div>
-      </div>
-    </div>
-  </div>
+            <!-- TỔNG CHI -->
+            <div class="card kpi">
+              <div class="kpi-label">Tổng chi</div>
 
-  <!-- TỔNG CHI -->
-  <div class="card kpi">
-    <div class="kpi-label">Tổng chi</div>
+              <div id="expenseTotalValue" class="kpi-total-value expense">
+                0 ₫
+              </div>
 
-    <div id="expenseTotalValue"
-         class="kpi-total-value expense">
-      0 ₫
-    </div>
+              <hr class="kpi-divider" />
 
-    <hr class="kpi-divider">
+              <div class="kpi-split">
+                <div class="kpi-source-row">
+                  <span class="kpi-source-label">💵 Tiền mặt</span>
+                  <div id="expenseCashValue" class="kpi-value expense">0 ₫</div>
+                </div>
 
-    <div class="kpi-split">
-      <div class="kpi-source-row">
-        <span class="kpi-source-label">💵 Tiền mặt</span>
-        <div id="expenseCashValue" class="kpi-value expense">0 ₫</div>
-      </div>
+                <div class="kpi-source-row">
+                  <span class="kpi-source-label">🏦 Ngân hàng</span>
+                  <div id="expenseBankValue" class="kpi-value expense">0 ₫</div>
+                </div>
+              </div>
+            </div>
 
-      <div class="kpi-source-row">
-        <span class="kpi-source-label">🏦 Ngân hàng</span>
-        <div id="expenseBankValue" class="kpi-value expense">0 ₫</div>
-      </div>
-    </div>
-  </div>
+            <!-- CHI THÁNG NÀY -->
+            <div class="card kpi">
+              <div class="kpi-label">Chi tháng này</div>
 
-  <!-- CHI THÁNG NÀY -->
-  <div class="card kpi">
-    <div class="kpi-label">Chi tháng này</div>
+              <div id="monthExpenseTotalValue" class="kpi-total-value expense">
+                0 ₫
+              </div>
 
-    <div id="monthExpenseTotalValue"
-         class="kpi-total-value expense">
-      0 ₫
-    </div>
+              <hr class="kpi-divider" />
 
-    <hr class="kpi-divider">
+              <div class="kpi-split">
+                <div class="kpi-source-row">
+                  <span class="kpi-source-label">💵 Tiền mặt</span>
+                  <div id="monthExpenseCashValue" class="kpi-value expense">
+                    0 ₫
+                  </div>
+                </div>
 
-    <div class="kpi-split">
-      <div class="kpi-source-row">
-        <span class="kpi-source-label">💵 Tiền mặt</span>
-        <div id="monthExpenseCashValue" class="kpi-value expense">0 ₫</div>
-      </div>
-
-      <div class="kpi-source-row">
-        <span class="kpi-source-label">🏦 Ngân hàng</span>
-        <div id="monthExpenseBankValue" class="kpi-value expense">0 ₫</div>
-      </div>
-    </div>
-  </div>
-
-</div>
+                <div class="kpi-source-row">
+                  <span class="kpi-source-label">🏦 Ngân hàng</span>
+                  <div id="monthExpenseBankValue" class="kpi-value expense">
+                    0 ₫
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div class="dashboard-grid">
             <div class="card panel">
@@ -1338,33 +1424,36 @@
             </div>
 
             <div class="card panel">
-  <div class="panel-header">
-    <div>
-      <div class="panel-title">Chi theo nhóm</div>
-      <div class="panel-subtitle">Tháng hiện tại</div>
-    </div>
-  </div>
+              <div class="panel-header">
+                <div>
+                  <div class="panel-title">Chi theo nhóm</div>
+                  <div class="panel-subtitle">Tháng hiện tại</div>
+                </div>
+              </div>
 
-  <div id="categoryList" class="category-list"></div>
+              <div id="categoryList" class="category-list"></div>
 
-  <div
-    style="
-      margin-top: 20px;
-      padding-top: 18px;
-      border-top: 1px solid var(--border);
-    "
-  >
-    <div class="panel-title" style="font-size: 14px">
-      💳 Chi theo nguồn tiền
-    </div>
+              <div
+                style="
+                  margin-top: 20px;
+                  padding-top: 18px;
+                  border-top: 1px solid var(--border);
+                "
+              >
+                <div class="panel-title" style="font-size: 14px">
+                  💳 Chi theo nguồn tiền
+                </div>
 
-    <div class="panel-subtitle" style="margin-top: 4px; margin-bottom: 14px">
-      Tháng hiện tại
-    </div>
+                <div
+                  class="panel-subtitle"
+                  style="margin-top: 4px; margin-bottom: 14px"
+                >
+                  Tháng hiện tại
+                </div>
 
-    <div id="sourceList" class="category-list"></div>
-  </div>
-</div>
+                <div id="sourceList" class="category-list"></div>
+              </div>
+            </div>
           </div>
 
           <div class="card panel">
@@ -1421,16 +1510,17 @@
                   <option value="Tiền điện">⚡ Tiền điện</option>
                   <option value="Ăn uống">🍜 Ăn uống</option>
                   <option value="Mua sắm">🛍️ Mua sắm</option>
+                  <option value="Khác">📦 Khác</option>
                 </select>
               </div>
               <div class="field">
-  <label for="filterSource">Nguồn tiền</label>
-  <select id="filterSource">
-    <option value="all">Tất cả nguồn tiền</option>
-    <option value="cash">💵 Tiền mặt</option>
-    <option value="bank">🏦 Ngân hàng</option>
-  </select>
-</div>
+                <label for="filterSource">Nguồn tiền</label>
+                <select id="filterSource">
+                  <option value="all">Tất cả nguồn tiền</option>
+                  <option value="cash">💵 Tiền mặt</option>
+                  <option value="bank">🏦 Ngân hàng</option>
+                </select>
+              </div>
               <div class="field">
                 <label for="filterSearch">Tìm kiếm</label>
                 <input
@@ -1459,14 +1549,14 @@
               <table>
                 <thead>
                   <tr>
-  <th>Ngày</th>
-  <th>Loại</th>
-  <th>Category</th>
-  <th>Nguồn tiền</th>
-  <th>Note</th>
-  <th>Số tiền</th>
-  <th>Actions</th>
-</tr>
+                    <th>Ngày</th>
+                    <th>Loại</th>
+                    <th>Category</th>
+                    <th>Nguồn tiền</th>
+                    <th>Note</th>
+                    <th>Số tiền</th>
+                    <th>Actions</th>
+                  </tr>
                 </thead>
                 <tbody id="transactionTableBody"></tbody>
               </table>
@@ -1582,15 +1672,7 @@
                 style="white-space: pre-wrap; margin-top: 10px"
               ></div>
 
-              <div
-                id="adminAccountList"
-                style="
-                  display: flex;
-                  flex-direction: column;
-                  gap: 12px;
-                  margin-top: 12px;
-                "
-              ></div>
+              <div id="adminAccountList"></div>
             </div>
 
             <div class="card settings-card">
@@ -1752,23 +1834,23 @@
           </div>
 
           <div class="field">
-  <label for="transactionAmount">Số tiền</label>
-  <input
-    type="number"
-    id="transactionAmount"
-    placeholder="Ví dụ: 500000"
-    min="0"
-    step="1000"
-  />
-</div>
+            <label for="transactionAmount">Số tiền</label>
+            <input
+              type="number"
+              id="transactionAmount"
+              placeholder="Ví dụ: 500000"
+              min="0"
+              step="1000"
+            />
+          </div>
 
-<div id="sourceField" class="field">
-  <label for="transactionSource">Nguồn tiền</label>
-  <select id="transactionSource">
-    <option value="cash">💵 Tiền mặt</option>
-    <option value="bank">🏦 Ngân hàng</option>
-  </select>
-</div>
+          <div id="sourceField" class="field">
+            <label for="transactionSource">Nguồn tiền</label>
+            <select id="transactionSource">
+              <option value="cash">💵 Tiền mặt</option>
+              <option value="bank">🏦 Ngân hàng</option>
+            </select>
+          </div>
 
           <div id="categoryField" class="field">
             <label for="transactionCategory">Category</label>
@@ -1777,8 +1859,7 @@
               <option value="Tiền điện">⚡ Tiền điện</option>
               <option value="Ăn uống">🍜 Ăn uống</option>
               <option value="Mua sắm">🛍️ Mua sắm</option>
-                <option value="Khác">📦 Khác</option>
-
+              <option value="Khác">📦 Khác</option>
             </select>
           </div>
 
@@ -1987,13 +2068,13 @@
 
       const SELECTED_ACCOUNT_KEY = "money_log_selected_account";
       const LOCK_EXPIRY_KEY = "money_log_app_lock_expiry";
-let unsubscribeTransactions = null;
-let unsubscribeAdminNotifications = null;
-let adminNotifications = [];
+      let unsubscribeTransactions = null;
+      let unsubscribeAdminNotifications = null;
+      let adminNotifications = [];
 
-let isSettingUpPassword = false;
-let lockExpiry = 0;
-let lockTimer = null;
+      let isSettingUpPassword = false;
+      let lockExpiry = 0;
+      let lockTimer = null;
 
       let lockConfigExists = false;
       let lockPasswordHash = null;
@@ -2247,62 +2328,204 @@ let lockTimer = null;
 
           message.textContent = "";
 
-          list.innerHTML = accounts
-            .map((account) => {
-              const id = escapeHtml(account.id);
-              const name = escapeHtml(account.name || "Unnamed Account");
-              const role = account.role === "admin" ? "admin" : "user";
-              const isCurrent = account.id === currentAccountId;
+          const formatAccountDate = (timestamp) => {
+            if (!timestamp?.toDate) return "-";
 
-              return `
-        <div
-          data-admin-account-row="${id}"
-          style="
-            border: 1px solid var(--border-color, #ddd);
-            border-radius: 10px;
-            padding: 14px;
-          "
-        >
-          <div style="font-weight: 600; margin-bottom: 8px;">
-            👤 ${name}${isCurrent ? " (Account hiện tại)" : ""}
-          </div>
+            return timestamp.toDate().toLocaleDateString("vi-VN");
+          };
 
-          <div class="field">
-            <label>Role</label>
-            <select data-account-role="${id}">
-              <option value="user" ${role === "user" ? "selected" : ""}>
-                User
-              </option>
-              <option value="admin" ${role === "admin" ? "selected" : ""}>
-                Admin
-              </option>
-            </select>
-          </div>
+          list.innerHTML = `
+      <div class="admin-account-table-wrap">
+        <table class="admin-account-table">
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Last Login</th>
+              <th>Action</th>
+            </tr>
+          </thead>
 
-          <div class="field">
-            <label>Mật khẩu App Lock mới</label>
-            <input
-              type="password"
-              data-reset-password-for="${id}"
-              placeholder="Nhập mật khẩu mới (ít nhất 4 ký tự)"
-              minlength="4"
-              autocomplete="new-password"
-            />
-          </div>
+          <tbody>
+            ${accounts
+              .map((account) => {
+                const id = escapeHtml(account.id);
+                const name = escapeHtml(account.name || "Unnamed Account");
 
-          <button
-            type="button"
-            class="secondary-btn"
-            data-reset-account="${id}"
-          >
-            🔑 Đặt lại App Lock
-          </button>
-        </div>
-      `;
-            })
-            .join("");
+                const role = account.role === "admin" ? "admin" : "user";
 
-          // Đổi role
+                const roleText = role === "admin" ? "Admin" : "User";
+
+                const isCurrent = account.id === currentAccountId;
+
+                const createdDate = formatAccountDate(account.createdAt);
+
+                // Hiện tại app chưa lưu lastLoginAt,
+                // nên tạm thời hiển thị "-"
+                const lastLogin = formatAccountDate(account.lastLoginAt);
+
+                return `
+                  <tr data-admin-account-row="${id}">
+                    <td>
+                      <div class="admin-account-name">
+                        ${name}
+                        ${
+                          isCurrent
+                            ? `<span class="admin-account-current">
+                                (Current)
+                              </span>`
+                            : ""
+                        }
+                      </div>
+                    </td>
+
+                    <td>
+                      <span class="admin-account-role">
+                        ${roleText}
+                      </span>
+                    </td>
+
+                    <td>
+                      <span class="admin-account-status">
+                        active
+                      </span>
+                    </td>
+
+                    <td>
+                      ${createdDate}
+                    </td>
+
+                    <td>
+                      ${lastLogin}
+                    </td>
+
+                    <td>
+                      <button
+                        type="button"
+                        class="admin-account-action-btn"
+                        data-account-action="${id}"
+                        title="Quản lý Account"
+                      >
+                        ⚙️
+                      </button>
+                    </td>
+                  </tr>
+
+                  <tr
+                    data-admin-action-row="${id}"
+                    style="display: none;"
+                  >
+                    <td colspan="6">
+                      <div
+                        class="admin-account-action-panel"
+                        data-action-panel="${id}"
+                      >
+                        <div class="admin-account-action-inner">
+
+                          <div class="field">
+                            <label>Role</label>
+
+                            <select
+                              data-account-role="${id}"
+                            >
+                              <option
+                                value="user"
+                                ${role === "user" ? "selected" : ""}
+                              >
+                                User
+                              </option>
+
+                              <option
+                                value="admin"
+                                ${role === "admin" ? "selected" : ""}
+                              >
+                                Admin
+                              </option>
+                            </select>
+                          </div>
+
+                          <div class="field">
+                            <label>
+                              Mật khẩu App Lock mới
+                            </label>
+
+                            <input
+                              type="password"
+                              data-reset-password-for="${id}"
+                              placeholder="Nhập mật khẩu mới (ít nhất 4 ký tự)"
+                              minlength="4"
+                              autocomplete="new-password"
+                            />
+                          </div>
+
+                          <button
+                            type="button"
+                            class="secondary-btn"
+                            data-reset-account="${id}"
+                          >
+                            🔑 Đặt lại App Lock
+                          </button>
+
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                `;
+              })
+              .join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+
+          // =====================================
+          // TOGGLE ACTION PANEL
+          // =====================================
+
+          list.querySelectorAll("[data-account-action]").forEach((button) => {
+            button.addEventListener("click", () => {
+              const accountId = button.dataset.accountAction;
+
+              const row = list.querySelector(
+                `[data-admin-action-row="${accountId}"]`,
+              );
+
+              if (!row) return;
+
+              const panel = row.querySelector(
+                `[data-action-panel="${accountId}"]`,
+              );
+
+              if (!panel) return;
+
+              const isOpen = row.style.display === "table-row";
+
+              // Đóng tất cả các panel khác
+              list
+                .querySelectorAll("[data-admin-action-row]")
+                .forEach((item) => {
+                  item.style.display = "none";
+
+                  const itemPanel = item.querySelector("[data-action-panel]");
+
+                  if (itemPanel) {
+                    itemPanel.style.display = "none";
+                  }
+                });
+
+              // Nếu đang đóng → mở
+              if (!isOpen) {
+                row.style.display = "table-row";
+                panel.style.display = "block";
+              }
+            });
+          });
+          // =====================================
+          // ĐỔI ROLE
+          // =====================================
+
           list.querySelectorAll("[data-account-role]").forEach((select) => {
             select.addEventListener("change", async () => {
               await window.updateAccountRole(
@@ -2312,7 +2535,10 @@ let lockTimer = null;
             });
           });
 
-          // Reset App Lock password
+          // =====================================
+          // RESET APP LOCK
+          // =====================================
+
           list.querySelectorAll("[data-reset-account]").forEach((button) => {
             button.addEventListener("click", async () => {
               await window.resetAccountAppLock(button.dataset.resetAccount);
@@ -2320,6 +2546,7 @@ let lockTimer = null;
           });
         } catch (error) {
           console.error("Render admin account settings error:", error);
+
           message.textContent =
             "Không thể tải danh sách Account.\n" +
             (error.message || "Lỗi không xác định.");
@@ -2451,11 +2678,11 @@ let lockTimer = null;
           return;
         }
 
-        const row = document.querySelector(
-          `[data-admin-account-row="${accountId}"]`,
+        const actionRow = document.querySelector(
+          `[data-admin-action-row="${accountId}"]`,
         );
 
-        const passwordInput = row?.querySelector(
+        const passwordInput = actionRow?.querySelector(
           `[data-reset-password-for="${accountId}"]`,
         );
 
@@ -2770,32 +2997,29 @@ let lockTimer = null;
 
         closeModal();
 
-    [
-  "balanceTotalValue",
-  "balanceCashValue",
-  "balanceBankValue",
+        [
+          "balanceTotalValue",
+          "balanceCashValue",
+          "balanceBankValue",
 
-  "incomeTotalValue",
-  "incomeCashValue",
-  "incomeBankValue",
+          "incomeTotalValue",
+          "incomeCashValue",
+          "incomeBankValue",
 
-  "expenseTotalValue",
-  "expenseCashValue",
-  "expenseBankValue",
+          "expenseTotalValue",
+          "expenseCashValue",
+          "expenseBankValue",
 
-  "monthExpenseTotalValue",
-  "monthExpenseCashValue",
-  "monthExpenseBankValue",
+          "monthExpenseTotalValue",
+          "monthExpenseCashValue",
+          "monthExpenseBankValue",
+        ].forEach((id) => {
+          const element = document.getElementById(id);
 
-].forEach((id) => {
-
-  const element = document.getElementById(id);
-
-  if (element) {
-    element.textContent = "—";
-  }
-
-});
+          if (element) {
+            element.textContent = "—";
+          }
+        });
         document.getElementById("categoryList").innerHTML = "";
 
         document.getElementById("recentTransactions").innerHTML = "";
@@ -2894,127 +3118,108 @@ let lockTimer = null;
    ADMIN NOTIFICATIONS
 ===================================== */
 
-function updateAdminNotificationUI() {
-  const button = document.getElementById("adminNotificationBtn");
-  const badge = document.getElementById("adminNotificationBadge");
+      function updateAdminNotificationUI() {
+        const button = document.getElementById("adminNotificationBtn");
+        const badge = document.getElementById("adminNotificationBadge");
 
-  if (!button || !badge) return;
+        if (!button || !badge) return;
 
-  const isAdmin =
-    isAppUnlocked &&
-    currentAccountId &&
-    currentAccountRole === "admin";
+        const isAdmin =
+          isAppUnlocked && currentAccountId && currentAccountRole === "admin";
 
-  button.style.display = isAdmin ? "block" : "none";
+        button.style.display = isAdmin ? "block" : "none";
 
-  if (!isAdmin) {
-    badge.style.display = "none";
-    return;
-  }
+        if (!isAdmin) {
+          badge.style.display = "none";
+          return;
+        }
 
-  const unreadCount = adminNotifications.filter(
-    (item) => item.read !== true
-  ).length;
+        const unreadCount = adminNotifications.filter(
+          (item) => item.read !== true,
+        ).length;
 
-  if (unreadCount > 0) {
-    badge.textContent = unreadCount > 99 ? "99+" : String(unreadCount);
-    badge.style.display = "block";
-  } else {
-    badge.style.display = "none";
-  }
-}
+        if (unreadCount > 0) {
+          badge.textContent = unreadCount > 99 ? "99+" : String(unreadCount);
+          badge.style.display = "block";
+        } else {
+          badge.style.display = "none";
+        }
+      }
 
-/* =====================================
+      /* =====================================
    RENDER ADMIN NOTIFICATIONS
 ===================================== */
 
-function renderAdminNotifications() {
-  const container = document.getElementById(
-    "adminNotificationList"
-  );
+      function renderAdminNotifications() {
+        const container = document.getElementById("adminNotificationList");
 
-  if (!container) return;
+        if (!container) return;
 
-  if (!adminNotifications.length) {
-    container.innerHTML = `
+        if (!adminNotifications.length) {
+          container.innerHTML = `
       <div class="empty-state">
         Không có thông báo mới.
       </div>
     `;
-    return;
-  }
+          return;
+        }
 
-  container.innerHTML = adminNotifications
-    .map((notification) => {
-      const isExpense =
-        notification.transactionType === "expense";
+        container.innerHTML = adminNotifications
+          .map((notification) => {
+            const isExpense = notification.transactionType === "expense";
 
-      const typeText = isExpense ? "Chi" : "Thu";
+            const typeText = isExpense ? "Chi" : "Thu";
 
-      const eventType = notification.type;
+            const eventType = notification.type;
 
-      let actionText = "";
-      let actionIcon = "";
+            let actionText = "";
+            let actionIcon = "";
 
-      if (eventType === "transaction_added") {
-        actionText = "đã thêm";
-        actionIcon = "➕";
-      } else if (eventType === "transaction_edited") {
-        actionText = "đã sửa";
-        actionIcon = "✏️";
-      } else if (eventType === "transaction_deleted") {
-        actionText = "đã xóa";
-        actionIcon = "🗑️";
-      } else {
-        return "";
-      }
+            if (eventType === "transaction_added") {
+              actionText = "đã thêm";
+              actionIcon = "➕";
+            } else if (eventType === "transaction_edited") {
+              actionText = "đã sửa";
+              actionIcon = "✏️";
+            } else if (eventType === "transaction_deleted") {
+              actionText = "đã xóa";
+              actionIcon = "🗑️";
+            } else {
+              return "";
+            }
 
-      const accountName = escapeHtml(
-        notification.accountName || "Account"
-      );
+            const accountName = escapeHtml(
+              notification.accountName || "Account",
+            );
 
-      const categoryOrSource = escapeHtml(
-        notification.category ||
-        notification.source ||
-        "Giao dịch"
-      );
+            const categoryOrSource = escapeHtml(
+              notification.category || notification.source || "Giao dịch",
+            );
 
-      const amount = formatMoney(
-        Number(notification.amount || 0)
-      );
+            const amount = formatMoney(Number(notification.amount || 0));
 
-      const note = notification.note
-        ? escapeHtml(notification.note)
-        : "";
+            const note = notification.note ? escapeHtml(notification.note) : "";
 
-      const unreadStyle =
-        notification.read === true
-          ? ""
-          : "background: rgba(59,130,246,0.08);";
+            const unreadStyle =
+              notification.read === true
+                ? ""
+                : "background: rgba(59,130,246,0.08);";
 
-      // Thông tin trước khi sửa
-      let previousInfo = "";
+            // Thông tin trước khi sửa
+            let previousInfo = "";
 
-      if (
-        eventType === "transaction_edited" &&
-        notification.previous
-      ) {
-        const previous = notification.previous;
+            if (eventType === "transaction_edited" && notification.previous) {
+              const previous = notification.previous;
 
-        const previousType =
-          previous.type === "expense" ? "Chi" : "Thu";
+              const previousType = previous.type === "expense" ? "Chi" : "Thu";
 
-        const previousCategory = escapeHtml(
-          previous.category ||
-          previous.source ||
-          "Giao dịch"
-        );
+              const previousCategory = escapeHtml(
+                previous.category || previous.source || "Giao dịch",
+              );
 
-        const previousAmount = formatMoney(
-          Number(previous.amount || 0)
-        );
+              const previousAmount = formatMoney(Number(previous.amount || 0));
 
-        previousInfo = `
+              previousInfo = `
           <div style="
             margin-top: 8px;
             padding: 8px;
@@ -3031,9 +3236,9 @@ function renderAdminNotifications() {
             </div>
           </div>
         `;
-      }
+            }
 
-      return `
+            return `
         <div
           style="
             padding: 12px;
@@ -3103,276 +3308,230 @@ function renderAdminNotifications() {
           ${previousInfo}
         </div>
       `;
-    })
-    .join("");
-}
+          })
+          .join("");
+      }
 
+      window.toggleAdminNotifications = function () {
+        const panel = document.getElementById("adminNotificationPanel");
 
-window.toggleAdminNotifications = function () {
-  const panel = document.getElementById(
-    "adminNotificationPanel"
-  );
+        if (!panel) return;
 
-  if (!panel) return;
+        const isVisible = panel.style.display !== "none";
 
-  const isVisible = panel.style.display !== "none";
+        panel.style.display = isVisible ? "none" : "block";
 
-  panel.style.display = isVisible ? "none" : "block";
+        if (!isVisible) {
+          renderAdminNotifications();
+        }
+      };
+      // =====================================
+      // CLOSE ADMIN NOTIFICATIONS WHEN CLICK OUTSIDE
+      // =====================================
 
-  if (!isVisible) {
-    renderAdminNotifications();
-  }
-}
-// =====================================
-// CLOSE ADMIN NOTIFICATIONS WHEN CLICK OUTSIDE
-// =====================================
+      document.addEventListener("click", function (event) {
+        const panel = document.getElementById("adminNotificationPanel");
 
-document.addEventListener("click", function (event) {
-  const panel = document.getElementById(
-    "adminNotificationPanel"
-  );
+        const toggleButton = document.getElementById("adminNotificationBtn");
 
-  const toggleButton = document.getElementById(
-    "adminNotificationBtn"
-  );
+        if (!panel) return;
 
-  if (!panel) return;
+        const isVisible = panel.style.display !== "none";
 
-  const isVisible = panel.style.display !== "none";
+        if (!isVisible) return;
 
-  if (!isVisible) return;
+        // Click bên trong panel hoặc nút toggle thì không đóng
+        if (
+          panel.contains(event.target) ||
+          toggleButton?.contains(event.target)
+        ) {
+          return;
+        }
 
-  // Click bên trong panel hoặc nút toggle thì không đóng
-  if (
-    panel.contains(event.target) ||
-    toggleButton?.contains(event.target)
-  ) {
-    return;
-  }
+        // Click bên ngoài thì đóng panel
+        panel.style.display = "none";
+      });
 
-  // Click bên ngoài thì đóng panel
-  panel.style.display = "none";
-});
-
-/* =====================================
+      /* =====================================
    DELETE SINGLE ADMIN NOTIFICATION
 ===================================== */
 
-window.deleteAdminNotification = async function (id) {
-  if (
-    !db ||
-    !isAppUnlocked ||
-    currentAccountRole !== "admin"
-  ) {
-    return;
-  }
+      window.deleteAdminNotification = async function (id) {
+        if (!db || !isAppUnlocked || currentAccountRole !== "admin") {
+          return;
+        }
 
-  const confirmed = await window.showAppDialog({
-    title: "Xóa thông báo?",
-    message: "Bạn có chắc muốn xóa thông báo này không?",
-    type: "danger",
-    confirm: true,
-    confirmText: "Xóa",
-    cancelText: "Hủy",
-  });
+        const confirmed = await window.showAppDialog({
+          title: "Xóa thông báo?",
+          message: "Bạn có chắc muốn xóa thông báo này không?",
+          type: "danger",
+          confirm: true,
+          confirmText: "Xóa",
+          cancelText: "Hủy",
+        });
 
-  if (!confirmed) return;
+        if (!confirmed) return;
 
-  try {
-    await deleteDoc(
-      doc(db, "notifications", id)
-    );
+        try {
+          await deleteDoc(doc(db, "notifications", id));
+        } catch (error) {
+          console.error("Delete notification error:", error);
 
-  } catch (error) {
-    console.error("Delete notification error:", error);
+          await window.showAppDialog({
+            title: "Không thể xóa thông báo",
+            message: error.message || "Lỗi không xác định.",
+            type: "error",
+          });
+        }
+      };
 
-    await window.showAppDialog({
-      title: "Không thể xóa thông báo",
-      message: error.message || "Lỗi không xác định.",
-      type: "error",
-    });
-  }
-};
-
-/* =====================================
+      /* =====================================
    DELETE ALL ADMIN NOTIFICATIONS
 ===================================== */
 
-window.deleteAllAdminNotifications = async function () {
-  if (
-    !db ||
-    !isAppUnlocked ||
-    currentAccountRole !== "admin"
-  ) {
-    return;
-  }
-
-  if (!adminNotifications.length) return;
-
-  const confirmed = await window.showAppDialog({
-    title: "Xóa tất cả thông báo?",
-    message:
-      "Bạn có chắc muốn xóa toàn bộ " +
-      adminNotifications.length +
-      " thông báo không?\n\nThao tác này không thể hoàn tác.",
-    type: "danger",
-    confirm: true,
-    confirmText: "Xóa tất cả",
-    cancelText: "Hủy",
-  });
-
-  if (!confirmed) return;
-
-  try {
-    const batch = writeBatch(db);
-
-    adminNotifications.forEach((notification) => {
-      batch.delete(
-        doc(db, "notifications", notification.id)
-      );
-    });
-
-    await batch.commit();
-
-    await window.showAppDialog({
-      title: "Đã xóa thông báo",
-      message: "Toàn bộ thông báo đã được xóa.",
-      type: "success",
-    });
-
-  } catch (error) {
-    console.error("Delete all notifications error:", error);
-
-    await window.showAppDialog({
-      title: "Không thể xóa thông báo",
-      message: error.message || "Lỗi không xác định.",
-      type: "error",
-    });
-  }
-};
-
-window.markAllAdminNotificationsRead = async function () {
-  if (
-    !db ||
-    !isAppUnlocked ||
-    currentAccountRole !== "admin"
-  ) {
-    return;
-  }
-
-  try {
-    const unread = adminNotifications.filter(
-      (item) => item.read !== true
-    );
-
-    if (!unread.length) return;
-
-    const batch = writeBatch(db);
-
-    unread.forEach((notification) => {
-      batch.update(
-        doc(db, "notifications", notification.id),
-        {
-          read: true,
-          readAt: serverTimestamp(),
+      window.deleteAllAdminNotifications = async function () {
+        if (!db || !isAppUnlocked || currentAccountRole !== "admin") {
+          return;
         }
-      );
-    });
 
-    await batch.commit();
+        if (!adminNotifications.length) return;
 
-  } catch (error) {
-    console.error(
-      "Mark notifications read error:",
-      error
-    );
-  }
-};
+        const confirmed = await window.showAppDialog({
+          title: "Xóa tất cả thông báo?",
+          message:
+            "Bạn có chắc muốn xóa toàn bộ " +
+            adminNotifications.length +
+            " thông báo không?\n\nThao tác này không thể hoàn tác.",
+          type: "danger",
+          confirm: true,
+          confirmText: "Xóa tất cả",
+          cancelText: "Hủy",
+        });
 
-function stopAdminNotificationListener() {
-  if (unsubscribeAdminNotifications) {
-    unsubscribeAdminNotifications();
-    unsubscribeAdminNotifications = null;
-  }
+        if (!confirmed) return;
 
-  adminNotifications = [];
-  updateAdminNotificationUI();
-  renderAdminNotifications();
+        try {
+          const batch = writeBatch(db);
 
-  const panel = document.getElementById(
-    "adminNotificationPanel"
-  );
+          adminNotifications.forEach((notification) => {
+            batch.delete(doc(db, "notifications", notification.id));
+          });
 
-  if (panel) {
-    panel.style.display = "none";
-  }
-}
+          await batch.commit();
 
-/* =====================================
+          await window.showAppDialog({
+            title: "Đã xóa thông báo",
+            message: "Toàn bộ thông báo đã được xóa.",
+            type: "success",
+          });
+        } catch (error) {
+          console.error("Delete all notifications error:", error);
+
+          await window.showAppDialog({
+            title: "Không thể xóa thông báo",
+            message: error.message || "Lỗi không xác định.",
+            type: "error",
+          });
+        }
+      };
+
+      window.markAllAdminNotificationsRead = async function () {
+        if (!db || !isAppUnlocked || currentAccountRole !== "admin") {
+          return;
+        }
+
+        try {
+          const unread = adminNotifications.filter(
+            (item) => item.read !== true,
+          );
+
+          if (!unread.length) return;
+
+          const batch = writeBatch(db);
+
+          unread.forEach((notification) => {
+            batch.update(doc(db, "notifications", notification.id), {
+              read: true,
+              readAt: serverTimestamp(),
+            });
+          });
+
+          await batch.commit();
+        } catch (error) {
+          console.error("Mark notifications read error:", error);
+        }
+      };
+
+      function stopAdminNotificationListener() {
+        if (unsubscribeAdminNotifications) {
+          unsubscribeAdminNotifications();
+          unsubscribeAdminNotifications = null;
+        }
+
+        adminNotifications = [];
+        updateAdminNotificationUI();
+        renderAdminNotifications();
+
+        const panel = document.getElementById("adminNotificationPanel");
+
+        if (panel) {
+          panel.style.display = "none";
+        }
+      }
+
+      /* =====================================
    START ADMIN NOTIFICATION LISTENER
 ===================================== */
 
-function startAdminNotificationListener() {
-  if (
-    !db ||
-    !isAppUnlocked ||
-    !currentAccountId ||
-    currentAccountRole !== "admin" ||
-    unsubscribeAdminNotifications
-  ) {
-    updateAdminNotificationUI();
-    return;
-  }
+      function startAdminNotificationListener() {
+        if (
+          !db ||
+          !isAppUnlocked ||
+          !currentAccountId ||
+          currentAccountRole !== "admin" ||
+          unsubscribeAdminNotifications
+        ) {
+          updateAdminNotificationUI();
+          return;
+        }
 
-  const notificationsRef = collection(
-    db,
-    "notifications"
-  );
+        const notificationsRef = collection(db, "notifications");
 
-  unsubscribeAdminNotifications = onSnapshot(
-    notificationsRef,
-    (snapshot) => {
-      if (
-        !isAppUnlocked ||
-        currentAccountRole !== "admin"
-      ) {
-        return;
+        unsubscribeAdminNotifications = onSnapshot(
+          notificationsRef,
+          (snapshot) => {
+            if (!isAppUnlocked || currentAccountRole !== "admin") {
+              return;
+            }
+
+            adminNotifications = snapshot.docs
+              .map((item) => ({
+                id: item.id,
+                ...item.data(),
+              }))
+              .filter((item) =>
+                [
+                  "transaction_added",
+                  "transaction_edited",
+                  "transaction_deleted",
+                ].includes(item.type),
+              )
+              .sort((a, b) => {
+                const aTime = a.createdAt?.toMillis?.() || 0;
+
+                const bTime = b.createdAt?.toMillis?.() || 0;
+
+                return bTime - aTime;
+              });
+
+            renderAdminNotifications();
+            updateAdminNotificationUI();
+          },
+          (error) => {
+            console.error("Admin notification listener error:", error);
+          },
+        );
       }
-
-      adminNotifications = snapshot.docs
-        .map((item) => ({
-          id: item.id,
-          ...item.data(),
-        }))
-        .filter((item) =>
-          [
-            "transaction_added",
-            "transaction_edited",
-            "transaction_deleted",
-          ].includes(item.type)
-        )
-        .sort((a, b) => {
-          const aTime =
-            a.createdAt?.toMillis?.() || 0;
-
-          const bTime =
-            b.createdAt?.toMillis?.() || 0;
-
-          return bTime - aTime;
-        });
-
-      renderAdminNotifications();
-      updateAdminNotificationUI();
-    },
-    (error) => {
-      console.error(
-        "Admin notification listener error:",
-        error
-      );
-    }
-  );
-}
-
 
       /* =====================================
    REALTIME LISTENER
@@ -3472,10 +3631,19 @@ function startAdminNotificationListener() {
               return;
             }
           }
-
           isAppUnlocked = true;
+
+          // =====================================
+          // UPDATE LAST LOGIN
+          // =====================================
+
+          await updateDoc(doc(db, "accounts", currentAccountId), {
+            lastLoginAt: serverTimestamp(),
+          });
+
           // Refresh Admin Account Management after successful unlock
           void renderAdminAccountSettings();
+
           lockExpiry = Date.now() + LOCK_DURATION_MS;
 
           localStorage.setItem(LOCK_EXPIRY_KEY, String(lockExpiry));
@@ -3486,8 +3654,8 @@ function startAdminNotificationListener() {
 
           startLockCountdown();
 
-         await startRealtimeListener();
-startAdminNotificationListener();
+          await startRealtimeListener();
+          startAdminNotificationListener();
         } catch (error) {
           console.error("App Lock error:", error);
 
@@ -3515,9 +3683,9 @@ startAdminNotificationListener();
         localStorage.removeItem(LOCK_EXPIRY_KEY);
         localStorage.removeItem(SELECTED_ACCOUNT_KEY);
 
-       stopRealtimeListener();
-stopAdminNotificationListener();
-clearSensitiveUI();
+        stopRealtimeListener();
+        stopAdminNotificationListener();
+        clearSensitiveUI();
 
         // Xóa Account hiện tại để lần mở tiếp theo
         // phải chọn Account lại.
@@ -3703,8 +3871,8 @@ clearSensitiveUI();
 
               updateCurrentAccountButton();
               startLockCountdown();
-await startRealtimeListener();
-startAdminNotificationListener();
+              await startRealtimeListener();
+              startAdminNotificationListener();
               setFirebaseStatus("● Firebase connected", "ok");
 
               return;
@@ -4081,397 +4249,366 @@ startAdminNotificationListener();
         });
       }
 
-
-/* =====================================
+      /* =====================================
    CREATE ADMIN NOTIFICATION
 ===================================== */
 
-async function createAdminTransactionNotification(
-  eventType,
-  transactionId,
-  transaction,
-  previousTransaction = null
-) {
-  // Admin tự thao tác thì không thông báo
-  if (
-    !db ||
-    !currentAccountId ||
-    currentAccountRole === "admin"
-  ) {
-    return;
-  }
-
-  try {
-    await addDoc(
-      collection(db, "notifications"),
-      {
-        type: eventType,
-
-        accountId: currentAccountId,
-        accountName: currentAccountName || "Account",
-
+      async function createAdminTransactionNotification(
+        eventType,
         transactionId,
+        transaction,
+        previousTransaction = null,
+      ) {
+        // Admin tự thao tác thì không thông báo
+        if (!db || !currentAccountId || currentAccountRole === "admin") {
+          return;
+        }
 
-        transactionType: transaction.type || "income",
+        try {
+          await addDoc(collection(db, "notifications"), {
+            type: eventType,
 
-        amount: Number(transaction.amount || 0),
+            accountId: currentAccountId,
+            accountName: currentAccountName || "Account",
 
-        category: transaction.category || "",
-        source: transaction.source || "",
-        note: transaction.note || "",
-        date: transaction.date || "",
+            transactionId,
 
-        // Chỉ có dữ liệu này khi sửa giao dịch
-        previous: previousTransaction
-          ? {
-              type: previousTransaction.type || "income",
-              amount: Number(previousTransaction.amount || 0),
-              category: previousTransaction.category || "",
-              source: previousTransaction.source || "",
-              note: previousTransaction.note || "",
-              date: previousTransaction.date || "",
-            }
-          : null,
+            transactionType: transaction.type || "income",
 
-        read: false,
-        createdAt: serverTimestamp(),
+            amount: Number(transaction.amount || 0),
+
+            category: transaction.category || "",
+            source: transaction.source || "",
+            note: transaction.note || "",
+            date: transaction.date || "",
+
+            // Chỉ có dữ liệu này khi sửa giao dịch
+            previous: previousTransaction
+              ? {
+                  type: previousTransaction.type || "income",
+                  amount: Number(previousTransaction.amount || 0),
+                  category: previousTransaction.category || "",
+                  source: previousTransaction.source || "",
+                  note: previousTransaction.note || "",
+                  date: previousTransaction.date || "",
+                }
+              : null,
+
+            read: false,
+            createdAt: serverTimestamp(),
+          });
+        } catch (error) {
+          // Không làm mất trạng thái thành công của giao dịch
+          console.error("Create admin notification error:", error);
+        }
       }
-    );
-  } catch (error) {
-    // Không làm mất trạng thái thành công của giao dịch
-    console.error(
-      "Create admin notification error:",
-      error
-    );
-  }
-}
 
-      
-/* =====================================
+      /* =====================================
    SAVE TRANSACTION
 ===================================== */
 
-window.saveTransaction = async function () {
-  if (!db) {
-    await window.showAppDialog({
-      title: "Chưa kết nối Firebase",
-      message:
-        "Firebase chưa được kết nối. Vui lòng kiểm tra kết nối và thử lại.",
-      type: "error",
-    });
-    return;
-  }
-
-  const date = document.getElementById("transactionDate").value;
-
-  const amountInput = document
-    .getElementById("transactionAmount")
-    .value.trim();
-
-  const amount = parseMoneyInput(amountInput);
-
-  const note = document
-    .getElementById("transactionNote")
-    .value.trim();
-
-const source =
-  document.getElementById("transactionSource").value || "cash";
-
-const category =
-  currentTransactionType === "expense"
-    ? document.getElementById("transactionCategory").value
-    : "";
-
-  if (!date) {
-    await window.showAppDialog({
-      title: "Thiếu ngày giao dịch",
-      message: "Vui lòng chọn ngày cho giao dịch.",
-      type: "warning",
-    });
-    return;
-  }
-
-  if (
-    amountInput === "" ||
-    !Number.isSafeInteger(amount) ||
-    amount <= 0
-  ) {
-    await window.showAppDialog({
-      title: "Số tiền không hợp lệ",
-      message: "Vui lòng nhập số tiền nguyên lớn hơn 0.",
-      type: "warning",
-    });
-    return;
-  }
-
-  const data = {
-  type: currentTransactionType,
-  amount: Math.round(amount),
-  date,
-  category,
-  source,
-  note,
-  updatedAt: serverTimestamp(),
-};
-
-  const saveButton = document.getElementById("saveTransactionBtn");
-
-  saveButton.disabled = true;
-  saveButton.textContent = "Đang lưu...";
-
-  try {
-    if (!currentAccountId || !isAppUnlocked) {
-      await window.showAppDialog({
-        title: "Account đang khóa",
-        message:
-          "Vui lòng mở khóa Account trước khi lưu giao dịch.",
-        type: "warning",
-      });
-
-      return;
-    }
-
-    if (editingId) {
-      // ==============================
-      // EDIT TRANSACTION
-      // ==============================
-
-      const transactionId = editingId;
-
-      // Lấy dữ liệu cũ trước khi cập nhật
-      const previousTransaction = transactions.find(
-        (item) => item.id === transactionId
-      );
-
-      await updateDoc(
-        getAccountTransactionRef(transactionId),
-        data
-      );
-
-      // Thông báo khi User sửa giao dịch
-      await createAdminTransactionNotification(
-        "transaction_edited",
-        transactionId,
-        data,
-        previousTransaction || null
-      );
-
-    } else {
-      // ==============================
-      // ADD TRANSACTION
-      // ==============================
-
-      const transactionRef = await addDoc(
-        getAccountTransactionsRef(),
-        {
-          ...data,
-          createdAt: serverTimestamp(),
+      window.saveTransaction = async function () {
+        if (!db) {
+          await window.showAppDialog({
+            title: "Chưa kết nối Firebase",
+            message:
+              "Firebase chưa được kết nối. Vui lòng kiểm tra kết nối và thử lại.",
+            type: "error",
+          });
+          return;
         }
-      );
 
-      // Thông báo khi User thêm giao dịch
-      await createAdminTransactionNotification(
-        "transaction_added",
-        transactionRef.id,
-        data
-      );
-    }
+        const date = document.getElementById("transactionDate").value;
 
-    closeModal();
+        const amountInput = document
+          .getElementById("transactionAmount")
+          .value.trim();
 
-    await window.showAppDialog({
-      title: "Lưu thành công",
-      message: editingId
-        ? "Giao dịch đã được cập nhật thành công."
-        : "Giao dịch mới đã được lưu thành công.",
-      type: "success",
-    });
+        const amount = parseMoneyInput(amountInput);
 
-  } catch (error) {
-    console.error("Save transaction error:", error);
+        const note = document.getElementById("transactionNote").value.trim();
 
-    await window.showAppDialog({
-      title: "Không thể lưu giao dịch",
-      message:
-        "Đã xảy ra lỗi khi lưu giao dịch.\n\n" +
-        (error.message || "Lỗi không xác định."),
-      type: "error",
-    });
+        const source =
+          document.getElementById("transactionSource").value || "cash";
 
-  } finally {
-    saveButton.disabled = false;
-    saveButton.textContent = "Lưu giao dịch";
-  }
-};
+        const category =
+          currentTransactionType === "expense"
+            ? document.getElementById("transactionCategory").value
+            : "";
 
+        if (!date) {
+          await window.showAppDialog({
+            title: "Thiếu ngày giao dịch",
+            message: "Vui lòng chọn ngày cho giao dịch.",
+            type: "warning",
+          });
+          return;
+        }
 
-    
-/* =====================================
+        if (
+          amountInput === "" ||
+          !Number.isSafeInteger(amount) ||
+          amount <= 0
+        ) {
+          await window.showAppDialog({
+            title: "Số tiền không hợp lệ",
+            message: "Vui lòng nhập số tiền nguyên lớn hơn 0.",
+            type: "warning",
+          });
+          return;
+        }
+
+        const data = {
+          type: currentTransactionType,
+          amount: Math.round(amount),
+          date,
+          category,
+          source,
+          note,
+          updatedAt: serverTimestamp(),
+        };
+
+        const saveButton = document.getElementById("saveTransactionBtn");
+
+        saveButton.disabled = true;
+        saveButton.textContent = "Đang lưu...";
+
+        try {
+          if (!currentAccountId || !isAppUnlocked) {
+            await window.showAppDialog({
+              title: "Account đang khóa",
+              message: "Vui lòng mở khóa Account trước khi lưu giao dịch.",
+              type: "warning",
+            });
+
+            return;
+          }
+
+          if (editingId) {
+            // ==============================
+            // EDIT TRANSACTION
+            // ==============================
+
+            const transactionId = editingId;
+
+            // Lấy dữ liệu cũ trước khi cập nhật
+            const previousTransaction = transactions.find(
+              (item) => item.id === transactionId,
+            );
+
+            await updateDoc(getAccountTransactionRef(transactionId), data);
+
+            // Thông báo khi User sửa giao dịch
+            await createAdminTransactionNotification(
+              "transaction_edited",
+              transactionId,
+              data,
+              previousTransaction || null,
+            );
+          } else {
+            // ==============================
+            // ADD TRANSACTION
+            // ==============================
+
+            const transactionRef = await addDoc(getAccountTransactionsRef(), {
+              ...data,
+              createdAt: serverTimestamp(),
+            });
+
+            // Thông báo khi User thêm giao dịch
+            await createAdminTransactionNotification(
+              "transaction_added",
+              transactionRef.id,
+              data,
+            );
+          }
+
+          closeModal();
+
+          await window.showAppDialog({
+            title: "Lưu thành công",
+            message: editingId
+              ? "Giao dịch đã được cập nhật thành công."
+              : "Giao dịch mới đã được lưu thành công.",
+            type: "success",
+          });
+        } catch (error) {
+          console.error("Save transaction error:", error);
+
+          await window.showAppDialog({
+            title: "Không thể lưu giao dịch",
+            message:
+              "Đã xảy ra lỗi khi lưu giao dịch.\n\n" +
+              (error.message || "Lỗi không xác định."),
+            type: "error",
+          });
+        } finally {
+          saveButton.disabled = false;
+          saveButton.textContent = "Lưu giao dịch";
+        }
+      };
+
+      /* =====================================
    DELETE TRANSACTION
 ===================================== */
 
-window.deleteTransaction = async function (id) {
-  if (!db) {
-    await window.showAppDialog({
-      title: "Chưa kết nối Firebase",
-      message: "Không thể xóa vì Firebase chưa được kết nối.",
-      type: "error",
-    });
-    return;
-  }
+      window.deleteTransaction = async function (id) {
+        if (!db) {
+          await window.showAppDialog({
+            title: "Chưa kết nối Firebase",
+            message: "Không thể xóa vì Firebase chưa được kết nối.",
+            type: "error",
+          });
+          return;
+        }
 
-  if (!currentAccountId || !isAppUnlocked) {
-    await window.showAppDialog({
-      title: "Account đang khóa",
-      message: "Vui lòng mở khóa Account trước khi xóa giao dịch.",
-      type: "warning",
-    });
-    return;
-  }
+        if (!currentAccountId || !isAppUnlocked) {
+          await window.showAppDialog({
+            title: "Account đang khóa",
+            message: "Vui lòng mở khóa Account trước khi xóa giao dịch.",
+            type: "warning",
+          });
+          return;
+        }
 
-  const transaction = transactions.find(
-    (item) => item.id === id
-  );
+        const transaction = transactions.find((item) => item.id === id);
 
-  if (!transaction) {
-    await window.showAppDialog({
-      title: "Không tìm thấy giao dịch",
-      message:
-        "Giao dịch này có thể đã bị xóa hoặc không còn tồn tại.",
-      type: "warning",
-    });
-    return;
-  }
+        if (!transaction) {
+          await window.showAppDialog({
+            title: "Không tìm thấy giao dịch",
+            message: "Giao dịch này có thể đã bị xóa hoặc không còn tồn tại.",
+            type: "warning",
+          });
+          return;
+        }
 
-  const confirmed = await window.showAppDialog({
-    title: "Xóa giao dịch?",
-    message:
-      "Bạn có chắc muốn xóa giao dịch này không?\n\n" +
-      (transaction.note || transaction.category || "Giao dịch") +
-      "\nLoại: " +
-      (transaction.type === "income" ? "Thu" : "Chi") +
-      "\nSố tiền: " +
-      formatMoney(transaction.amount) +
-      "\n\nThao tác này không thể hoàn tác.",
-    type: "danger",
-    confirm: true,
-    confirmText: "Xóa giao dịch",
-    cancelText: "Hủy",
-  });
+        const confirmed = await window.showAppDialog({
+          title: "Xóa giao dịch?",
+          message:
+            "Bạn có chắc muốn xóa giao dịch này không?\n\n" +
+            (transaction.note || transaction.category || "Giao dịch") +
+            "\nLoại: " +
+            (transaction.type === "income" ? "Thu" : "Chi") +
+            "\nSố tiền: " +
+            formatMoney(transaction.amount) +
+            "\n\nThao tác này không thể hoàn tác.",
+          type: "danger",
+          confirm: true,
+          confirmText: "Xóa giao dịch",
+          cancelText: "Hủy",
+        });
 
-  if (!confirmed) return;
+        if (!confirmed) return;
 
-  try {
-    // Xóa giao dịch khỏi Firebase
-    await deleteDoc(getAccountTransactionRef(id));
+        try {
+          // Xóa giao dịch khỏi Firebase
+          await deleteDoc(getAccountTransactionRef(id));
 
-    // Tạo notification cho Admin
-    await createAdminTransactionNotification(
-      "transaction_deleted",
-      id,
-      transaction
-    );
+          // Tạo notification cho Admin
+          await createAdminTransactionNotification(
+            "transaction_deleted",
+            id,
+            transaction,
+          );
 
-    await window.showAppDialog({
-      title: "Đã xóa giao dịch",
-      message: "Giao dịch đã được xóa thành công.",
-      type: "success",
-    });
+          await window.showAppDialog({
+            title: "Đã xóa giao dịch",
+            message: "Giao dịch đã được xóa thành công.",
+            type: "success",
+          });
+        } catch (error) {
+          console.error("Delete error:", error);
 
-  } catch (error) {
-    console.error("Delete error:", error);
-
-    await window.showAppDialog({
-      title: "Không thể xóa giao dịch",
-      message:
-        "Đã xảy ra lỗi khi xóa giao dịch.\n\n" +
-        (error.message || "Lỗi không xác định."),
-      type: "error",
-    });
-  }
-};
-
+          await window.showAppDialog({
+            title: "Không thể xóa giao dịch",
+            message:
+              "Đã xảy ra lỗi khi xóa giao dịch.\n\n" +
+              (error.message || "Lỗi không xác định."),
+            type: "error",
+          });
+        }
+      };
 
       /* =====================================
          EDIT TRANSACTION
       ===================================== */
 
-     window.editTransaction = function (id) {
-  const transaction = transactions.find((item) => item.id === id);
-  if (!transaction) return;
+      window.editTransaction = function (id) {
+        const transaction = transactions.find((item) => item.id === id);
+        if (!transaction) return;
 
-  editingId = id;
-  currentTransactionType = transaction.type || "income";
+        editingId = id;
+        currentTransactionType = transaction.type || "income";
 
-  document.getElementById("modalTitle").textContent = "Sửa giao dịch";
+        document.getElementById("modalTitle").textContent = "Sửa giao dịch";
 
-  // Common fields
-  document.getElementById("transactionDate").value =
-    transaction.date || "";
+        // Common fields
+        document.getElementById("transactionDate").value =
+          transaction.date || "";
 
-  document.getElementById("transactionAmount").value =
-    transaction.amount != null
-      ? formatMoneyInput(transaction.amount)
-      : "";
+        document.getElementById("transactionAmount").value =
+          transaction.amount != null
+            ? formatMoneyInput(transaction.amount)
+            : "";
 
-  document.getElementById("transactionNote").value =
-    transaction.note || "";
+        document.getElementById("transactionNote").value =
+          transaction.note || "";
 
-  // Chỉ load đúng data của type hiện tại
-// Load Source cho cả Thu và Chi
-document.getElementById("transactionSource").value =
-  transaction.source || "cash";
+        // Chỉ load đúng data của type hiện tại
+        // Load Source cho cả Thu và Chi
+        document.getElementById("transactionSource").value =
+          transaction.source || "cash";
 
-// Category chỉ áp dụng cho Chi
-if (currentTransactionType === "expense") {
-  document.getElementById("transactionCategory").value =
-    transaction.category || "Ăn uống";
-}
+        // Category chỉ áp dụng cho Chi
+        if (currentTransactionType === "expense") {
+          document.getElementById("transactionCategory").value =
+            transaction.category || "Ăn uống";
+        }
 
-  // Update UI
-  updateTypeUI();
+        // Update UI
+        updateTypeUI();
 
-  // EDIT MODE:
-  // Chỉ hiện đúng type của giao dịch, không cho đổi Thu/Chi
-  const incomeBtn = document.getElementById("incomeTypeBtn");
-  const expenseBtn = document.getElementById("expenseTypeBtn");
+        // EDIT MODE:
+        // Chỉ hiện đúng type của giao dịch, không cho đổi Thu/Chi
+        const incomeBtn = document.getElementById("incomeTypeBtn");
+        const expenseBtn = document.getElementById("expenseTypeBtn");
 
-  if (currentTransactionType === "income") {
-    incomeBtn.style.display = "block";
-    expenseBtn.style.display = "none";
-  } else {
-    incomeBtn.style.display = "none";
-    expenseBtn.style.display = "block";
-  }
+        if (currentTransactionType === "income") {
+          incomeBtn.style.display = "block";
+          expenseBtn.style.display = "none";
+        } else {
+          incomeBtn.style.display = "none";
+          expenseBtn.style.display = "block";
+        }
 
-  document.getElementById("transactionModal").classList.add("show");
-};
+        document.getElementById("transactionModal").classList.add("show");
+      };
 
       /* =====================================
          OPEN ADD MODAL
       ===================================== */
 
-     window.openAddModal = function () {
-  editingId = null;
-  currentTransactionType = "income";
+      window.openAddModal = function () {
+        editingId = null;
+        currentTransactionType = "income";
 
-  document.getElementById("modalTitle").textContent = "Thêm giao dịch";
+        document.getElementById("modalTitle").textContent = "Thêm giao dịch";
 
-  document.getElementById("transactionDate").value = getToday();
-  document.getElementById("transactionAmount").value = "";
-  document.getElementById("transactionNote").value = "";
-  document.getElementById("transactionCategory").value = "Ăn uống";
-  document.getElementById("transactionSource").value = "cash";
+        document.getElementById("transactionDate").value = getToday();
+        document.getElementById("transactionAmount").value = "";
+        document.getElementById("transactionNote").value = "";
+        document.getElementById("transactionCategory").value = "Ăn uống";
+        document.getElementById("transactionSource").value = "cash";
 
-  // ADD MODE:
-  // Hiện cả Thu và Chi
-  document.getElementById("incomeTypeBtn").style.display = "block";
-  document.getElementById("expenseTypeBtn").style.display = "block";
+        // ADD MODE:
+        // Hiện cả Thu và Chi
+        document.getElementById("incomeTypeBtn").style.display = "block";
+        document.getElementById("expenseTypeBtn").style.display = "block";
 
-  updateTypeUI();
+        updateTypeUI();
 
-  document.getElementById("transactionModal").classList.add("show");
-};
+        document.getElementById("transactionModal").classList.add("show");
+      };
 
       /* =====================================
          CLOSE TRANSACTION MODAL
@@ -4491,37 +4628,37 @@ if (currentTransactionType === "expense") {
         updateTypeUI();
       };
 
-    function updateTypeUI() {
-  const incomeBtn = document.getElementById("incomeTypeBtn");
-  const expenseBtn = document.getElementById("expenseTypeBtn");
+      function updateTypeUI() {
+        const incomeBtn = document.getElementById("incomeTypeBtn");
+        const expenseBtn = document.getElementById("expenseTypeBtn");
 
-  const categoryField = document.getElementById("categoryField");
-  const sourceField = document.getElementById("sourceField");
+        const categoryField = document.getElementById("categoryField");
+        const sourceField = document.getElementById("sourceField");
 
-  incomeBtn.classList.toggle(
-    "active",
-    currentTransactionType === "income"
-  );
+        incomeBtn.classList.toggle(
+          "active",
+          currentTransactionType === "income",
+        );
 
-  expenseBtn.classList.toggle(
-    "active",
-    currentTransactionType === "expense"
-  );
+        expenseBtn.classList.toggle(
+          "active",
+          currentTransactionType === "expense",
+        );
 
-  // =====================================
-  // NGUỒN TIỀN: LUÔN HIỆN CHO CẢ THU VÀ CHI
-  // =====================================
-  sourceField.style.display = "flex";
+        // =====================================
+        // NGUỒN TIỀN: LUÔN HIỆN CHO CẢ THU VÀ CHI
+        // =====================================
+        sourceField.style.display = "flex";
 
-  // =====================================
-  // CATEGORY: CHỈ HIỆN CHO CHI
-  // =====================================
-  if (currentTransactionType === "expense") {
-    categoryField.style.display = "flex";
-  } else {
-    categoryField.style.display = "none";
-  }
-}
+        // =====================================
+        // CATEGORY: CHỈ HIỆN CHO CHI
+        // =====================================
+        if (currentTransactionType === "expense") {
+          categoryField.style.display = "flex";
+        } else {
+          categoryField.style.display = "none";
+        }
+      }
 
       /* =====================================
          PAGE SWITCH
@@ -4561,165 +4698,139 @@ if (currentTransactionType === "expense") {
          DASHBOARD
       ===================================== */
 
-    function renderDashboard() {
+      function renderDashboard() {
+        const currentMonth = getCurrentMonth();
 
-  const currentMonth = getCurrentMonth();
+        // Hàm tính tổng theo nguồn tiền và loại giao dịch
+        function getTransactionTotal(source, type, monthOnly = false) {
+          return transactions
+            .filter((item) => {
+              // Giao dịch cũ chưa có source mặc định là tiền mặt
+              const itemSource = item.source || "cash";
 
-  // Hàm tính tổng theo nguồn tiền và loại giao dịch
-  function getTransactionTotal(source, type, monthOnly = false) {
-    return transactions
-      .filter((item) => {
+              if (itemSource !== source) return false;
 
-        // Giao dịch cũ chưa có source mặc định là tiền mặt
-        const itemSource = item.source || "cash";
+              if (item.type !== type) return false;
 
-        if (itemSource !== source) return false;
+              if (
+                monthOnly &&
+                !String(item.date || "").startsWith(currentMonth)
+              ) {
+                return false;
+              }
 
-        if (item.type !== type) return false;
-
-        if (
-          monthOnly &&
-          !String(item.date || "").startsWith(currentMonth)
-        ) {
-          return false;
+              return true;
+            })
+            .reduce((sum, item) => sum + Number(item.amount || 0), 0);
         }
 
-        return true;
-      })
-      .reduce(
-        (sum, item) => sum + Number(item.amount || 0),
-        0
-      );
-  }
+        // ==============================
+        // TIỀN MẶT
+        // ==============================
 
-  // ==============================
-  // TIỀN MẶT
-  // ==============================
+        const cashIncome = getTransactionTotal("cash", "income");
+        const cashExpense = getTransactionTotal("cash", "expense");
 
-  const cashIncome = getTransactionTotal("cash", "income");
-  const cashExpense = getTransactionTotal("cash", "expense");
+        const cashMonthExpense = getTransactionTotal("cash", "expense", true);
 
-  const cashMonthExpense = getTransactionTotal(
-    "cash",
-    "expense",
-    true
-  );
+        const cashBalance = cashIncome - cashExpense;
 
-  const cashBalance = cashIncome - cashExpense;
+        // ==============================
+        // NGÂN HÀNG
+        // ==============================
 
-  // ==============================
-  // NGÂN HÀNG
-  // ==============================
+        const bankIncome = getTransactionTotal("bank", "income");
+        const bankExpense = getTransactionTotal("bank", "expense");
 
-  const bankIncome = getTransactionTotal("bank", "income");
-  const bankExpense = getTransactionTotal("bank", "expense");
+        const bankMonthExpense = getTransactionTotal("bank", "expense", true);
 
-  const bankMonthExpense = getTransactionTotal(
-    "bank",
-    "expense",
-    true
-  );
+        const bankBalance = bankIncome - bankExpense;
 
-  const bankBalance = bankIncome - bankExpense;
+        // ==============================
+        // TỔNG CỘNG
+        // ==============================
 
-  // ==============================
-  // TỔNG CỘNG
-  // ==============================
+        const totalIncome = cashIncome + bankIncome;
+        const totalExpense = cashExpense + bankExpense;
 
-  const totalIncome = cashIncome + bankIncome;
-  const totalExpense = cashExpense + bankExpense;
+        const totalBalance = cashBalance + bankBalance;
 
-  const totalBalance = cashBalance + bankBalance;
+        const totalMonthExpense = cashMonthExpense + bankMonthExpense;
 
-  const totalMonthExpense =
-    cashMonthExpense + bankMonthExpense;
+        // ==============================
+        // HIỂN THỊ DASHBOARD
+        // ==============================
 
-  // ==============================
-  // HIỂN THỊ DASHBOARD
-  // ==============================
+        const dashboardValues = {
+          // Số dư
+          balanceTotalValue: totalBalance,
+          balanceCashValue: cashBalance,
+          balanceBankValue: bankBalance,
 
-  const dashboardValues = {
+          // Tổng thu
+          incomeTotalValue: totalIncome,
+          incomeCashValue: cashIncome,
+          incomeBankValue: bankIncome,
 
-    // Số dư
-    balanceTotalValue: totalBalance,
-    balanceCashValue: cashBalance,
-    balanceBankValue: bankBalance,
+          // Tổng chi
+          expenseTotalValue: totalExpense,
+          expenseCashValue: cashExpense,
+          expenseBankValue: bankExpense,
 
-    // Tổng thu
-    incomeTotalValue: totalIncome,
-    incomeCashValue: cashIncome,
-    incomeBankValue: bankIncome,
+          // Chi tháng này
+          monthExpenseTotalValue: totalMonthExpense,
+          monthExpenseCashValue: cashMonthExpense,
+          monthExpenseBankValue: bankMonthExpense,
+        };
 
-    // Tổng chi
-    expenseTotalValue: totalExpense,
-    expenseCashValue: cashExpense,
-    expenseBankValue: bankExpense,
+        Object.entries(dashboardValues).forEach(([id, value]) => {
+          const element = document.getElementById(id);
 
-    // Chi tháng này
-    monthExpenseTotalValue: totalMonthExpense,
-    monthExpenseCashValue: cashMonthExpense,
-    monthExpenseBankValue: bankMonthExpense,
+          if (!element) return;
 
-  };
+          element.textContent = formatMoney(value);
+        });
 
-  Object.entries(dashboardValues).forEach(([id, value]) => {
+        // ==============================
+        // MÀU SẮC SỐ DƯ
+        // ==============================
 
-    const element = document.getElementById(id);
+        const balanceElements = [
+          {
+            id: "balanceTotalValue",
+            value: totalBalance,
+          },
+          {
+            id: "balanceCashValue",
+            value: cashBalance,
+          },
+          {
+            id: "balanceBankValue",
+            value: bankBalance,
+          },
+        ];
 
-    if (!element) return;
+        balanceElements.forEach(({ id, value }) => {
+          const element = document.getElementById(id);
 
-    element.textContent = formatMoney(value);
+          if (!element) return;
 
-  });
+          element.classList.remove("balance-positive", "balance-negative");
 
-  // ==============================
-  // MÀU SẮC SỐ DƯ
-  // ==============================
+          element.classList.add(
+            value >= 0 ? "balance-positive" : "balance-negative",
+          );
+        });
 
-  const balanceElements = [
-    {
-      id: "balanceTotalValue",
-      value: totalBalance,
-    },
-    {
-      id: "balanceCashValue",
-      value: cashBalance,
-    },
-    {
-      id: "balanceBankValue",
-      value: bankBalance,
-    },
-  ];
+        // ==============================
+        // CÁC PHẦN DASHBOARD KHÁC
+        // ==============================
 
-  balanceElements.forEach(({ id, value }) => {
-
-    const element = document.getElementById(id);
-
-    if (!element) return;
-
-    element.classList.remove(
-      "balance-positive",
-      "balance-negative"
-    );
-
-    element.classList.add(
-      value >= 0
-        ? "balance-positive"
-        : "balance-negative"
-    );
-
-  });
-
-  // ==============================
-  // CÁC PHẦN DASHBOARD KHÁC
-  // ==============================
-
-  renderWeeklyChart();
-  renderCategoryList();
-  renderSourceList();
-  renderRecentTransactions();
-
-}
+        renderWeeklyChart();
+        renderCategoryList();
+        renderSourceList();
+        renderRecentTransactions();
+      }
 
       /* =====================================
          WEEKLY CHART
@@ -4819,6 +4930,7 @@ if (currentTransactionType === "expense") {
           { name: "Tiền điện", icon: "⚡" },
           { name: "Ăn uống", icon: "🍜" },
           { name: "Mua sắm", icon: "🛍️" },
+          { name: "Khác", icon: "📦" },
         ];
 
         const currentMonth = getCurrentMonth();
@@ -4861,40 +4973,40 @@ if (currentTransactionType === "expense") {
       }
 
       function renderSourceList() {
-  const sources = [
-    { key: "cash", label: "Tiền mặt", icon: "💵" },
-    { key: "bank", label: "Ngân hàng", icon: "🏦" },
-  ];
+        const sources = [
+          { key: "cash", label: "Tiền mặt", icon: "💵" },
+          { key: "bank", label: "Ngân hàng", icon: "🏦" },
+        ];
 
-  const currentMonth = getCurrentMonth();
+        const currentMonth = getCurrentMonth();
 
-  const values = sources.map((source) => {
-    const amount = transactions
-      .filter(
-        (item) =>
-          item.type === "expense" &&
-          (item.source || "cash") === source.key &&
-          String(item.date || "").startsWith(currentMonth),
-      )
-      .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        const values = sources.map((source) => {
+          const amount = transactions
+            .filter(
+              (item) =>
+                item.type === "expense" &&
+                (item.source || "cash") === source.key &&
+                String(item.date || "").startsWith(currentMonth),
+            )
+            .reduce((sum, item) => sum + Number(item.amount || 0), 0);
 
-    return {
-      ...source,
-      amount,
-    };
-  });
+          return {
+            ...source,
+            amount,
+          };
+        });
 
-  const max = Math.max(...values.map((item) => item.amount), 1);
-  const container = document.getElementById("sourceList");
+        const max = Math.max(...values.map((item) => item.amount), 1);
+        const container = document.getElementById("sourceList");
 
-  if (!container) return;
+        if (!container) return;
 
-  container.innerHTML = values
-    .map((item) => {
-      const width =
-        item.amount > 0 ? Math.max(5, (item.amount / max) * 100) : 0;
+        container.innerHTML = values
+          .map((item) => {
+            const width =
+              item.amount > 0 ? Math.max(5, (item.amount / max) * 100) : 0;
 
-      return `
+            return `
         <div class="category-row">
           <div class="category-icon">${item.icon}</div>
 
@@ -4916,9 +5028,9 @@ if (currentTransactionType === "expense") {
           </div>
         </div>
       `;
-    })
-    .join("");
-}
+          })
+          .join("");
+      }
 
       /* =====================================
          RECENT TRANSACTIONS
@@ -4980,13 +5092,13 @@ if (currentTransactionType === "expense") {
         const from = document.getElementById("filterFrom").value;
         const to = document.getElementById("filterTo").value;
         const type = document.getElementById("filterType").value;
-const category = document.getElementById("filterCategory").value;
-const source = document.getElementById("filterSource").value;
+        const category = document.getElementById("filterCategory").value;
+        const source = document.getElementById("filterSource").value;
 
-const search = document
-  .getElementById("filterSearch")
-  .value.toLowerCase()
-  .trim();
+        const search = document
+          .getElementById("filterSearch")
+          .value.toLowerCase()
+          .trim();
 
         return transactions
           .filter((item) => {
@@ -4994,22 +5106,19 @@ const search = document
             if (to && String(item.date || "") > to) return false;
             if (type !== "all" && item.type !== type) return false;
             if (category !== "all" && item.category !== category) return false;
-if (
-  source !== "all" &&
-  (item.source || "cash") !== source
-) {
-  return false;
-}
+            if (source !== "all" && (item.source || "cash") !== source) {
+              return false;
+            }
             if (search) {
               const haystack = [
-  item.note,
-  item.category,
-  item.date,
-  getSourceLabel(item.source),
-]
-  .filter(Boolean)
-  .join(" ")
-  .toLowerCase();
+                item.note,
+                item.category,
+                item.date,
+                getSourceLabel(item.source),
+              ]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase();
 
               if (!haystack.includes(search)) return false;
             }
@@ -5122,13 +5231,13 @@ if (
       ===================================== */
 
       [
-  "filterFrom",
-  "filterTo",
-  "filterType",
-  "filterCategory",
-  "filterSource",
-  "filterSearch",
-].forEach((id) => {
+        "filterFrom",
+        "filterTo",
+        "filterType",
+        "filterCategory",
+        "filterSource",
+        "filterSearch",
+      ].forEach((id) => {
         document
           .getElementById(id)
           .addEventListener("input", renderTransactions);
@@ -5226,8 +5335,8 @@ if (
       }
 
       function getSourceLabel(source) {
-  return source === "bank" ? "🏦 Ngân hàng" : "💵 Tiền mặt";
-}
+        return source === "bank" ? "🏦 Ngân hàng" : "💵 Tiền mặt";
+      }
 
       function escapeHtml(value) {
         return String(value ?? "")
