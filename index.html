@@ -6540,7 +6540,26 @@ window.addCategory = addCategory;
             window.closeModal();
           }
         });
+document.addEventListener("input", (e) => {
+  if (e.target.tagName !== "INPUT") return;
 
+  const input = e.target;
+
+  // Bỏ qua input số, date, password, email...
+  if (
+    ["number", "date", "datetime-local", "time", "password", "email"].includes(
+      input.type
+    )
+  ) {
+    return;
+  }
+
+  const value = input.value;
+
+  if (value.length > 0) {
+    input.value = value.charAt(0).toUpperCase() + value.slice(1);
+  }
+});
       /* =====================================
          INITIAL
       ===================================== */
