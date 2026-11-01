@@ -4066,9 +4066,14 @@ try {
           currentAccountName = account.name || "Account";
           currentAccountRole = account.role === "admin" ? "admin" : "user";
 accountCategories = [];
-          updateSettingsAccountName();
-          loadSharedDateFilter();
-          localStorage.setItem(SELECTED_ACCOUNT_KEY, currentAccountId);
+updateSettingsAccountName();
+
+await loadSharedDateFilter();
+
+localStorage.setItem(
+  SELECTED_ACCOUNT_KEY,
+  currentAccountId,
+);
 
           lockPasswordHash = null;
           lockConfigExists = false;
@@ -4789,7 +4794,7 @@ accountCategories = [];
 
 await loadAccountCategories();
 refreshCategoryUI();
-loadSharedDateFilter();
+await loadSharedDateFilter();
 // =====================================
 // UPDATE LAST LOGIN
 // =====================================
@@ -4863,7 +4868,6 @@ loadSharedDateFilter();
 
         setFirebaseStatus("● Chọn Account", "");
       };
-
 /* =====================================
    SHARED DATE FILTER
 ===================================== */
@@ -4881,40 +4885,120 @@ function getDefaultSharedDateRange() {
   };
 }
 
-function loadSharedDateFilter() {
+function getSharedDateFilterDocRef() {
+  if (!db || !currentAccountId) return null;
+
+  return doc(
+    db,
+    "accounts",
+    currentAccountId,
+    "settings",
+    "preferences",
+  );
+}
+
+async function loadSharedDateFilter() {
   const defaultRange = getDefaultSharedDateRange();
 
-  let saved = null;
+  let from = defaultRange.from;
+  let to = defaultRange.to;
 
+  /*
+   * =====================================
+   * LOAD FROM FIREBASE
+   * =====================================
+   */
   try {
-    const raw = localStorage.getItem(getSharedDateFilterStorageKey());
+    const ref = getSharedDateFilterDocRef();
 
-    if (raw) {
-      saved = JSON.parse(raw);
+    if (ref) {
+      const snap = await getDoc(ref);
+
+      if (snap.exists()) {
+        const data = snap.data();
+
+        from = data.dateFilterFrom || from;
+        to = data.dateFilterTo || to;
+      }
     }
   } catch (error) {
-    console.warn("Cannot load shared date filter:", error);
+    console.warn(
+      "Cannot load shared date filter from Firebase:",
+      error,
+    );
+
+    /*
+     * =====================================
+     * FALLBACK TO LOCALSTORAGE
+     * =====================================
+     */
+    try {
+      const raw = localStorage.getItem(
+        getSharedDateFilterStorageKey(),
+      );
+
+      if (raw) {
+        const saved = JSON.parse(raw);
+
+        from = saved?.from || from;
+        to = saved?.to || to;
+      }
+    } catch (localError) {
+      console.warn(
+        "Cannot load shared date filter from localStorage:",
+        localError,
+      );
+    }
   }
 
-  const from = saved?.from || defaultRange.from;
-  const to = saved?.to || defaultRange.to;
+  /*
+   * =====================================
+   * APPLY TO BOTH FILTERS
+   * =====================================
+   */
 
-  const dashboardFrom = document.getElementById("dashboardFilterFrom");
-  const dashboardTo = document.getElementById("dashboardFilterTo");
+  const dashboardFrom =
+    document.getElementById("dashboardFilterFrom");
 
-  const transactionFrom = document.getElementById("filterFrom");
-  const transactionTo = document.getElementById("filterTo");
+  const dashboardTo =
+    document.getElementById("dashboardFilterTo");
 
-  if (dashboardFrom) dashboardFrom.value = from;
-  if (dashboardTo) dashboardTo.value = to;
+  const transactionFrom =
+    document.getElementById("filterFrom");
 
-  if (transactionFrom) transactionFrom.value = from;
-  if (transactionTo) transactionTo.value = to;
+  const transactionTo =
+    document.getElementById("filterTo");
+
+  if (dashboardFrom) {
+    dashboardFrom.value = from;
+  }
+
+  if (dashboardTo) {
+    dashboardTo.value = to;
+  }
+
+  if (transactionFrom) {
+    transactionFrom.value = from;
+  }
+
+  if (transactionTo) {
+    transactionTo.value = to;
+  }
 
   updateDashboardDateLabels();
 }
 
-function saveSharedDateFilter(from, to) {
+async function saveSharedDateFilter(from, to) {
+  if (!currentAccountId) return;
+
+  /*
+   * =====================================
+   * SAVE TO LOCALSTORAGE FIRST
+   * =====================================
+   *
+   * Giữ lại fallback local để nếu Firebase
+   * lỗi/offline thì date hiện tại vẫn không mất.
+   */
   try {
     localStorage.setItem(
       getSharedDateFilterStorageKey(),
@@ -4924,7 +5008,38 @@ function saveSharedDateFilter(from, to) {
       }),
     );
   } catch (error) {
-    console.warn("Cannot save shared date filter:", error);
+    console.warn(
+      "Cannot save shared date filter to localStorage:",
+      error,
+    );
+  }
+
+  /*
+   * =====================================
+   * SAVE TO FIREBASE
+   * =====================================
+   */
+  try {
+    const ref = getSharedDateFilterDocRef();
+
+    if (!ref) return;
+
+    await setDoc(
+      ref,
+      {
+        dateFilterFrom: from,
+        dateFilterTo: to,
+        dateFilterUpdatedAt: serverTimestamp(),
+      },
+      {
+        merge: true,
+      },
+    );
+  } catch (error) {
+    console.warn(
+      "Cannot save shared date filter to Firebase:",
+      error,
+    );
   }
 }
 
@@ -4937,13 +5052,11 @@ function updateDashboardDateLabels() {
 
   const label = formatSharedDateRange(from, to);
 
-  const categorySubtitle = document.getElementById(
-    "categoryDateRangeLabel",
-  );
+  const categorySubtitle =
+    document.getElementById("categoryDateRangeLabel");
 
-  const sourceSubtitle = document.getElementById(
-    "sourceDateRangeLabel",
-  );
+  const sourceSubtitle =
+    document.getElementById("sourceDateRangeLabel");
 
   if (categorySubtitle) {
     categorySubtitle.textContent = label;
@@ -4970,7 +5083,7 @@ function formatSharedDateRange(from, to) {
   return `Đến ${formatDate(to)}`;
 }
 
-function applySharedDateFilter(source) {
+async function applySharedDateFilter(source) {
   let from = "";
   let to = "";
 
@@ -4988,24 +5101,50 @@ function applySharedDateFilter(source) {
       document.getElementById("filterTo")?.value || "";
   }
 
-  // Nếu ngày bắt đầu > ngày kết thúc thì chưa áp dụng
+  /*
+   * Nếu ngày bắt đầu > ngày kết thúc
+   * thì không áp dụng.
+   */
   if (from && to && from > to) {
     return;
   }
 
-  const dashboardFrom = document.getElementById("dashboardFilterFrom");
-  const dashboardTo = document.getElementById("dashboardFilterTo");
+  const dashboardFrom =
+    document.getElementById("dashboardFilterFrom");
 
-  const transactionFrom = document.getElementById("filterFrom");
-  const transactionTo = document.getElementById("filterTo");
+  const dashboardTo =
+    document.getElementById("dashboardFilterTo");
 
-  if (dashboardFrom) dashboardFrom.value = from;
-  if (dashboardTo) dashboardTo.value = to;
+  const transactionFrom =
+    document.getElementById("filterFrom");
 
-  if (transactionFrom) transactionFrom.value = from;
-  if (transactionTo) transactionTo.value = to;
+  const transactionTo =
+    document.getElementById("filterTo");
 
-  saveSharedDateFilter(from, to);
+  /*
+   * Sync Dashboard + Transactions
+   */
+  if (dashboardFrom) {
+    dashboardFrom.value = from;
+  }
+
+  if (dashboardTo) {
+    dashboardTo.value = to;
+  }
+
+  if (transactionFrom) {
+    transactionFrom.value = from;
+  }
+
+  if (transactionTo) {
+    transactionTo.value = to;
+  }
+
+  /*
+   * Save Firebase
+   */
+  await saveSharedDateFilter(from, to);
+
   updateDashboardDateLabels();
 
   renderTransactions();
@@ -5176,7 +5315,7 @@ function applySharedDateFilter(source) {
 
   await loadAccountCategories();
   refreshCategoryUI();
-loadSharedDateFilter();
+await loadSharedDateFilter();
   hideAccountScreen();
   hideLockScreen();
 
