@@ -1709,7 +1709,38 @@
               </div>
             </div>
           </div>
+          <!-- SHARED DATE FILTER -->
+          <div class="card filters" style="margin-bottom: 20px">
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                margin-bottom: 14px;
+                flex-wrap: wrap;
+              "
+            >
+              <div>
+                <div class="panel-title">📅 Khoảng thời gian</div>
+                <div class="panel-subtitle" style="margin-top: 4px">
+                  Áp dụng cho Dashboard và Transactions
+                </div>
+              </div>
+            </div>
 
+            <div class="filter-grid">
+              <div class="field">
+                <label for="dashboardFilterFrom">Từ ngày</label>
+                <input type="date" id="dashboardFilterFrom" />
+              </div>
+
+              <div class="field">
+                <label for="dashboardFilterTo">Đến ngày</label>
+                <input type="date" id="dashboardFilterTo" />
+              </div>
+            </div>
+          </div>
           <div class="dashboard-grid">
             <div class="card panel">
               <div class="panel-header">
@@ -1727,7 +1758,12 @@
               <div class="panel-header">
                 <div>
                   <div class="panel-title">Chi theo nhóm</div>
-                  <div class="panel-subtitle">Tháng hiện tại</div>
+<div
+  class="panel-subtitle"
+  id="categoryDateRangeLabel"
+>
+  Tháng hiện tại
+</div>
                 </div>
               </div>
 
@@ -1745,11 +1781,12 @@
                 </div>
 
                 <div
-                  class="panel-subtitle"
-                  style="margin-top: 4px; margin-bottom: 14px"
-                >
-                  Tháng hiện tại
-                </div>
+  class="panel-subtitle"
+  id="sourceDateRangeLabel"
+  style="margin-top: 4px; margin-bottom: 14px"
+>
+  Tháng hiện tại
+</div>
 
                 <div id="sourceList" class="category-list"></div>
               </div>
@@ -4030,6 +4067,7 @@ try {
           currentAccountRole = account.role === "admin" ? "admin" : "user";
 accountCategories = [];
           updateSettingsAccountName();
+          loadSharedDateFilter();
           localStorage.setItem(SELECTED_ACCOUNT_KEY, currentAccountId);
 
           lockPasswordHash = null;
@@ -4693,6 +4731,8 @@ accountCategories = [];
         );
       }
 
+      
+
       /* =====================================
    UNLOCK ACCOUNT
 ===================================== */
@@ -4749,7 +4789,7 @@ accountCategories = [];
 
 await loadAccountCategories();
 refreshCategoryUI();
-
+loadSharedDateFilter();
 // =====================================
 // UPDATE LAST LOGIN
 // =====================================
@@ -4824,6 +4864,154 @@ refreshCategoryUI();
         setFirebaseStatus("● Chọn Account", "");
       };
 
+/* =====================================
+   SHARED DATE FILTER
+===================================== */
+
+const SHARED_DATE_FILTER_KEY = "money_log_shared_date_filter";
+
+function getSharedDateFilterStorageKey() {
+  return `${SHARED_DATE_FILTER_KEY}_${currentAccountId || "default"}`;
+}
+
+function getDefaultSharedDateRange() {
+  return {
+    from: getCurrentMonth() + "-01",
+    to: getToday(),
+  };
+}
+
+function loadSharedDateFilter() {
+  const defaultRange = getDefaultSharedDateRange();
+
+  let saved = null;
+
+  try {
+    const raw = localStorage.getItem(getSharedDateFilterStorageKey());
+
+    if (raw) {
+      saved = JSON.parse(raw);
+    }
+  } catch (error) {
+    console.warn("Cannot load shared date filter:", error);
+  }
+
+  const from = saved?.from || defaultRange.from;
+  const to = saved?.to || defaultRange.to;
+
+  const dashboardFrom = document.getElementById("dashboardFilterFrom");
+  const dashboardTo = document.getElementById("dashboardFilterTo");
+
+  const transactionFrom = document.getElementById("filterFrom");
+  const transactionTo = document.getElementById("filterTo");
+
+  if (dashboardFrom) dashboardFrom.value = from;
+  if (dashboardTo) dashboardTo.value = to;
+
+  if (transactionFrom) transactionFrom.value = from;
+  if (transactionTo) transactionTo.value = to;
+
+  updateDashboardDateLabels();
+}
+
+function saveSharedDateFilter(from, to) {
+  try {
+    localStorage.setItem(
+      getSharedDateFilterStorageKey(),
+      JSON.stringify({
+        from,
+        to,
+      }),
+    );
+  } catch (error) {
+    console.warn("Cannot save shared date filter:", error);
+  }
+}
+
+function updateDashboardDateLabels() {
+  const from =
+    document.getElementById("dashboardFilterFrom")?.value || "";
+
+  const to =
+    document.getElementById("dashboardFilterTo")?.value || "";
+
+  const label = formatSharedDateRange(from, to);
+
+  const categorySubtitle = document.getElementById(
+    "categoryDateRangeLabel",
+  );
+
+  const sourceSubtitle = document.getElementById(
+    "sourceDateRangeLabel",
+  );
+
+  if (categorySubtitle) {
+    categorySubtitle.textContent = label;
+  }
+
+  if (sourceSubtitle) {
+    sourceSubtitle.textContent = label;
+  }
+}
+
+function formatSharedDateRange(from, to) {
+  if (!from && !to) {
+    return "Tất cả thời gian";
+  }
+
+  if (from && to) {
+    return `${formatDate(from)} → ${formatDate(to)}`;
+  }
+
+  if (from) {
+    return `Từ ${formatDate(from)}`;
+  }
+
+  return `Đến ${formatDate(to)}`;
+}
+
+function applySharedDateFilter(source) {
+  let from = "";
+  let to = "";
+
+  if (source === "dashboard") {
+    from =
+      document.getElementById("dashboardFilterFrom")?.value || "";
+
+    to =
+      document.getElementById("dashboardFilterTo")?.value || "";
+  } else {
+    from =
+      document.getElementById("filterFrom")?.value || "";
+
+    to =
+      document.getElementById("filterTo")?.value || "";
+  }
+
+  // Nếu ngày bắt đầu > ngày kết thúc thì chưa áp dụng
+  if (from && to && from > to) {
+    return;
+  }
+
+  const dashboardFrom = document.getElementById("dashboardFilterFrom");
+  const dashboardTo = document.getElementById("dashboardFilterTo");
+
+  const transactionFrom = document.getElementById("filterFrom");
+  const transactionTo = document.getElementById("filterTo");
+
+  if (dashboardFrom) dashboardFrom.value = from;
+  if (dashboardTo) dashboardTo.value = to;
+
+  if (transactionFrom) transactionFrom.value = from;
+  if (transactionTo) transactionTo.value = to;
+
+  saveSharedDateFilter(from, to);
+  updateDashboardDateLabels();
+
+  renderTransactions();
+  renderCategoryList();
+  renderSourceList();
+}
       /* =====================================
    ACCOUNT LOCK INITIALIZATION
 ===================================== */
@@ -4988,7 +5176,7 @@ refreshCategoryUI();
 
   await loadAccountCategories();
   refreshCategoryUI();
-
+loadSharedDateFilter();
   hideAccountScreen();
   hideLockScreen();
 
@@ -6059,7 +6247,7 @@ renderCategoryOptions(
          CATEGORY LIST
       ===================================== */
 
-     function renderCategoryList() {
+   function renderCategoryList() {
   const container =
     document.getElementById("categoryList");
 
@@ -6070,36 +6258,47 @@ renderCategoryOptions(
     return;
   }
 
-  const currentMonth = getCurrentMonth();
+  const from =
+    document.getElementById("dashboardFilterFrom")?.value ||
+    document.getElementById("filterFrom")?.value ||
+    "";
 
-  const values = accountCategories.map(
-    (category) => {
-      const amount = transactions
-        .filter(
-          (item) =>
-            item.type === "expense" &&
-            item.category === category.name &&
-            String(item.date || "").startsWith(
-              currentMonth,
-            ),
-        )
-        .reduce(
-          (sum, item) =>
-            sum + Number(item.amount || 0),
-          0,
-        );
+  const to =
+    document.getElementById("dashboardFilterTo")?.value ||
+    document.getElementById("filterTo")?.value ||
+    "";
 
-      return {
-        name: category.name,
-        amount,
-      };
-    },
-  );
+  const values = accountCategories.map((category) => {
+    const amount = transactions
+      .filter((item) => {
+        if (item.type !== "expense") return false;
+
+        if (item.category !== category.name) return false;
+
+        if (from && String(item.date || "") < from) {
+          return false;
+        }
+
+        if (to && String(item.date || "") > to) {
+          return false;
+        }
+
+        return true;
+      })
+      .reduce(
+        (sum, item) =>
+          sum + Number(item.amount || 0),
+        0,
+      );
+
+    return {
+      name: category.name,
+      amount,
+    };
+  });
 
   const max = Math.max(
-    ...values.map(
-      (item) => item.amount,
-    ),
+    ...values.map((item) => item.amount),
     1,
   );
 
@@ -6138,42 +6337,74 @@ renderCategoryOptions(
     })
     .join("");
 }
+     function renderSourceList() {
+  const sources = [
+    { key: "cash", label: "Tiền mặt", icon: "💵" },
+    { key: "bank", label: "Ngân hàng", icon: "🏦" },
+  ];
 
-      function renderSourceList() {
-        const sources = [
-          { key: "cash", label: "Tiền mặt", icon: "💵" },
-          { key: "bank", label: "Ngân hàng", icon: "🏦" },
-        ];
+  const from =
+    document.getElementById("dashboardFilterFrom")?.value ||
+    document.getElementById("filterFrom")?.value ||
+    "";
 
-        const currentMonth = getCurrentMonth();
+  const to =
+    document.getElementById("dashboardFilterTo")?.value ||
+    document.getElementById("filterTo")?.value ||
+    "";
 
-        const values = sources.map((source) => {
-          const amount = transactions
-            .filter(
-              (item) =>
-                item.type === "expense" &&
-                (item.source || "cash") === source.key &&
-                String(item.date || "").startsWith(currentMonth),
+  const values = sources.map((source) => {
+    const amount = transactions
+      .filter((item) => {
+        if (item.type !== "expense") return false;
+
+        if ((item.source || "cash") !== source.key) {
+          return false;
+        }
+
+        if (from && String(item.date || "") < from) {
+          return false;
+        }
+
+        if (to && String(item.date || "") > to) {
+          return false;
+        }
+
+        return true;
+      })
+      .reduce(
+        (sum, item) =>
+          sum + Number(item.amount || 0),
+        0,
+      );
+
+    return {
+      ...source,
+      amount,
+    };
+  });
+
+  const max = Math.max(
+    ...values.map((item) => item.amount),
+    1,
+  );
+
+  const container =
+    document.getElementById("sourceList");
+
+  if (!container) return;
+
+  container.innerHTML = values
+    .map((item) => {
+      const width =
+        item.amount > 0
+          ? Math.max(
+              5,
+              (item.amount / max) * 100,
             )
-            .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+          : 0;
 
-          return {
-            ...source,
-            amount,
-          };
-        });
-
-        const max = Math.max(...values.map((item) => item.amount), 1);
-        const container = document.getElementById("sourceList");
-
-        if (!container) return;
-
-        container.innerHTML = values
-          .map((item) => {
-            const width =
-              item.amount > 0 ? Math.max(5, (item.amount / max) * 100) : 0;
-
-            return `
+      return `
         <div class="category-row">
           <div class="category-icon">${item.icon}</div>
 
@@ -6195,9 +6426,9 @@ renderCategoryOptions(
           </div>
         </div>
       `;
-          })
-          .join("");
-      }
+    })
+    .join("");
+}
 
       /* =====================================
          RECENT TRANSACTIONS
@@ -6408,25 +6639,65 @@ renderCategoryOptions(
         });
       }
 
-      /* =====================================
-         FILTER EVENTS
-      ===================================== */
+     /* =====================================
+   FILTER EVENTS
+===================================== */
 
-      [
-        "filterFrom",
-        "filterTo",
-        "filterType",
-        "filterCategory",
-        "filterSource",
-        "filterSearch",
-      ].forEach((id) => {
-        document
-          .getElementById(id)
-          .addEventListener("input", renderTransactions);
-        document
-          .getElementById(id)
-          .addEventListener("change", renderTransactions);
-      });
+// =====================================
+// SHARED DATE FILTER
+// =====================================
+
+[
+  "filterFrom",
+  "filterTo",
+].forEach((id) => {
+  const element = document.getElementById(id);
+
+  if (!element) return;
+
+  element.addEventListener("input", () => {
+    applySharedDateFilter("transactions");
+  });
+
+  element.addEventListener("change", () => {
+    applySharedDateFilter("transactions");
+  });
+});
+
+[
+  "dashboardFilterFrom",
+  "dashboardFilterTo",
+].forEach((id) => {
+  const element = document.getElementById(id);
+
+  if (!element) return;
+
+  element.addEventListener("input", () => {
+    applySharedDateFilter("dashboard");
+  });
+
+  element.addEventListener("change", () => {
+    applySharedDateFilter("dashboard");
+  });
+});
+
+// =====================================
+// OTHER TRANSACTION FILTERS
+// =====================================
+
+[
+  "filterType",
+  "filterCategory",
+  "filterSource",
+  "filterSearch",
+].forEach((id) => {
+  const element = document.getElementById(id);
+
+  if (!element) return;
+
+  element.addEventListener("input", renderTransactions);
+  element.addEventListener("change", renderTransactions);
+});
 
       /* =====================================
          DARK MODE
@@ -6576,10 +6847,7 @@ document.addEventListener("input", (e) => {
 
       loadTheme();
 
-      document.getElementById("filterFrom").value = getCurrentMonth() + "-01";
-      document.getElementById("filterTo").value = getToday();
-
-      updateTypeUI();
+updateTypeUI();
     </script>
   </body>
 </html>
