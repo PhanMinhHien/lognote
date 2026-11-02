@@ -4903,11 +4903,6 @@ async function loadSharedDateFilter() {
   let from = defaultRange.from;
   let to = defaultRange.to;
 
-  /*
-   * =====================================
-   * LOAD FROM FIREBASE
-   * =====================================
-   */
   try {
     const ref = getSharedDateFilterDocRef();
 
@@ -4917,8 +4912,11 @@ async function loadSharedDateFilter() {
       if (snap.exists()) {
         const data = snap.data();
 
+        // Giữ "Từ ngày" đã lưu
         from = data.dateFilterFrom || from;
-        to = data.dateFilterTo || to;
+
+        // "Đến ngày" luôn lấy ngày hôm nay
+        to = getToday();
       }
     }
   } catch (error) {
@@ -4927,11 +4925,7 @@ async function loadSharedDateFilter() {
       error,
     );
 
-    /*
-     * =====================================
-     * FALLBACK TO LOCALSTORAGE
-     * =====================================
-     */
+    // Fallback localStorage
     try {
       const raw = localStorage.getItem(
         getSharedDateFilterStorageKey(),
@@ -4941,7 +4935,9 @@ async function loadSharedDateFilter() {
         const saved = JSON.parse(raw);
 
         from = saved?.from || from;
-        to = saved?.to || to;
+
+        // Không lấy "to" cũ nữa → luôn dùng hôm nay
+        to = getToday();
       }
     } catch (localError) {
       console.warn(
@@ -4950,12 +4946,6 @@ async function loadSharedDateFilter() {
       );
     }
   }
-
-  /*
-   * =====================================
-   * APPLY TO BOTH FILTERS
-   * =====================================
-   */
 
   const dashboardFrom =
     document.getElementById("dashboardFilterFrom");
