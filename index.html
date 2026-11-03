@@ -210,7 +210,7 @@
 
       .kpi-grid {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 16px;
         margin-bottom: 20px;
       }
@@ -1604,9 +1604,23 @@
               <div class="page-title">Dashboard 👋</div>
               <div class="page-subtitle">Tổng quan thu chi của bạn</div>
             </div>
-            <button class="primary-btn" onclick="openAddModal()">
-              + Giao dịch
-            </button>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+  <button
+    class="secondary-btn"
+    type="button"
+    onclick="openTransferModal()"
+  >
+    ↔ Chuyển tiền
+  </button>
+
+  <button
+    class="primary-btn"
+    type="button"
+    onclick="openAddModal()"
+  >
+    + Giao dịch
+  </button>
+</div>
           </div>
 
           <div class="kpi-grid">
@@ -1634,6 +1648,7 @@
                   <div id="balanceBankValue" class="kpi-value">0 ₫</div>
                 </div>
               </div>
+              
             </div>
 
             <!-- TỔNG THU -->
@@ -1658,7 +1673,32 @@
                 </div>
               </div>
             </div>
+<!-- THU TIỀN TRỌ -->
+<div class="card kpi">
+  <div class="kpi-label">🏠 Thu tiền trọ</div>
 
+  <div
+    id="rentIncomeValue"
+    class="kpi-total-value income"
+  >
+    0 ₫
+  </div>
+
+  <hr class="kpi-divider" />
+
+  <div class="kpi-source-row">
+    <span class="kpi-source-label">
+      🏦 Vào ngân hàng
+    </span>
+
+    <div
+      id="rentIncomeBankValue"
+      class="kpi-value income"
+    >
+      0 ₫
+    </div>
+  </div>
+</div>
             <!-- TỔNG CHI -->
             <div class="card kpi">
               <div class="kpi-label">Tổng chi</div>
@@ -1816,9 +1856,23 @@
               <div class="page-title">Transactions</div>
               <div class="page-subtitle">Xem và quản lý các giao dịch</div>
             </div>
-            <button class="primary-btn" onclick="openAddModal()">
-              + Giao dịch
-            </button>
+           <div style="display:flex; gap:10px; flex-wrap:wrap;">
+  <button
+    class="secondary-btn"
+    type="button"
+    onclick="openTransferModal()"
+  >
+    ↔ Chuyển tiền
+  </button>
+
+  <button
+    class="primary-btn"
+    type="button"
+    onclick="openAddModal()"
+  >
+    + Giao dịch
+  </button>
+</div>
           </div>
 
           <div class="card filters">
@@ -1834,10 +1888,11 @@
               <div class="field">
                 <label for="filterType">Loại</label>
                 <select id="filterType">
-                  <option value="all">Tất cả</option>
-                  <option value="income">Thu</option>
-                  <option value="expense">Chi</option>
-                </select>
+  <option value="all">Tất cả</option>
+  <option value="income">Thu</option>
+  <option value="expense">Chi</option>
+  <option value="transfer">↔ Chuyển tiền</option>
+</select>
               </div>
               <div class="field">
                 <label for="filterCategory">Category</label>
@@ -2210,13 +2265,21 @@
             />
           </div>
 
-          <div id="sourceField" class="field">
-            <label for="transactionSource">Nguồn tiền</label>
-            <select id="transactionSource">
-              <option value="cash">💵 Tiền mặt</option>
-              <option value="bank">🏦 Ngân hàng</option>
-            </select>
-          </div>
+         <div id="sourceField" class="field">
+  <label for="transactionSource">Nguồn tiền</label>
+  <select id="transactionSource">
+    <option value="cash">💵 Tiền mặt</option>
+    <option value="bank">🏦 Ngân hàng</option>
+  </select>
+</div>
+
+<div id="incomeKindField" class="field">
+  <label for="transactionIncomeKind">Loại khoản thu</label>
+  <select id="transactionIncomeKind">
+    <option value="normal">💰 Thu nhập thường</option>
+    <option value="rent">🏠 Tiền trọ</option>
+  </select>
+</div>
 
           <div id="categoryField" class="field">
             <label for="transactionCategory">Category</label>
@@ -2246,6 +2309,107 @@
       </div>
     </div>
 
+    <!-- TRANSFER MODAL -->
+<div id="transferModal" class="modal-backdrop">
+  <div
+    class="modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="transferModalTitle"
+  >
+    <div class="modal-header">
+      <div id="transferModalTitle" class="modal-title">
+        ↔ Chuyển tiền
+      </div>
+
+      <button
+        class="close-btn"
+        type="button"
+        onclick="closeTransferModal()"
+        aria-label="Đóng"
+      >
+        ×
+      </button>
+    </div>
+
+    <div class="modal-fields">
+
+      <div class="field">
+        <label for="transferDate">Ngày</label>
+        <input type="date" id="transferDate" />
+      </div>
+
+      <div class="field">
+        <label for="transferAmount">Số tiền</label>
+        <input
+          type="number"
+          id="transferAmount"
+          placeholder="Ví dụ: 2000000"
+          min="0"
+          step="1000"
+        />
+      </div>
+
+      <div class="field">
+        <label for="transferFrom">Chuyển từ</label>
+
+        <select id="transferFrom">
+          <option value="cash">
+            💵 Tiền mặt
+          </option>
+
+          <option value="bank">
+            🏦 Ngân hàng
+          </option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="transferTo">Chuyển đến</label>
+
+        <select id="transferTo">
+          <option value="bank">
+            🏦 Ngân hàng
+          </option>
+
+          <option value="cash">
+            💵 Tiền mặt
+          </option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="transferNote">Note</label>
+
+        <input
+          type="text"
+          id="transferNote"
+          placeholder="Ví dụ: Rút tiền từ ATM..."
+        />
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <button
+        class="secondary-btn"
+        type="button"
+        onclick="closeTransferModal()"
+      >
+        Hủy
+      </button>
+
+      <button
+        id="saveTransferBtn"
+        class="primary-btn"
+        type="button"
+        onclick="saveTransfer()"
+      >
+        Lưu chuyển tiền
+      </button>
+    </div>
+  </div>
+</div>
     <!-- CUSTOM NOTIFICATION / CONFIRMATION MODAL -->
     <div id="appDialogBackdrop" class="modal-backdrop" aria-hidden="true">
       <div
@@ -2302,9 +2466,14 @@
 
       let db = null;
       let transactions = [];
-      let editingId = null;
-      let currentTransactionType = "income";
-      let weeklyChart = null;
+     let editingId = null;
+let currentTransactionType = "income";
+let weeklyChart = null;
+
+// =====================================
+// TRANSFER
+// =====================================
+let editingTransferId = null;
       window.startPasswordSetup = function () {
         const passwordInput = document.getElementById("lockPassword");
         const confirmField = document.getElementById("lockConfirmField");
@@ -4151,22 +4320,26 @@ localStorage.setItem(
         closeModal();
 
         [
-          "balanceTotalValue",
-          "balanceCashValue",
-          "balanceBankValue",
+  "balanceTotalValue",
+  "balanceCashValue",
+  "balanceBankValue",
 
-          "incomeTotalValue",
-          "incomeCashValue",
-          "incomeBankValue",
+  "incomeTotalValue",
+  "incomeCashValue",
+  "incomeBankValue",
 
-          "expenseTotalValue",
-          "expenseCashValue",
-          "expenseBankValue",
+  // 🏠 Thu tiền trọ
+  "rentIncomeValue",
+  "rentIncomeBankValue",
 
-          "monthExpenseTotalValue",
-          "monthExpenseCashValue",
-          "monthExpenseBankValue",
-        ].forEach((id) => {
+  "expenseTotalValue",
+  "expenseCashValue",
+  "expenseBankValue",
+
+  "monthExpenseTotalValue",
+  "monthExpenseCashValue",
+  "monthExpenseBankValue",
+].forEach((id) => {
           const element = document.getElementById(id);
 
           if (element) {
@@ -5747,151 +5920,427 @@ await loadSharedDateFilter();
           console.error("Create admin notification error:", error);
         }
       }
+function updateTransferToSource() {
+  const fromSelect = document.getElementById("transferFrom");
+  const toSelect = document.getElementById("transferTo");
 
+  if (!fromSelect || !toSelect) return;
+
+  const fromSource = fromSelect.value;
+
+  if (fromSource === "cash") {
+    // Từ Tiền mặt → chỉ được đến Ngân hàng
+    toSelect.value = "bank";
+  } else {
+    // Từ Ngân hàng → chỉ được đến Tiền mặt
+    toSelect.value = "cash";
+  }
+}
+      /* =====================================
+   TRANSFER
+===================================== */
+
+window.openTransferModal = function (id = null) {
+  editingTransferId = id;
+
+  const modal =
+    document.getElementById("transferModal");
+
+  if (!modal) return;
+
+  if (id) {
+    const transaction = transactions.find(
+      (item) => item.id === id,
+    );
+
+    if (!transaction) return;
+
+    document.getElementById(
+      "transferModalTitle",
+    ).textContent = "Sửa chuyển tiền";
+
+    document.getElementById("transferDate").value =
+      transaction.date || "";
+
+    document.getElementById("transferAmount").value =
+      transaction.amount != null
+        ? formatMoneyInput(transaction.amount)
+        : "";
+
+    document.getElementById("transferFrom").value =
+      transaction.fromSource || "cash";
+
+    document.getElementById("transferTo").value =
+      transaction.toSource || "bank";
+
+    document.getElementById("transferNote").value =
+      transaction.note || "";
+  } else {
+    document.getElementById(
+      "transferModalTitle",
+    ).textContent = "↔ Chuyển tiền";
+
+    document.getElementById("transferDate").value =
+      getToday();
+
+    document.getElementById("transferAmount").value =
+      "";
+
+    document.getElementById("transferFrom").value =
+      "cash";
+
+    document.getElementById("transferTo").value =
+      "bank";
+
+    document.getElementById("transferNote").value =
+      "";
+  }
+
+  modal.classList.add("show");
+  updateTransferToSource();
+};
+document
+  .getElementById("transferFrom")
+  ?.addEventListener("change", updateTransferToSource);
+
+window.closeTransferModal = function () {
+  editingTransferId = null;
+
+  const modal =
+    document.getElementById("transferModal");
+
+  if (modal) {
+    modal.classList.remove("show");
+  }
+};
+
+
+window.saveTransfer = async function () {
+  if (!db) {
+    await window.showAppDialog({
+      title: "Chưa kết nối Firebase",
+      message:
+        "Firebase chưa được kết nối. Vui lòng kiểm tra và thử lại.",
+      type: "error",
+    });
+
+    return;
+  }
+
+  if (!currentAccountId || !isAppUnlocked) {
+    await window.showAppDialog({
+      title: "Account đang khóa",
+      message:
+        "Vui lòng mở khóa Account trước khi chuyển tiền.",
+      type: "warning",
+    });
+
+    return;
+  }
+
+  const date =
+    document.getElementById("transferDate").value;
+
+  const amountInput =
+    document.getElementById("transferAmount").value.trim();
+
+  const amount = parseMoneyInput(amountInput);
+
+  const fromSource =
+    document.getElementById("transferFrom").value;
+
+  const toSource =
+    document.getElementById("transferTo").value;
+
+  const note =
+    document.getElementById("transferNote").value.trim();
+
+  if (!date) {
+    await window.showAppDialog({
+      title: "Thiếu ngày",
+      message: "Vui lòng chọn ngày chuyển tiền.",
+      type: "warning",
+    });
+
+    return;
+  }
+
+  if (
+    amountInput === "" ||
+    !Number.isSafeInteger(amount) ||
+    amount <= 0
+  ) {
+    await window.showAppDialog({
+      title: "Số tiền không hợp lệ",
+      message:
+        "Vui lòng nhập số tiền nguyên lớn hơn 0.",
+      type: "warning",
+    });
+
+    return;
+  }
+
+  if (fromSource === toSource) {
+    await window.showAppDialog({
+      title: "Nguồn tiền không hợp lệ",
+      message:
+        "Nguồn chuyển và nguồn nhận phải khác nhau.",
+      type: "warning",
+    });
+
+    return;
+  }
+
+  const data = {
+    type: "transfer",
+    amount: Math.round(amount),
+    date,
+    fromSource,
+    toSource,
+    note,
+    updatedAt: serverTimestamp(),
+  };
+
+  const saveButton =
+    document.getElementById("saveTransferBtn");
+
+  saveButton.disabled = true;
+  saveButton.textContent = "Đang lưu...";
+
+  try {
+    if (editingTransferId) {
+      const previousTransaction =
+        transactions.find(
+          (item) => item.id === editingTransferId,
+        );
+
+      await updateDoc(
+        getAccountTransactionRef(editingTransferId),
+        data,
+      );
+
+      await createAdminTransactionNotification(
+        "transaction_edited",
+        editingTransferId,
+        data,
+        previousTransaction || null,
+      );
+    } else {
+      const transactionRef =
+        await addDoc(
+          getAccountTransactionsRef(),
+          {
+            ...data,
+            createdAt: serverTimestamp(),
+          },
+        );
+
+      await createAdminTransactionNotification(
+        "transaction_added",
+        transactionRef.id,
+        data,
+      );
+    }
+
+    closeTransferModal();
+
+    await window.showAppDialog({
+      title: "Lưu thành công",
+      message: editingTransferId
+        ? "Chuyển tiền đã được cập nhật."
+        : "Chuyển tiền đã được lưu.",
+      type: "success",
+    });
+  } catch (error) {
+    console.error(
+      "Save transfer error:",
+      error,
+    );
+
+    await window.showAppDialog({
+      title: "Không thể lưu",
+      message:
+        "Đã xảy ra lỗi khi lưu chuyển tiền.\n\n" +
+        (error.message ||
+          "Lỗi không xác định."),
+      type: "error",
+    });
+  } finally {
+    saveButton.disabled = false;
+    saveButton.textContent =
+      "Lưu chuyển tiền";
+  }
+};
       /* =====================================
    SAVE TRANSACTION
 ===================================== */
 
       window.saveTransaction = async function () {
-        if (!db) {
-          await window.showAppDialog({
-            title: "Chưa kết nối Firebase",
-            message:
-              "Firebase chưa được kết nối. Vui lòng kiểm tra kết nối và thử lại.",
-            type: "error",
-          });
-          return;
-        }
+  if (!db) {
+    await window.showAppDialog({
+      title: "Chưa kết nối Firebase",
+      message:
+        "Firebase chưa được kết nối. Vui lòng kiểm tra kết nối và thử lại.",
+      type: "error",
+    });
+    return;
+  }
 
-        const date = document.getElementById("transactionDate").value;
+  const date = document.getElementById("transactionDate").value;
 
-        const amountInput = document
-          .getElementById("transactionAmount")
-          .value.trim();
+  const amountInput = document
+    .getElementById("transactionAmount")
+    .value.trim();
 
-        const amount = parseMoneyInput(amountInput);
+  const amount = parseMoneyInput(amountInput);
 
-        const note = document.getElementById("transactionNote").value.trim();
+  const note = document
+    .getElementById("transactionNote")
+    .value.trim();
 
-        const source =
-          document.getElementById("transactionSource").value || "cash";
+  let source =
+    document.getElementById("transactionSource").value || "cash";
 
-        const category =
-          currentTransactionType === "expense"
-            ? document.getElementById("transactionCategory").value
-            : "";
+  const incomeKind =
+    currentTransactionType === "income"
+      ? (
+          document.getElementById("transactionIncomeKind")?.value ||
+          "normal"
+        )
+      : "normal";
 
-        if (!date) {
-          await window.showAppDialog({
-            title: "Thiếu ngày giao dịch",
-            message: "Vui lòng chọn ngày cho giao dịch.",
-            type: "warning",
-          });
-          return;
-        }
+  const category =
+    currentTransactionType === "expense"
+      ? document.getElementById("transactionCategory").value
+      : "";
 
-        if (
-          amountInput === "" ||
-          !Number.isSafeInteger(amount) ||
-          amount <= 0
-        ) {
-          await window.showAppDialog({
-            title: "Số tiền không hợp lệ",
-            message: "Vui lòng nhập số tiền nguyên lớn hơn 0.",
-            type: "warning",
-          });
-          return;
-        }
+  // =====================================
+  // TIỀN TRỌ LUÔN VÀO NGÂN HÀNG
+  // =====================================
+  if (
+    currentTransactionType === "income" &&
+    incomeKind === "rent"
+  ) {
+    source = "bank";
+  }
 
-        const data = {
-          type: currentTransactionType,
-          amount: Math.round(amount),
-          date,
-          category,
-          source,
-          note,
-          updatedAt: serverTimestamp(),
-        };
+  if (!date) {
+    await window.showAppDialog({
+      title: "Thiếu ngày giao dịch",
+      message: "Vui lòng chọn ngày cho giao dịch.",
+      type: "warning",
+    });
+    return;
+  }
 
-        const saveButton = document.getElementById("saveTransactionBtn");
+  if (
+    amountInput === "" ||
+    !Number.isSafeInteger(amount) ||
+    amount <= 0
+  ) {
+    await window.showAppDialog({
+      title: "Số tiền không hợp lệ",
+      message: "Vui lòng nhập số tiền nguyên lớn hơn 0.",
+      type: "warning",
+    });
+    return;
+  }
 
-        saveButton.disabled = true;
-        saveButton.textContent = "Đang lưu...";
+  const data = {
+    type: currentTransactionType,
+    amount: Math.round(amount),
+    date,
+    category,
+    source,
+    incomeKind,
+    note,
+    updatedAt: serverTimestamp(),
+  };
 
-        try {
-          if (!currentAccountId || !isAppUnlocked) {
-            await window.showAppDialog({
-              title: "Account đang khóa",
-              message: "Vui lòng mở khóa Account trước khi lưu giao dịch.",
-              type: "warning",
-            });
+  const saveButton =
+    document.getElementById("saveTransactionBtn");
 
-            return;
-          }
+  saveButton.disabled = true;
+  saveButton.textContent = "Đang lưu...";
 
-          if (editingId) {
-            // ==============================
-            // EDIT TRANSACTION
-            // ==============================
+  try {
+    if (!currentAccountId || !isAppUnlocked) {
+      await window.showAppDialog({
+        title: "Account đang khóa",
+        message:
+          "Vui lòng mở khóa Account trước khi lưu giao dịch.",
+        type: "warning",
+      });
 
-            const transactionId = editingId;
+      return;
+    }
 
-            // Lấy dữ liệu cũ trước khi cập nhật
-            const previousTransaction = transactions.find(
-              (item) => item.id === transactionId,
-            );
+    if (editingId) {
+      // =====================================
+      // EDIT
+      // =====================================
 
-            await updateDoc(getAccountTransactionRef(transactionId), data);
+      const transactionId = editingId;
 
-            // Thông báo khi User sửa giao dịch
-            await createAdminTransactionNotification(
-              "transaction_edited",
-              transactionId,
-              data,
-              previousTransaction || null,
-            );
-          } else {
-            // ==============================
-            // ADD TRANSACTION
-            // ==============================
+      const previousTransaction = transactions.find(
+        (item) => item.id === transactionId,
+      );
 
-            const transactionRef = await addDoc(getAccountTransactionsRef(), {
-              ...data,
-              createdAt: serverTimestamp(),
-            });
+      await updateDoc(
+        getAccountTransactionRef(transactionId),
+        data,
+      );
 
-            // Thông báo khi User thêm giao dịch
-            await createAdminTransactionNotification(
-              "transaction_added",
-              transactionRef.id,
-              data,
-            );
-          }
+      await createAdminTransactionNotification(
+        "transaction_edited",
+        transactionId,
+        data,
+        previousTransaction || null,
+      );
+    } else {
+      // =====================================
+      // ADD
+      // =====================================
 
-          closeModal();
+      const transactionRef = await addDoc(
+        getAccountTransactionsRef(),
+        {
+          ...data,
+          createdAt: serverTimestamp(),
+        },
+      );
 
-          await window.showAppDialog({
-            title: "Lưu thành công",
-            message: editingId
-              ? "Giao dịch đã được cập nhật thành công."
-              : "Giao dịch mới đã được lưu thành công.",
-            type: "success",
-          });
-        } catch (error) {
-          console.error("Save transaction error:", error);
+      await createAdminTransactionNotification(
+        "transaction_added",
+        transactionRef.id,
+        data,
+      );
+    }
 
-          await window.showAppDialog({
-            title: "Không thể lưu giao dịch",
-            message:
-              "Đã xảy ra lỗi khi lưu giao dịch.\n\n" +
-              (error.message || "Lỗi không xác định."),
-            type: "error",
-          });
-        } finally {
-          saveButton.disabled = false;
-          saveButton.textContent = "Lưu giao dịch";
-        }
-      };
+    closeModal();
+
+    await window.showAppDialog({
+      title: "Lưu thành công",
+      message: editingId
+        ? "Giao dịch đã được cập nhật thành công."
+        : "Giao dịch mới đã được lưu thành công.",
+      type: "success",
+    });
+  } catch (error) {
+    console.error("Save transaction error:", error);
+
+    await window.showAppDialog({
+      title: "Không thể lưu giao dịch",
+      message:
+        "Đã xảy ra lỗi khi lưu giao dịch.\n\n" +
+        (error.message || "Lỗi không xác định."),
+      type: "error",
+    });
+  } finally {
+    saveButton.disabled = false;
+    saveButton.textContent = "Lưu giao dịch";
+  }
+};
 
       /* =====================================
    DELETE TRANSACTION
@@ -5933,7 +6382,13 @@ await loadSharedDateFilter();
             "Bạn có chắc muốn xóa giao dịch này không?\n\n" +
             (transaction.note || transaction.category || "Giao dịch") +
             "\nLoại: " +
-            (transaction.type === "income" ? "Thu" : "Chi") +
+            (
+  transaction.type === "transfer"
+    ? "Chuyển tiền"
+    : transaction.type === "income"
+      ? "Thu"
+      : "Chi"
+) +
             "\nSố tiền: " +
             formatMoney(transaction.amount) +
             "\n\nThao tác này không thể hoàn tác.",
@@ -5978,84 +6433,134 @@ await loadSharedDateFilter();
          EDIT TRANSACTION
       ===================================== */
 
-      window.editTransaction = function (id) {
-        const transaction = transactions.find((item) => item.id === id);
-        if (!transaction) return;
-
-        editingId = id;
-        currentTransactionType = transaction.type || "income";
-
-        document.getElementById("modalTitle").textContent = "Sửa giao dịch";
-
-        // Common fields
-        document.getElementById("transactionDate").value =
-          transaction.date || "";
-
-        document.getElementById("transactionAmount").value =
-          transaction.amount != null
-            ? formatMoneyInput(transaction.amount)
-            : "";
-
-        document.getElementById("transactionNote").value =
-          transaction.note || "";
-
-        // Chỉ load đúng data của type hiện tại
-        // Load Source cho cả Thu và Chi
-        document.getElementById("transactionSource").value =
-          transaction.source || "cash";
-
-        // Category chỉ áp dụng cho Chi
-      if (currentTransactionType === "expense") {
-  renderCategoryOptions(
-    transaction.category || "",
+     window.editTransaction = function (id) {
+  const transaction = transactions.find(
+    (item) => item.id === id,
   );
-}
 
-        // Update UI
-        updateTypeUI();
+  if (!transaction) return;
 
-        // EDIT MODE:
-        // Chỉ hiện đúng type của giao dịch, không cho đổi Thu/Chi
-        const incomeBtn = document.getElementById("incomeTypeBtn");
-        const expenseBtn = document.getElementById("expenseTypeBtn");
+  // Transfer có modal riêng
+  if (transaction.type === "transfer") {
+    openTransferModal(id);
+    return;
+  }
 
-        if (currentTransactionType === "income") {
-          incomeBtn.style.display = "block";
-          expenseBtn.style.display = "none";
-        } else {
-          incomeBtn.style.display = "none";
-          expenseBtn.style.display = "block";
-        }
+  editingId = id;
+  editingTransferId = null;
 
-        document.getElementById("transactionModal").classList.add("show");
-      };
+  currentTransactionType =
+    transaction.type || "income";
+
+  document.getElementById("modalTitle").textContent =
+    "Sửa giao dịch";
+
+  document.getElementById("transactionDate").value =
+    transaction.date || "";
+
+  document.getElementById("transactionAmount").value =
+    transaction.amount != null
+      ? formatMoneyInput(transaction.amount)
+      : "";
+
+  document.getElementById("transactionNote").value =
+    transaction.note || "";
+
+  document.getElementById("transactionSource").value =
+    transaction.source || "cash";
+
+  // =====================================
+  // LOAD LOẠI KHOẢN THU
+  // =====================================
+  const incomeKindSelect =
+    document.getElementById("transactionIncomeKind");
+
+  if (incomeKindSelect) {
+    incomeKindSelect.value =
+      transaction.type === "income"
+        ? transaction.incomeKind || "normal"
+        : "normal";
+  }
+
+  // =====================================
+  // CATEGORY CHỈ CHO CHI
+  // =====================================
+  if (currentTransactionType === "expense") {
+    renderCategoryOptions(
+      transaction.category || "",
+    );
+  } else {
+    renderCategoryOptions(
+      accountCategories[0]?.name || "",
+    );
+  }
+
+  updateTypeUI();
+
+  // =====================================
+  // EDIT MODE
+  // Không cho đổi Thu / Chi
+  // =====================================
+  const incomeBtn =
+    document.getElementById("incomeTypeBtn");
+
+  const expenseBtn =
+    document.getElementById("expenseTypeBtn");
+
+  if (currentTransactionType === "income") {
+    incomeBtn.style.display = "block";
+    expenseBtn.style.display = "none";
+  } else {
+    incomeBtn.style.display = "none";
+    expenseBtn.style.display = "block";
+  }
+
+  document
+    .getElementById("transactionModal")
+    .classList.add("show");
+};
 
       /* =====================================
          OPEN ADD MODAL
       ===================================== */
 
-      window.openAddModal = function () {
-        editingId = null;
-        currentTransactionType = "income";
+     window.openAddModal = function () {
+  editingId = null;
+  editingTransferId = null;
 
-        document.getElementById("modalTitle").textContent = "Thêm giao dịch";
+  currentTransactionType = "income";
 
-        document.getElementById("transactionDate").value = getToday();
-        document.getElementById("transactionAmount").value = "";
-        document.getElementById("transactionNote").value = "";
-renderCategoryOptions(
-  accountCategories[0]?.name || "",
-);        document.getElementById("transactionSource").value = "cash";
+  document.getElementById("modalTitle").textContent =
+    "Thêm giao dịch";
 
-        // ADD MODE:
-        // Hiện cả Thu và Chi
-        document.getElementById("incomeTypeBtn").style.display = "block";
-        document.getElementById("expenseTypeBtn").style.display = "block";
+  document.getElementById("transactionDate").value =
+    getToday();
 
-        updateTypeUI();
+  document.getElementById("transactionAmount").value = "";
 
-        document.getElementById("transactionModal").classList.add("show");
-      };
+  document.getElementById("transactionNote").value = "";
+
+  document.getElementById("transactionSource").value =
+    "cash";
+
+  document.getElementById("transactionIncomeKind").value =
+    "normal";
+
+ renderCategoryOptions("");
+
+  // ADD MODE
+  document.getElementById("incomeTypeBtn").style.display =
+    "block";
+
+  document.getElementById("expenseTypeBtn").style.display =
+    "block";
+
+  updateTypeUI();
+
+  document
+    .getElementById("transactionModal")
+    .classList.add("show");
+};
 
       /* =====================================
          CLOSE TRANSACTION MODAL
@@ -6070,43 +6575,137 @@ renderCategoryOptions(
          TRANSACTION TYPE
       ===================================== */
 
-      window.setTransactionType = function (type) {
-        currentTransactionType = type;
-        updateTypeUI();
-      };
+    window.setTransactionType = function (type) {
+  currentTransactionType = type;
+
+  const categorySelect =
+    document.getElementById("transactionCategory");
+
+  const incomeKindSelect =
+    document.getElementById("transactionIncomeKind");
+
+  const sourceSelect =
+    document.getElementById("transactionSource");
+
+  // ==============================
+  // CHUYỂN SANG CHI
+  // ==============================
+  if (type === "expense") {
+    if (incomeKindSelect) {
+      incomeKindSelect.value = "normal";
+    }
+
+    if (categorySelect) {
+      categorySelect.value =
+        accountCategories[0]?.name || "";
+    }
+
+    if (sourceSelect) {
+      sourceSelect.disabled = false;
+    }
+  }
+
+  // ==============================
+  // CHUYỂN SANG THU
+  // ==============================
+  if (type === "income") {
+    if (categorySelect) {
+      categorySelect.value = "";
+    }
+
+    if (incomeKindSelect) {
+      incomeKindSelect.value = "normal";
+    }
+
+    if (sourceSelect) {
+      sourceSelect.disabled = false;
+    }
+  }
+
+  updateTypeUI();
+};
 
       function updateTypeUI() {
-        const incomeBtn = document.getElementById("incomeTypeBtn");
-        const expenseBtn = document.getElementById("expenseTypeBtn");
+  const incomeBtn =
+    document.getElementById("incomeTypeBtn");
 
-        const categoryField = document.getElementById("categoryField");
-        const sourceField = document.getElementById("sourceField");
+  const expenseBtn =
+    document.getElementById("expenseTypeBtn");
 
-        incomeBtn.classList.toggle(
-          "active",
-          currentTransactionType === "income",
-        );
+  const categoryField =
+    document.getElementById("categoryField");
 
-        expenseBtn.classList.toggle(
-          "active",
-          currentTransactionType === "expense",
-        );
+  const sourceField =
+    document.getElementById("sourceField");
 
-        // =====================================
-        // NGUỒN TIỀN: LUÔN HIỆN CHO CẢ THU VÀ CHI
-        // =====================================
-        sourceField.style.display = "flex";
+  const incomeKindField =
+    document.getElementById("incomeKindField");
 
-        // =====================================
-        // CATEGORY: CHỈ HIỆN CHO CHI
-        // =====================================
-        if (currentTransactionType === "expense") {
-          categoryField.style.display = "flex";
-        } else {
-          categoryField.style.display = "none";
-        }
-      }
+  const sourceSelect =
+    document.getElementById("transactionSource");
 
+  const incomeKindSelect =
+    document.getElementById("transactionIncomeKind");
+
+  incomeBtn.classList.toggle(
+    "active",
+    currentTransactionType === "income",
+  );
+
+  expenseBtn.classList.toggle(
+    "active",
+    currentTransactionType === "expense",
+  );
+
+  sourceField.style.display = "flex";
+
+  // =====================================
+  // CHI
+  // =====================================
+  if (currentTransactionType === "expense") {
+    categoryField.style.display = "flex";
+    incomeKindField.style.display = "none";
+
+    // Không để dữ liệu "Tiền trọ" dính sang Chi
+    if (incomeKindSelect) {
+      incomeKindSelect.value = "normal";
+    }
+
+    return;
+  }
+
+  // =====================================
+  // THU
+  // =====================================
+  categoryField.style.display = "none";
+  incomeKindField.style.display = "flex";
+
+  // Nếu là tiền trọ -> bắt buộc Bank
+  if (
+    incomeKindSelect &&
+    incomeKindSelect.value === "rent"
+  ) {
+    sourceSelect.value = "bank";
+    sourceSelect.disabled = true;
+  } else {
+    sourceSelect.disabled = false;
+  }
+}
+document
+  .getElementById("transactionIncomeKind")
+  ?.addEventListener("change", function () {
+    const sourceSelect =
+      document.getElementById("transactionSource");
+
+    if (!sourceSelect) return;
+
+    if (this.value === "rent") {
+      sourceSelect.value = "bank";
+      sourceSelect.disabled = true;
+    } else {
+      sourceSelect.disabled = false;
+    }
+  });
       /* =====================================
          PAGE SWITCH
       ===================================== */
@@ -6184,9 +6783,34 @@ renderCategoryOptions(
         const cashExpense = getTransactionTotal("cash", "expense");
 
         const cashMonthExpense = getTransactionTotal("cash", "expense", true);
+const cashTransferOut = transactions
+  .filter(
+    (item) =>
+      item.type === "transfer" &&
+      item.fromSource === "cash",
+  )
+  .reduce(
+    (sum, item) =>
+      sum + Number(item.amount || 0),
+    0,
+  );
 
-        const cashBalance = cashIncome - cashExpense;
-
+const cashTransferIn = transactions
+  .filter(
+    (item) =>
+      item.type === "transfer" &&
+      item.toSource === "cash",
+  )
+  .reduce(
+    (sum, item) =>
+      sum + Number(item.amount || 0),
+    0,
+  );
+const cashBalance =
+  cashIncome -
+  cashExpense -
+  cashTransferOut +
+  cashTransferIn;
         // ==============================
         // NGÂN HÀNG
         // ==============================
@@ -6195,9 +6819,34 @@ renderCategoryOptions(
         const bankExpense = getTransactionTotal("bank", "expense");
 
         const bankMonthExpense = getTransactionTotal("bank", "expense", true);
+const bankTransferOut = transactions
+  .filter(
+    (item) =>
+      item.type === "transfer" &&
+      item.fromSource === "bank",
+  )
+  .reduce(
+    (sum, item) =>
+      sum + Number(item.amount || 0),
+    0,
+  );
 
-        const bankBalance = bankIncome - bankExpense;
-
+const bankTransferIn = transactions
+  .filter(
+    (item) =>
+      item.type === "transfer" &&
+      item.toSource === "bank",
+  )
+  .reduce(
+    (sum, item) =>
+      sum + Number(item.amount || 0),
+    0,
+  );
+const bankBalance =
+  bankIncome -
+  bankExpense -
+  bankTransferOut +
+  bankTransferIn;
         // ==============================
         // TỔNG CỘNG
         // ==============================
@@ -6208,17 +6857,34 @@ renderCategoryOptions(
         const totalBalance = cashBalance + bankBalance;
 
         const totalMonthExpense = cashMonthExpense + bankMonthExpense;
-
+// ==============================
+// THU TIỀN TRỌ
+// ==============================
+const rentIncome = transactions
+  .filter(
+    (item) =>
+      item.type === "income" &&
+      item.incomeKind === "rent",
+  )
+  .reduce(
+    (sum, item) =>
+      sum + Number(item.amount || 0),
+    0,
+  );
         // ==============================
         // HIỂN THỊ DASHBOARD
         // ==============================
 
         const dashboardValues = {
           // Số dư
+
+          
           balanceTotalValue: totalBalance,
           balanceCashValue: cashBalance,
           balanceBankValue: bankBalance,
 
+          rentIncomeValue: rentIncome,
+rentIncomeBankValue: rentIncome,
           // Tổng thu
           incomeTotalValue: totalIncome,
           incomeCashValue: cashIncome,
@@ -6586,39 +7252,92 @@ renderCategoryOptions(
 
       function createTransactionItem(item) {
   const isIncome = item.type === "income";
-  const sign = isIncome ? "+" : "-";
+  const isExpense = item.type === "expense";
+  const isTransfer = item.type === "transfer";
+
+  let title = "";
+  let meta = "";
+  let sign = "";
+  let amountClass = "";
+
+  // ==============================
+  // ↔ CHUYỂN TIỀN
+  // ==============================
+  if (isTransfer) {
+    title = item.note || "Chuyển tiền";
+
+    meta =
+      `${formatDate(item.date)} · ` +
+      `${getSourceLabel(item.fromSource)} → ${getSourceLabel(item.toSource)}`;
+
+    sign = "↔ ";
+    amountClass = "";
+  }
+
+  // ==============================
+  // 🟢 THU
+  // ==============================
+  else if (isIncome) {
+    title =
+      item.incomeKind === "rent"
+        ? "🏠 Tiền trọ"
+        : item.note || "Thu nhập";
+
+    meta =
+      `${formatDate(item.date)}` +
+      (item.incomeKind === "rent"
+        ? " · 🏠 Tiền trọ"
+        : "") +
+      ` · ${getSourceLabel(item.source)}`;
+
+    sign = "+";
+    amountClass = "income";
+  }
+
+  // ==============================
+  // 🔴 CHI
+  // ==============================
+  else {
+    title =
+      item.note ||
+      item.category ||
+      "Chi tiêu";
+
+    meta =
+      `${formatDate(item.date)}` +
+      (item.category
+        ? " · " + escapeHtml(item.category)
+        : "") +
+      ` · ${getSourceLabel(item.source)}`;
+
+    sign = "-";
+    amountClass = "expense";
+  }
 
   return `
     <div class="transaction-item">
 
+      <div class="transaction-icon ${
+        isTransfer
+          ? ""
+          : isIncome
+            ? "income"
+            : "expense"
+      }">
+        ${isTransfer ? "↔" : isIncome ? "🟢" : "🔴"}
+      </div>
+
       <div class="transaction-info">
         <div class="transaction-name">
-          ${escapeHtml(
-            item.note ||
-              item.category ||
-              (isIncome
-                ? "Thu nhập"
-                : "Chi tiêu"),
-          )}
+          ${escapeHtml(title)}
         </div>
 
         <div class="transaction-meta">
-          ${formatDate(item.date)}
-          ${
-            item.category
-              ? " · " +
-                escapeHtml(item.category)
-              : ""
-          }
-          · ${getSourceLabel(item.source)}
+          ${meta}
         </div>
       </div>
 
-      <div
-        class="transaction-amount ${
-          isIncome ? "income" : "expense"
-        }"
-      >
+      <div class="transaction-amount ${amountClass}">
         ${sign}${formatMoney(item.amount)}
       </div>
 
@@ -6653,14 +7372,26 @@ renderCategoryOptions(
             }
             if (search) {
               const haystack = [
-                item.note,
-                item.category,
-                item.date,
-                getSourceLabel(item.source),
-              ]
-                .filter(Boolean)
-                .join(" ")
-                .toLowerCase();
+  item.note,
+  item.category,
+  item.date,
+
+  item.type === "income" &&
+  item.incomeKind === "rent"
+    ? "tiền trọ thu tiền trọ rent"
+    : "",
+
+  item.type === "transfer"
+    ? "chuyển tiền transfer"
+    : "",
+
+  getSourceLabel(item.source),
+  getSourceLabel(item.fromSource),
+  getSourceLabel(item.toSource),
+]
+  .filter(Boolean)
+  .join(" ")
+  .toLowerCase();
 
               if (!haystack.includes(search)) return false;
             }
@@ -6686,11 +7417,11 @@ renderCategoryOptions(
         filtered.forEach((item) => {
           const amount = Number(item.amount || 0);
 
-          if (item.type === "income") {
-            income += amount;
-          } else {
-            expense += amount;
-          }
+        if (item.type === "income") {
+  income += amount;
+} else if (item.type === "expense") {
+  expense += amount;
+}
         });
 
         document.getElementById("rangeIncome").textContent =
@@ -6712,36 +7443,81 @@ renderCategoryOptions(
 
         tbody.innerHTML = filtered
           .map((item) => {
-            const isIncome = item.type === "income";
+const isIncome = item.type === "income";
+const isExpense = item.type === "expense";
+const isTransfer = item.type === "transfer";
             const safeId = escapeHtml(item.id);
 
             return `
             <tr>
               <td>${formatDate(item.date)}</td>
               <td>
-                <span class="type-badge ${isIncome ? "income" : "expense"}">
-                  ${isIncome ? "🟢 Thu" : "🔴 Chi"}
-                </span>
+               <span
+  class="type-badge ${
+    isTransfer
+      ? ""
+      : isIncome
+        ? "income"
+        : "expense"
+  }"
+>
+  ${
+    isTransfer
+      ? "↔ Chuyển tiền"
+      : isIncome
+        ? "🟢 Thu"
+        : "🔴 Chi"
+  }
+</span>
               </td>
            <td>
   ${
-    item.category
-      ? `<span class="category-badge">${escapeHtml(item.category)}</span>`
-      : "—"
+    item.type === "transfer"
+      ? `<span class="category-badge">↔ Nội bộ</span>`
+      : item.type === "income" &&
+          item.incomeKind === "rent"
+        ? `<span class="category-badge">🏠 Tiền trọ</span>`
+        : item.category
+          ? `<span class="category-badge">${escapeHtml(
+              item.category,
+            )}</span>`
+          : "—"
   }
 </td>
 
 <td>
   <span class="category-badge">
-    ${getSourceLabel(item.source)}
+    ${
+      item.type === "transfer"
+        ? `${getSourceLabel(
+            item.fromSource,
+          )} → ${getSourceLabel(item.toSource)}`
+        : getSourceLabel(item.source)
+    }
   </span>
 </td>
 
 <td>${escapeHtml(item.note || "—")}</td>
               <td>
-                <strong style="color:${isIncome ? "var(--income)" : "var(--expense)"}">
-                  ${isIncome ? "+" : "-"}${formatMoney(item.amount)}
-                </strong>
+               <strong
+  style="
+    color:${
+      isTransfer
+        ? "var(--text)"
+        : isIncome
+          ? "var(--income)"
+          : "var(--expense)"
+    }
+  "
+>
+  ${
+    isTransfer
+      ? "↔ "
+      : isIncome
+        ? "+"
+        : "-"
+  }${formatMoney(item.amount)}
+</strong>
               </td>
               <td>
                 <div class="actions">
