@@ -2341,13 +2341,12 @@
 
       <div class="field">
         <label for="transferAmount">Số tiền</label>
-        <input
-          type="number"
-          id="transferAmount"
-          placeholder="Ví dụ: 2000000"
-          min="0"
-          step="1000"
-        />
+       <input
+  type="text"
+  id="transferAmount"
+  placeholder="Ví dụ: 2.000.000"
+  inputmode="numeric"
+/>
       </div>
 
       <div class="field">
@@ -5866,7 +5865,49 @@ await loadSharedDateFilter();
           input.setSelectionRange(newPosition, newPosition);
         });
       }
+// Tự động định dạng số tiền chuyển khoản.
+const transferAmountInput =
+  document.getElementById("transferAmount");
 
+if (transferAmountInput) {
+  transferAmountInput.type = "text";
+  transferAmountInput.inputMode = "numeric";
+
+  transferAmountInput.addEventListener("input", function () {
+    const input = this;
+    const oldValue = input.value;
+    const oldPosition =
+      input.selectionStart ?? oldValue.length;
+
+    const digitsBeforeCursor = oldValue
+      .slice(0, oldPosition)
+      .replace(/\D/g, "").length;
+
+    const digits = oldValue.replace(/\D/g, "");
+
+    const formatted = digits
+      ? Number(digits).toLocaleString("vi-VN")
+      : "";
+
+    input.value = formatted;
+
+    let newPosition = 0;
+    let digitCount = 0;
+
+    while (
+      newPosition < formatted.length &&
+      digitCount < digitsBeforeCursor
+    ) {
+      if (/\d/.test(formatted[newPosition])) {
+        digitCount++;
+      }
+
+      newPosition++;
+    }
+
+    input.setSelectionRange(newPosition, newPosition);
+  });
+}
       /* =====================================
    CREATE ADMIN NOTIFICATION
 ===================================== */
