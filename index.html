@@ -1590,7 +1590,7 @@
         justify-content: space-between;
         align-items: center;
         gap: 16px;
-        margin-top: 20px;
+        margin: 20px 0;
         padding: 20px;
         border: 1px solid var(--border);
         border-radius: 14px;
@@ -1615,201 +1615,215 @@
    ROOM LIST
 ===================================== */
 
-/* =====================================
+      /* =====================================
    ROOM LIST - COMPACT SCROLLABLE
 ===================================== */
 
-.rr-room-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 20px 0 14px;
-}
+      .rr-room-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 20px 0 14px;
+      }
 
-.rr-room-toolbar .field {
-  margin: 0;
-  min-width: 0;
-}
+      .rr-room-toolbar .field {
+        margin: 0;
+        min-width: 0;
+      }
 
-.rr-room-search {
-  flex: 1 1 260px;
-}
+      .rr-room-search {
+        flex: 1 1 260px;
+      }
 
-.rr-room-filter {
-  flex: 0 0 190px;
-}
+      .rr-room-filter {
+        flex: 0 0 190px;
+      }
 
-/* Scroll container */
-.rr-room-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+      /* Scroll container */
+      .rr-room-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
 
-  max-height: 430px;
-  overflow-y: auto;
-  overscroll-behavior: contain;
+        max-height: 430px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
 
-  padding: 4px 8px 4px 4px;
-  margin-top: 0;
+        padding: 4px 8px 4px 4px;
+        margin-top: 0;
 
-  scrollbar-width: thin;
-  scrollbar-color: var(--border) transparent;
-}
+        scrollbar-width: thin;
+        scrollbar-color: var(--border) transparent;
+      }
 
-.rr-room-list::-webkit-scrollbar {
-  width: 7px;
-}
+      .rr-room-list::-webkit-scrollbar {
+        width: 7px;
+      }
 
-.rr-room-list::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 10px;
-}
+      .rr-room-list::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 10px;
+      }
 
-/* Individual room */
-.rr-room-item {
-  display: grid;
-  grid-template-columns:
-    minmax(150px, 0.9fr)
-    minmax(250px, 2fr)
-    auto;
+      /* Individual room */
+      .rr-room-item {
+        display: grid;
+        grid-template-columns:
+          minmax(150px, 0.9fr)
+          minmax(250px, 2fr)
+          auto;
 
-  align-items: center;
-  gap: 18px;
+        align-items: center;
+        gap: 18px;
 
-  border: 1px solid var(--border);
-  border-radius: 12px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
 
-  padding: 14px 16px;
-  min-width: 0;
+        padding: 14px 16px;
+        min-width: 0;
 
-  background: var(--card);
-  box-sizing: border-box;
-}
+        background: var(--card);
+        box-sizing: border-box;
+      }
 
-/* Room name + status */
-.rr-room-heading {
-  min-width: 0;
-  padding-right: 4px;
-}
+      /* Room name + status */
+      .rr-room-heading {
+        min-width: 0;
+        padding-right: 4px;
+      }
 
-.rr-room-name {
-  font-size: 14px;
-  font-weight: 800;
-  line-height: 1.5;
-  overflow-wrap: anywhere;
-}
+      .rr-room-name {
+        font-size: 14px;
+        font-weight: 800;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+      }
 
-.rr-room-status {
-  display: inline-block;
-  margin-top: 6px;
+      .rr-room-status {
+        display: inline-block;
+        margin-top: 6px;
 
-  color: var(--income);
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1.4;
-}
+        color: var(--income);
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1.4;
+      }
 
-.rr-room-status.inactive {
-  color: var(--muted);
-}
+      .rr-room-status.inactive {
+        color: var(--muted);
+      }
 
-/* Room information */
-.rr-room-info {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+      /* Room information */
+      .rr-room-info {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
 
-  column-gap: 18px;
-  row-gap: 8px;
+        column-gap: 18px;
+        row-gap: 8px;
 
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.6;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.6;
 
-  min-width: 0;
-  padding: 2px 0;
-}
+        min-width: 0;
+        padding: 2px 0;
+      }
 
-.rr-room-info span {
-  white-space: nowrap;
-}
+      .rr-room-info span {
+        white-space: nowrap;
+      }
 
-.rr-room-info strong {
-  color: var(--text);
-  font-weight: 700;
-}
+      .rr-room-info strong {
+        color: var(--text);
+        font-weight: 700;
+      }
 
-/* Action buttons */
-.rr-room-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  flex-wrap: wrap;
-}
+      /* Action buttons */
+      .rr-room-actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
 
-.rr-room-actions .rr-small-btn {
-  white-space: nowrap;
-  padding: 7px 10px;
-}
+      .rr-room-actions .rr-small-btn {
+        white-space: nowrap;
+        padding: 7px 10px;
+      }
+      .rr-room-actions .rr-small-btn.danger {
+        color: var(--expense);
+        border-color: var(--border);
+      }
 
-/* =====================================
+      .rr-room-actions .rr-small-btn.danger:hover {
+        color: var(--expense);
+        border-color: var(--expense);
+      }
+
+      @media (max-width: 420px) {
+        .rr-room-actions .rr-small-btn {
+          width: 100%;
+        }
+      }
+      /* =====================================
    RESPONSIVE
 ===================================== */
 
-@media (max-width: 900px) {
-  .rr-room-item {
-    grid-template-columns: minmax(130px, 1fr) minmax(0, 1.6fr);
-    gap: 12px 16px;
-  }
+      @media (max-width: 900px) {
+        .rr-room-item {
+          grid-template-columns: minmax(130px, 1fr) minmax(0, 1.6fr);
+          gap: 12px 16px;
+        }
 
-  .rr-room-info {
-    grid-column: 1 / -1;
-    order: 3;
-    padding-top: 8px;
-    border-top: 1px solid var(--border);
-  }
+        .rr-room-info {
+          grid-column: 1 / -1;
+          order: 3;
+          padding-top: 8px;
+          border-top: 1px solid var(--border);
+        }
 
-  .rr-room-actions {
-    justify-content: flex-end;
-  }
-}
+        .rr-room-actions {
+          justify-content: flex-end;
+        }
+      }
 
-@media (max-width: 600px) {
-  .rr-room-toolbar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-  }
+      @media (max-width: 600px) {
+        .rr-room-toolbar {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 10px;
+        }
 
-  .rr-room-search,
-  .rr-room-filter {
-    flex: 1 1 auto;
-    width: 100%;
-  }
+        .rr-room-search,
+        .rr-room-filter {
+          flex: 1 1 auto;
+          width: 100%;
+        }
 
-  .rr-room-list {
-    max-height: 390px;
-    padding-right: 5px;
-  }
+        .rr-room-list {
+          max-height: 390px;
+          padding-right: 5px;
+        }
 
-  .rr-room-item {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
-    padding: 14px;
-  }
+        .rr-room-item {
+          grid-template-columns: minmax(0, 1fr);
+          gap: 12px;
+          padding: 14px;
+        }
 
-  .rr-room-info {
-    grid-column: auto;
-    gap: 8px 16px;
-    padding-top: 10px;
-  }
+        .rr-room-info {
+          grid-column: auto;
+          gap: 8px 16px;
+          padding-top: 10px;
+        }
 
-  .rr-room-actions {
-    justify-content: flex-start;
-    padding-top: 2px;
-  }
-}
+        .rr-room-actions {
+          justify-content: flex-start;
+          padding-top: 2px;
+        }
+      }
 
       /* =====================================
    HISTORY TABLE
@@ -1899,38 +1913,38 @@
 
       @media (max-width: 760px) {
         .rr-room-toolbar {
-  align-items: stretch;
-  flex-direction: column;
-}
+          align-items: stretch;
+          flex-direction: column;
+        }
 
-.rr-room-filter {
-  flex-basis: auto;
-}
+        .rr-room-filter {
+          flex-basis: auto;
+        }
 
-.rr-room-item {
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 8px 10px;
-}
+        .rr-room-item {
+          grid-template-columns: minmax(0, 1fr) auto;
+          gap: 8px 10px;
+        }
 
-.rr-room-heading {
-  grid-column: 1 / -1;
-}
+        .rr-room-heading {
+          grid-column: 1 / -1;
+        }
 
-.rr-room-info {
-  grid-column: 1;
-  gap: 2px 10px;
-}
+        .rr-room-info {
+          grid-column: 1;
+          gap: 2px 10px;
+        }
 
-.rr-room-actions {
-  grid-column: 2;
-  grid-row: 2;
-  align-self: center;
-  flex-direction: column;
-}
+        .rr-room-actions {
+          grid-column: 2;
+          grid-row: 2;
+          align-self: center;
+          flex-direction: column;
+        }
 
-.rr-room-list {
-  max-height: 390px;
-}
+        .rr-room-list {
+          max-height: 390px;
+        }
         .rr-card {
           padding: 17px;
           margin-bottom: 18px;
@@ -2590,32 +2604,32 @@
             </div>
 
             <div class="rr-room-toolbar">
-  <div class="field rr-room-search">
-    <input
-      id="roomRentRoomSearch"
-      type="search"
-      placeholder="🔎 Tìm theo tên phòng..."
-      oninput="renderRoomRentRooms()"
-    />
-  </div>
+              <div class="field rr-room-search">
+                <input
+                  id="roomRentRoomSearch"
+                  type="search"
+                  placeholder="🔎 Tìm theo tên phòng..."
+                  oninput="renderRoomRentRooms()"
+                />
+              </div>
 
-  <div class="field rr-room-filter">
-    <select
-      id="roomRentRoomStatusFilter"
-      onchange="renderRoomRentRooms()"
-    >
-      <option value="all">Tất cả phòng</option>
-      <option value="active">Đang hoạt động</option>
-      <option value="inactive">Ngừng sử dụng</option>
-    </select>
-  </div>
-</div>
+              <div class="field rr-room-filter">
+                <select
+                  id="roomRentRoomStatusFilter"
+                  onchange="renderRoomRentRooms()"
+                >
+                  <option value="all">Tất cả phòng</option>
+                  <option value="active">Đang hoạt động</option>
+                  <option value="inactive">Ngừng sử dụng</option>
+                </select>
+              </div>
+            </div>
 
-<div id="roomRentRoomList" class="rr-room-list">
-  <div class="settings-description">
-    Đang tải danh sách phòng...
-  </div>
-</div>
+            <div id="roomRentRoomList" class="rr-room-list">
+              <div class="settings-description">
+                Đang tải danh sách phòng...
+              </div>
+            </div>
           </div>
           <!-- MONTHLY UTILITY SUMMARY -->
           <div class="card rr-card">
@@ -8058,95 +8072,113 @@
 ===================================== */
 
       function renderRoomRentRooms() {
-  const container = document.getElementById("roomRentRoomList");
-  if (!container) return;
+        const container = document.getElementById("roomRentRoomList");
+        if (!container) return;
 
-  const search = (
-    document.getElementById("roomRentRoomSearch")?.value || ""
-  ).trim().toLocaleLowerCase("vi");
+        const search = (
+          document.getElementById("roomRentRoomSearch")?.value || ""
+        )
+          .trim()
+          .toLocaleLowerCase("vi");
 
-  const statusFilter =
-    document.getElementById("roomRentRoomStatusFilter")?.value || "all";
+        const statusFilter =
+          document.getElementById("roomRentRoomStatusFilter")?.value || "all";
 
-  const sortedRooms = [...roomRentRooms].sort((a, b) =>
-    String(a.name || "").localeCompare(
-      String(b.name || ""),
-      "vi",
-      { numeric: true },
-    ),
-  );
+        const sortedRooms = [...roomRentRooms].sort((a, b) =>
+          String(a.name || "").localeCompare(String(b.name || ""), "vi", {
+            numeric: true,
+          }),
+        );
 
-  const filteredRooms = sortedRooms.filter((room) => {
-    const inactive = room.isActive === false;
+        const filteredRooms = sortedRooms.filter((room) => {
+          const inactive = room.isActive === false;
 
-    const matchesSearch = String(room.name || "")
-      .toLocaleLowerCase("vi")
-      .includes(search);
+          const matchesSearch = String(room.name || "")
+            .toLocaleLowerCase("vi")
+            .includes(search);
 
-    const matchesStatus =
-      statusFilter === "all" ||
-      (statusFilter === "active" && !inactive) ||
-      (statusFilter === "inactive" && inactive);
+          const matchesStatus =
+            statusFilter === "all" ||
+            (statusFilter === "active" && !inactive) ||
+            (statusFilter === "inactive" && inactive);
 
-    return matchesSearch && matchesStatus;
-  });
+          return matchesSearch && matchesStatus;
+        });
 
-  if (!roomRentRooms.length) {
-    container.innerHTML = `
+        if (!roomRentRooms.length) {
+          container.innerHTML = `
       <div class="rr-empty">
         Chưa có phòng nào. Hãy thêm phòng đầu tiên nhé.
       </div>
     `;
-    return;
-  }
+          return;
+        }
 
-  if (!filteredRooms.length) {
-    container.innerHTML = `
+        if (!filteredRooms.length) {
+          container.innerHTML = `
       <div class="rr-empty">
         Không tìm thấy phòng phù hợp.
       </div>
     `;
-    return;
-  }
+          return;
+        }
 
-  container.innerHTML = filteredRooms.map((room) => {
-    const inactive = room.isActive === false;
+        container.innerHTML = filteredRooms
+          .map((room) => {
+            const inactive = room.isActive === false;
 
-    return `
-      <div class="rr-room-item">
-        <div class="rr-room-heading">
-          <div class="rr-room-name">
-            ${roomRentEscapeHtml(room.name)}
-          </div>
+            const hasBills = roomRentBills.some(
+              (bill) => bill.roomId === room.id,
+            );
 
-          <span class="rr-room-status ${inactive ? "inactive" : ""}">
-            ${inactive ? "● Ngừng sử dụng" : "● Đang hoạt động"}
-          </span>
+            return `
+    <div class="rr-room-item">
+      <div class="rr-room-heading">
+        <div class="rr-room-name">
+          ${roomRentEscapeHtml(room.name)}
         </div>
 
-        <div class="rr-room-info">
-          <span>Thuê: <strong>${roomRentMoney(room.defaultRent)}</strong></span>
-          <span>Rác: <strong>${roomRentMoney(room.defaultGarbage)}</strong></span>
-          <span>Điện: <strong>${roomRentMoney(room.electricityRate ?? roomRentConfig.electricityRate)}/kWh</strong></span>
-          <span>Nước: <strong>${roomRentMoney(room.waterRate ?? roomRentConfig.waterRate)}/m³</strong></span>
-        </div>
-
-        <div class="rr-room-actions">
-          <button
-            class="rr-small-btn"
-            onclick="editRoomRentRoom('${room.id}')"
-          >✏️ Sửa</button>
-
-          <button
-            class="rr-small-btn"
-            onclick="toggleRoomRentRoomStatus('${room.id}')"
-          >${inactive ? "▶️ Kích hoạt" : "⏸ Ngừng"}</button>
-        </div>
+        <span class="rr-room-status ${inactive ? "inactive" : ""}">
+          ${inactive ? "● Ngừng sử dụng" : "● Đang hoạt động"}
+        </span>
       </div>
-    `;
-  }).join("");
-}
-window.renderRoomRentRooms = renderRoomRentRooms;
+
+      <div class="rr-room-info">
+        <span>Thuê: <strong>${roomRentMoney(room.defaultRent)}</strong></span>
+        <span>Rác: <strong>${roomRentMoney(room.defaultGarbage)}</strong></span>
+        <span>Điện: <strong>${roomRentMoney(room.electricityRate ?? roomRentConfig.electricityRate)}/kWh</strong></span>
+        <span>Nước: <strong>${roomRentMoney(room.waterRate ?? roomRentConfig.waterRate)}/m³</strong></span>
+      </div>
+
+      <div class="rr-room-actions">
+        <button
+          class="rr-small-btn"
+          onclick="editRoomRentRoom('${room.id}')"
+        >✏️ Sửa</button>
+
+        <button
+          class="rr-small-btn"
+          onclick="toggleRoomRentRoomStatus('${room.id}')"
+        >${inactive ? "▶️ Kích hoạt" : "⏸ Ngừng"}</button>
+
+        ${
+          hasBills
+            ? `<button
+                 class="rr-small-btn danger"
+                 onclick="clearRoomRentBills('${room.id}')"
+               >🧹 Xóa hóa đơn</button>`
+            : `<button
+                 class="rr-small-btn danger"
+                 onclick="deleteRoomRentRoom('${room.id}')"
+               >🗑 Xóa phòng</button>`
+        }
+      </div>
+    </div>
+  `;
+          })
+          .join("");
+      }
+      window.renderRoomRentRooms = renderRoomRentRooms;
       function renderRoomRentRoomOptions() {
         const billSelect = document.getElementById("roomBillRoom");
 
@@ -8360,7 +8392,227 @@ window.renderRoomRentRooms = renderRoomRentRooms;
           });
         }
       };
+      /* =====================================
+   DELETE ALL BILLS OF A ROOM
+===================================== */
 
+      window.clearRoomRentBills = async function (roomId) {
+        if (!isAppUnlocked || !currentAccountId) return;
+
+        const accountId = currentAccountId;
+
+        const room = roomRentRooms.find((item) => item.id === roomId);
+
+        if (!room) return;
+
+        try {
+          // Giữ cố định đường dẫn account hiện tại
+          const billsRef = getRoomRentBillsRef();
+
+          // Lấy hóa đơn mới nhất
+          const billsSnapshot = await getDocs(billsRef);
+
+          if (currentAccountId !== accountId || !isAppUnlocked) {
+            return;
+          }
+
+          const roomBills = billsSnapshot.docs.filter(
+            (item) => item.data().roomId === roomId,
+          );
+
+          if (!roomBills.length) {
+            await loadRoomRentData();
+            return;
+          }
+
+          const confirmed = await window.showAppDialog({
+            title: "Xóa toàn bộ hóa đơn?",
+            message:
+              `Phòng: ${room.name}\n\n` +
+              `Số hóa đơn sẽ bị xóa: ${roomBills.length}\n\n` +
+              "Toàn bộ lịch sử hóa đơn của riêng phòng này sẽ bị xóa vĩnh viễn.\n\n" +
+              "Các phòng khác và hóa đơn của chúng không bị ảnh hưởng. " +
+              "Thông tin phòng hiện tại vẫn được giữ lại.\n\n" +
+              "Bạn có chắc chắn muốn tiếp tục không?",
+            type: "danger",
+            confirm: true,
+            confirmText: "Xóa tất cả hóa đơn",
+            cancelText: "Hủy",
+          });
+
+          if (!confirmed) return;
+
+          if (currentAccountId !== accountId || !isAppUnlocked) {
+            return;
+          }
+
+          // Kiểm tra lại dữ liệu ngay trước khi xóa
+          const latestSnapshot = await getDocs(billsRef);
+
+          if (currentAccountId !== accountId || !isAppUnlocked) {
+            return;
+          }
+
+          const latestRoomBills = latestSnapshot.docs.filter(
+            (item) => item.data().roomId === roomId,
+          );
+
+          if (!latestRoomBills.length) {
+            await loadRoomRentData();
+            return;
+          }
+
+          // Nếu đang sửa một hóa đơn thuộc phòng này,
+          // đưa form về trạng thái thêm mới.
+          const editingBillWillBeDeleted = latestRoomBills.some(
+            (item) => item.id === editingRoomRentBillId,
+          );
+
+          // Xóa theo từng nhóm để tránh gửi quá nhiều request cùng lúc
+          const chunkSize = 400;
+
+          for (let i = 0; i < latestRoomBills.length; i += chunkSize) {
+            if (currentAccountId !== accountId || !isAppUnlocked) {
+              throw new Error(
+                "Thao tác đã dừng vì tài khoản đã thay đổi hoặc ứng dụng bị khóa.",
+              );
+            }
+
+            const chunk = latestRoomBills.slice(i, i + chunkSize);
+
+            await Promise.all(chunk.map((item) => deleteDoc(item.ref)));
+          }
+
+          if (editingBillWillBeDeleted) {
+            window.resetRoomRentBillForm();
+          }
+
+          await loadRoomRentData();
+
+          await window.showAppDialog({
+            title: "Đã xóa hóa đơn",
+            message:
+              `Đã xóa ${latestRoomBills.length} hóa đơn của phòng "${room.name}".\n\n` +
+              "Thông tin phòng vẫn được giữ lại để bạn tiếp tục sử dụng.",
+            type: "success",
+          });
+        } catch (error) {
+          console.error("Clear room bills error:", error);
+
+          await window.showAppDialog({
+            title: "Không thể xóa hóa đơn",
+            message: error.message || "Đã xảy ra lỗi khi xóa hóa đơn.",
+            type: "error",
+          });
+        }
+      };
+      /* =====================================
+   DELETE ROOM
+===================================== */
+
+      window.deleteRoomRentRoom = async function (id) {
+        if (!isAppUnlocked || !currentAccountId) return;
+
+        const accountId = currentAccountId;
+
+        const room = roomRentRooms.find((item) => item.id === id);
+
+        if (!room) return;
+
+        try {
+          // Lưu reference trước khi thực hiện các thao tác bất đồng bộ
+          const roomRef = getRoomRentRoomRef(id);
+          const billsRef = getRoomRentBillsRef();
+
+          // Kiểm tra hóa đơn hiện có
+          const billsSnapshot = await getDocs(billsRef);
+
+          if (currentAccountId !== accountId || !isAppUnlocked) {
+            return;
+          }
+
+          const hasBills = billsSnapshot.docs.some(
+            (item) => item.data().roomId === id,
+          );
+
+          if (hasBills) {
+            await loadRoomRentData();
+
+            await window.showAppDialog({
+              title: "Không thể xóa phòng",
+              message:
+                `Phòng "${room.name}" vẫn còn hóa đơn.\n\n` +
+                "Bạn cần xóa toàn bộ hóa đơn của phòng trước khi xóa phòng.",
+              type: "warning",
+            });
+
+            return;
+          }
+
+          const confirmed = await window.showAppDialog({
+            title: "Xóa phòng?",
+            message:
+              `Bạn có chắc chắn muốn xóa phòng "${room.name}" không?\n\n` +
+              "Thông tin phòng sẽ bị xóa vĩnh viễn và không thể khôi phục.",
+            type: "danger",
+            confirm: true,
+            confirmText: "Xóa phòng",
+            cancelText: "Hủy",
+          });
+
+          if (!confirmed) return;
+
+          if (currentAccountId !== accountId || !isAppUnlocked) {
+            return;
+          }
+
+          // Kiểm tra lần cuối để tránh xóa phòng vừa phát sinh hóa đơn
+          const latestSnapshot = await getDocs(billsRef);
+
+          if (currentAccountId !== accountId || !isAppUnlocked) {
+            return;
+          }
+
+          const hasNewBills = latestSnapshot.docs.some(
+            (item) => item.data().roomId === id,
+          );
+
+          if (hasNewBills) {
+            await loadRoomRentData();
+
+            await window.showAppDialog({
+              title: "Không thể xóa phòng",
+              message:
+                "Phòng vừa phát sinh hóa đơn. Hãy kiểm tra và xử lý hóa đơn trước khi xóa phòng.",
+              type: "warning",
+            });
+
+            return;
+          }
+
+          await deleteDoc(roomRef);
+
+          if (editingRoomRentRoomId === id) {
+            resetRoomRentRoomForm();
+          }
+
+          await loadRoomRentData();
+
+          await window.showAppDialog({
+            title: "Đã xóa phòng",
+            message: `Phòng "${room.name}" đã được xóa thành công.`,
+            type: "success",
+          });
+        } catch (error) {
+          console.error("Delete room error:", error);
+
+          await window.showAppDialog({
+            title: "Không thể xóa phòng",
+            message: error.message || "Đã xảy ra lỗi khi xóa phòng.",
+            type: "error",
+          });
+        }
+      };
       /* =====================================
    BILL CALCULATION
 ===================================== */
