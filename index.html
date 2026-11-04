@@ -1879,7 +1879,29 @@
       /* =====================================
    SUMMARY TABLE
 ===================================== */
+      .rr-payment-btn {
+        padding: 7px 10px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: transparent;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: 0.2s;
+      }
 
+      .rr-payment-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+
+      .rr-payment-btn.paid {
+        color: var(--income);
+        border-color: var(--income);
+        background: var(--primary-soft);
+      }
       #roomRentSummaryBody td,
       #roomRentSummaryFoot th {
         border-bottom: 1px solid var(--border);
@@ -2695,11 +2717,15 @@
                     <th style="text-align: right; padding: 10px 8px">
                       Tiền nước
                     </th>
+                    <th style="text-align: center; padding: 10px 8px">
+                      Thanh toán
+                    </th>
                   </tr>
                 </thead>
+
                 <tbody id="roomRentSummaryBody">
                   <tr>
-                    <td colspan="5" class="rr-empty">Chưa có dữ liệu.</td>
+                    <td colspan="6" class="rr-empty">Chưa có dữ liệu.</td>
                   </tr>
                 </tbody>
                 <tfoot id="roomRentSummaryFoot"></tfoot>
@@ -3458,6 +3484,8 @@
         onSnapshot,
         serverTimestamp,
         writeBatch,
+        arrayUnion,
+        arrayRemove,
       } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
       const firebaseConfig = {
@@ -9001,10 +9029,11 @@
         const rows = activeRooms.map((room) => ({
           room,
           bill: billByRoom.get(room.id) || null,
+          isPaid:
+            Array.isArray(room.paidMonths) && room.paidMonths.includes(month),
         }));
-
         const savedRows = rows.filter((item) => item.bill);
-
+        const paidCount = rows.filter((item) => item.isPaid).length;
         const totalElectricityUsage = savedRows.reduce(
           (sum, item) => sum + Number(item.bill.electricityUsage || 0),
           0,
@@ -9038,7 +9067,7 @@
           roomRentMoney(totalWaterAmount);
 
         document.getElementById("roomSummaryBillCount").textContent =
-          `Đã có hóa đơn: ${savedRows.length} / ${activeRooms.length} phòng đang hoạt động`;
+          `Đã có hóa đơn: ${savedRows.length} / ${activeRooms.length} phòng đang hoạt động · Đã thu tiền: ${paidCount} / ${activeRooms.length} phòng`;
 
         if (!rows.length) {
           tbody.innerHTML = `
@@ -9051,7 +9080,7 @@
         } else {
           tbody.innerHTML = rows
             .map(
-              ({ room, bill }) => `
+              ({ room, bill, isPaid }) => `
       <tr>
         <td style="padding:10px 8px">
           <strong>${roomRentEscapeHtml(room.name)}</strong>
@@ -9073,6 +9102,15 @@
         <td style="text-align:right;padding:10px 8px">
           ${bill ? roomRentMoney(bill.waterAmount) : "—"}
         </td>
+        <td style="text-align:center;padding:10px 8px">
+  <button
+    type="button"
+    class="rr-payment-btn ${isPaid ? "paid" : ""}"
+    onclick="toggleRoomRentPayment('${room.id}', '${month}', ${isPaid})"
+  >
+    ${isPaid ? "✓ Đã thanh toán" : "Chưa thanh toán"}
+  </button>
+</td>
       </tr>
     `,
             )
@@ -9097,10 +9135,94 @@
         <th style="text-align:right;padding:10px 8px">
           ${roomRentMoney(totalWaterAmount)}
         </th>
+        <th style="text-align:center;padding:10px 8px">
+  ${paidCount}/${rows.length} phòng
+</th>
       </tr>
     `;
         }
       }
+      window.toggleRoomRentPayment = async function (
+        roomId,
+        month,
+        currentlyPaid,
+      ) {
+        if (!isAppUnlocked || !currentAccountId) {
+          return;
+        }
+
+        const room = roomRentRooms.find((item) => item.id === roomId);
+
+        if (!room) return;
+
+        const accountId = currentAccountId;
+        const nextPaid = !currentlyPaid;
+
+        const confirmed = await window.showAppDialog({
+          title: nextPaid
+            ? "Xác nhận đã nhận tiền?"
+            : "Hủy trạng thái thanh toán?",
+          message: nextPaid
+            ? `Xác nhận phòng ${room.name} đã thanh toán tiền phòng tháng ${month}?`
+            : `Bạn muốn chuyển phòng ${room.name} tháng ${month} về trạng thái chưa thanh toán?`,
+          type: "warning",
+          confirm: true,
+          confirmText: nextPaid ? "Đã nhận tiền" : "Xác nhận",
+        });
+
+        if (!confirmed) return;
+
+        // Kiểm tra lại sau khi người dùng xác nhận.
+        if (
+          !isAppUnlocked ||
+          !currentAccountId ||
+          currentAccountId !== accountId
+        ) {
+          return;
+        }
+
+        try {
+          const roomRef = doc(db, "accounts", accountId, "rooms", roomId);
+
+          await updateDoc(roomRef, {
+            paidMonths: nextPaid ? arrayUnion(month) : arrayRemove(month),
+            updatedAt: serverTimestamp(),
+          });
+
+          // Cập nhật dữ liệu local ngay sau khi Firebase lưu thành công.
+          roomRentRooms = roomRentRooms.map((item) =>
+            item.id === roomId
+              ? {
+                  ...item,
+                  paidMonths: nextPaid
+                    ? [
+                        ...new Set([
+                          ...(Array.isArray(item.paidMonths)
+                            ? item.paidMonths
+                            : []),
+                          month,
+                        ]),
+                      ]
+                    : Array.isArray(item.paidMonths)
+                      ? item.paidMonths.filter(
+                          (itemMonth) => itemMonth !== month,
+                        )
+                      : [],
+                }
+              : item,
+          );
+
+          renderRoomRentSummary();
+        } catch (error) {
+          console.error("Toggle room rent payment error:", error);
+
+          await window.showAppDialog({
+            title: "Không thể cập nhật thanh toán",
+            message: error.message || "Vui lòng thử lại.",
+            type: "error",
+          });
+        }
+      };
 
       window.changeRoomRentSummaryMonth = function () {
         const summaryMonth = document.getElementById(
