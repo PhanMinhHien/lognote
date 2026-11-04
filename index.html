@@ -2862,8 +2862,18 @@
 
           <div id="lockError" class="app-lock-error" role="alert"></div>
 
-          <button id="lockSubmitBtn" class="primary-btn" type="submit">
+                    <button id="lockSubmitBtn" class="primary-btn" type="submit">
             Mở khóa
+          </button>
+
+          <button
+            id="backToAccountBtn"
+            class="secondary-btn"
+            type="button"
+            onclick="backToAccountSelection()"
+            style="width:100%;margin-top:10px"
+          >
+            ← Quay lại chọn Account
           </button>
         </form>
       </div>
@@ -4979,6 +4989,12 @@ localStorage.setItem(
       function hideLockScreen() {
         document.getElementById("appLockScreen").classList.add("hidden");
       }
+            window.backToAccountSelection = async function () {
+        if (lockActionInProgress) return;
+
+        // Quay lại màn hình chọn Account và xóa phiên đang chọn.
+        await window.lockApp();
+      };
 function clearRoomRentSensitiveUI() {
   roomRentRooms = [];
   roomRentBills = [];
