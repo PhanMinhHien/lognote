@@ -1161,22 +1161,34 @@
         }
 
         /* Label giả cho mobile */
-        .admin-account-table tbody tr[data-admin-account-row] td:nth-child(2)::before {
+        .admin-account-table
+          tbody
+          tr[data-admin-account-row]
+          td:nth-child(2)::before {
           content: "Role: ";
           color: var(--muted);
           font-weight: 500;
         }
 
-        .admin-account-table tbody tr[data-admin-account-row] td:nth-child(3)::before {
+        .admin-account-table
+          tbody
+          tr[data-admin-account-row]
+          td:nth-child(3)::before {
           content: "● ";
           color: #22c55e;
         }
 
-        .admin-account-table tbody tr[data-admin-account-row] td:nth-child(4)::before {
+        .admin-account-table
+          tbody
+          tr[data-admin-account-row]
+          td:nth-child(4)::before {
           content: "Created: ";
         }
 
-        .admin-account-table tbody tr[data-admin-account-row] td:nth-child(5)::before {
+        .admin-account-table
+          tbody
+          tr[data-admin-account-row]
+          td:nth-child(5)::before {
           content: "Login: ";
         }
 
@@ -1460,64 +1472,88 @@
         }
       }
       /* =====================================
-   ROOM RENT MODULE
+   ROOM RENT MODULE - MODERN UI
 ===================================== */
 
       .rr-card {
-        margin-bottom: 20px;
-        padding: 20px;
+        margin-bottom: 24px;
+        padding: 22px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        min-width: 0;
+      }
+
+      .rr-section-heading {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 14px;
+      }
+
+      .rr-section-heading .panel-title {
+        margin-bottom: 8px;
       }
 
       .rr-grid {
         display: grid;
-        gap: 14px;
-        margin-top: 16px;
+        gap: 16px;
+        margin-top: 18px;
+        min-width: 0;
       }
 
       .rr-grid-2 {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .rr-section-heading {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-      }
-
-      .rr-actions {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-top: 14px;
-      }
-
       .rr-divider {
         height: 1px;
         background: var(--border);
-        margin: 20px 0;
+        margin: 24px 0;
       }
 
+      /* =====================================
+   UTILITY CARDS
+===================================== */
+
       .rr-utility-card {
-        padding: 16px;
+        padding: 18px;
         border: 1px solid var(--border);
-        border-radius: 12px;
+        border-radius: 14px;
         background: var(--bg);
         min-width: 0;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+
+      .rr-utility-card:hover {
+        border-color: var(--primary);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
       }
 
       .rr-utility-title {
-        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 15px;
         font-weight: 800;
+        margin-bottom: 16px;
+      }
+
+      .rr-utility-card .field {
         margin-bottom: 14px;
+      }
+
+      .rr-utility-card .field:last-child {
+        margin-bottom: 0;
       }
 
       .rr-result {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 10px;
-        padding: 9px 0;
+        gap: 12px;
+        padding: 11px 0;
         border-top: 1px solid var(--border);
         font-size: 13px;
       }
@@ -1528,86 +1564,205 @@
 
       .rr-result strong {
         text-align: right;
-        font-weight: 700;
+        font-weight: 750;
+        overflow-wrap: anywhere;
       }
+
+      /* =====================================
+   MONTHLY SUMMARY
+===================================== */
+
+      .rr-utility-card .rr-result strong {
+        font-size: 17px;
+      }
+
+      .rr-utility-card .settings-description strong {
+        color: var(--text);
+        font-weight: 800;
+      }
+
+      /* =====================================
+   TOTAL BILL
+===================================== */
 
       .rr-total {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 12px;
-        margin-top: 18px;
-        padding: 18px;
-        border-radius: 12px;
+        gap: 16px;
+        margin-top: 20px;
+        padding: 20px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
         background: var(--primary-soft);
       }
 
       .rr-total span {
         font-size: 13px;
         font-weight: 800;
+        letter-spacing: 0.4px;
       }
 
       .rr-total strong {
-        font-size: 23px;
+        font-size: clamp(21px, 3vw, 26px);
         font-weight: 900;
         color: var(--income);
         text-align: right;
+        overflow-wrap: anywhere;
       }
+
+      /* =====================================
+   ROOM LIST
+===================================== */
 
       .rr-room-list {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-        margin-top: 18px;
+        gap: 14px;
+        margin-top: 22px;
       }
 
       .rr-room-item {
+        position: relative;
+        padding: 18px;
         border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 14px;
+        border-radius: 14px;
+        background: var(--bg);
         min-width: 0;
+        transition:
+          transform 0.2s,
+          border-color 0.2s,
+          box-shadow 0.2s;
+      }
+
+      .rr-room-item:hover {
+        transform: translateY(-2px);
+        border-color: var(--primary);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
       }
 
       .rr-room-name {
-        font-size: 15px;
-        font-weight: 800;
-        margin-bottom: 8px;
+        font-size: 16px;
+        font-weight: 850;
+        margin-bottom: 14px;
+        overflow-wrap: anywhere;
       }
 
       .rr-room-info {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
         color: var(--muted);
         font-size: 13px;
-        line-height: 1.8;
+        line-height: 1.6;
+      }
+
+      .rr-room-info strong {
+        color: var(--text);
+        font-weight: 750;
+      }
+
+      /* =====================================
+   BUTTONS
+===================================== */
+
+      .rr-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 18px;
       }
 
       .rr-room-actions {
         display: flex;
         gap: 8px;
-        margin-top: 12px;
+        margin-top: 16px;
+        padding-top: 14px;
+        border-top: 1px solid var(--border);
         flex-wrap: wrap;
       }
 
       .rr-small-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        min-height: 34px;
+        padding: 7px 12px;
         border: 1px solid var(--border);
+        border-radius: 8px;
         background: var(--card);
         color: var(--text);
-        padding: 7px 11px;
-        border-radius: 7px;
         font-size: 12px;
-        font-weight: 700;
+        font-weight: 750;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          border-color 0.2s,
+          transform 0.15s;
+      }
+
+      .rr-small-btn:hover {
+        background: var(--primary-soft);
+        border-color: var(--primary);
+      }
+
+      .rr-small-btn:active {
+        transform: scale(0.97);
       }
 
       .rr-small-btn.danger {
         color: var(--expense);
       }
 
+      .rr-small-btn.danger:hover {
+        background: rgba(239, 68, 68, 0.08);
+        border-color: var(--expense);
+      }
+
+      /* =====================================
+   HISTORY TABLE
+===================================== */
+
       .rr-history-table {
+        width: 100%;
         min-width: 720px;
         margin-top: 20px;
+        border-collapse: separate;
+        border-spacing: 0;
+      }
+
+      .rr-history-table th {
+        padding: 13px 12px;
+        background: var(--bg);
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+        text-align: left;
+        white-space: nowrap;
+      }
+
+      .rr-history-table th:first-child {
+        border-radius: 8px 0 0 8px;
+      }
+
+      .rr-history-table th:last-child {
+        border-radius: 0 8px 8px 0;
       }
 
       .rr-history-table td {
+        padding: 13px 12px;
+        border-bottom: 1px solid var(--border);
         vertical-align: middle;
+        font-size: 13px;
+      }
+
+      .rr-history-table tbody tr:hover {
+        background: var(--bg);
+      }
+
+      .rr-history-table td strong {
+        font-weight: 800;
       }
 
       .rr-history-actions {
@@ -1616,32 +1771,118 @@
         flex-wrap: wrap;
       }
 
-      .rr-empty {
-        color: var(--muted);
-        text-align: center;
-        padding: 22px 10px;
+      /* =====================================
+   SUMMARY TABLE
+===================================== */
+
+      #roomRentSummaryBody td,
+      #roomRentSummaryFoot th {
+        border-bottom: 1px solid var(--border);
       }
 
+      #roomRentSummaryBody tr:hover {
+        background: var(--bg);
+      }
+
+      #roomRentSummaryFoot th {
+        padding-top: 14px !important;
+        padding-bottom: 14px !important;
+      }
+
+      /* =====================================
+   EMPTY STATE
+===================================== */
+
+      .rr-empty {
+        grid-column: 1 / -1;
+        color: var(--muted);
+        text-align: center;
+        padding: 32px 16px;
+        border: 1px dashed var(--border);
+        border-radius: 12px;
+      }
+
+      /* =====================================
+   RESPONSIVE
+===================================== */
+
       @media (max-width: 760px) {
+        .rr-card {
+          padding: 17px;
+          margin-bottom: 18px;
+          border-radius: 14px;
+        }
+
         .rr-grid-2 {
           grid-template-columns: 1fr;
+          gap: 13px;
         }
 
         .rr-room-list {
           grid-template-columns: 1fr;
+          gap: 12px;
+        }
+
+        .rr-room-item {
+          padding: 16px;
+        }
+
+        .rr-utility-card {
+          padding: 16px;
         }
 
         .rr-total {
           align-items: flex-start;
           flex-direction: column;
+          gap: 8px;
+          padding: 17px;
         }
 
         .rr-total strong {
           text-align: left;
         }
 
+        .rr-actions {
+          gap: 8px;
+        }
+
         .rr-actions > button {
           flex: 1;
+          min-width: 120px;
+        }
+
+        .rr-room-actions > button {
+          flex: 1;
+        }
+
+        .rr-history-table {
+          min-width: 680px;
+        }
+
+        .rr-section-heading {
+          flex-direction: column;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .rr-card {
+          padding: 14px;
+        }
+
+        .rr-room-actions {
+          flex-direction: column;
+        }
+
+        .rr-room-actions > button {
+          width: 100%;
+        }
+
+        .rr-small-btn {
+          min-height: 36px;
+        }
+
+        .rr-total strong {
+          font-size: 22px;
         }
       }
     </style>
@@ -1663,10 +1904,34 @@
         </div>
 
         <nav class="nav">
-          <button class="nav-btn active" data-page="dashboard" onclick="switchPage('dashboard')">📊 Dashboard</button>
-          <button class="nav-btn" data-page="transactions" onclick="switchPage('transactions')">💳 Transactions</button>
-          <button class="nav-btn" data-page="roomRent" onclick="switchPage('roomRent')">🏠 Quản lý tiền phòng</button>
-          <button class="nav-btn" data-page="settings" onclick="switchPage('settings')">⚙️ Settings</button>
+          <button
+            class="nav-btn active"
+            data-page="dashboard"
+            onclick="switchPage('dashboard')"
+          >
+            📊 Dashboard
+          </button>
+          <button
+            class="nav-btn"
+            data-page="transactions"
+            onclick="switchPage('transactions')"
+          >
+            💳 Transactions
+          </button>
+          <button
+            class="nav-btn"
+            data-page="roomRent"
+            onclick="switchPage('roomRent')"
+          >
+            🏠 Quản lý tiền phòng
+          </button>
+          <button
+            class="nav-btn"
+            data-page="settings"
+            onclick="switchPage('settings')"
+          >
+            ⚙️ Settings
+          </button>
         </nav>
 
         <!-- <div class="sidebar-bottom">
@@ -1675,21 +1940,84 @@
           </button>
         </div> -->
         <div class="sidebar-bottom">
-          <button class="theme-btn" id="currentAccountBtn" onclick="openAccountSwitcher()" style="margin-bottom: 8px">👤 Account</button>
-          <button class="theme-btn" id="adminNotificationBtn" onclick="toggleAdminNotifications()" style="margin-bottom: 8px; display: none; position: relative">
-            🔔 Thông báo
-            <span id="adminNotificationBadge" style="display: none; position: absolute; top: 6px; right: 8px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: #ef4444; color: white; font-size: 11px; font-weight: 700; line-height: 18px; text-align: center"> 0 </span>
+          <button
+            class="theme-btn"
+            id="currentAccountBtn"
+            onclick="openAccountSwitcher()"
+            style="margin-bottom: 8px"
+          >
+            👤 Account
           </button>
-          <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌙 Dark mode</button>
+          <button
+            class="theme-btn"
+            id="adminNotificationBtn"
+            onclick="toggleAdminNotifications()"
+            style="margin-bottom: 8px; display: none; position: relative"
+          >
+            🔔 Thông báo
+            <span
+              id="adminNotificationBadge"
+              style="
+                display: none;
+                position: absolute;
+                top: 6px;
+                right: 8px;
+                min-width: 18px;
+                height: 18px;
+                padding: 0 5px;
+                border-radius: 999px;
+                background: #ef4444;
+                color: white;
+                font-size: 11px;
+                font-weight: 700;
+                line-height: 18px;
+                text-align: center;
+              "
+            >
+              0
+            </span>
+          </button>
+          <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">
+            🌙 Dark mode
+          </button>
         </div>
-        <div id="adminNotificationPanel" style="display: none; position: fixed; left: 220px; bottom: 70px; width: min(380px, calc(100vw - 240px)); max-height: 500px; overflow-y: auto; z-index: 9999; background: var(--card); border: 1px solid var(--border-color, #ddd); border-radius: 14px; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18); padding: 16px">
+        <div
+          id="adminNotificationPanel"
+          style="
+            display: none;
+            position: fixed;
+            left: 220px;
+            bottom: 70px;
+            width: min(380px, calc(100vw - 240px));
+            max-height: 500px;
+            overflow-y: auto;
+            z-index: 9999;
+            background: var(--card);
+            border: 1px solid var(--border-color, #ddd);
+            border-radius: 14px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+            padding: 16px;
+          "
+        >
           <div style="margin-bottom: 12px">
             <div style="font-size: 17px; font-weight: 700">🔔 Thông báo</div>
 
             <div style="display: flex; gap: 8px; margin: 10px 0">
-              <button class="theme-btn" onclick="markAllAdminNotificationsRead()" style="flex: 1">✓ Đọc tất cả</button>
+              <button
+                class="theme-btn"
+                onclick="markAllAdminNotificationsRead()"
+                style="flex: 1"
+              >
+                ✓ Đọc tất cả
+              </button>
 
-              <button class="theme-btn" onclick="deleteAllAdminNotifications()" style="flex: 1; color: #ef4444">🗑️ Xóa tất cả</button>
+              <button
+                class="theme-btn"
+                onclick="deleteAllAdminNotifications()"
+                style="flex: 1; color: #ef4444"
+              >
+                🗑️ Xóa tất cả
+              </button>
             </div>
 
             <div id="adminNotificationList"></div>
@@ -1709,9 +2037,21 @@
               <div class="page-subtitle">Tổng quan thu chi của bạn</div>
             </div>
             <div style="display: flex; gap: 10px; flex-wrap: wrap">
-              <button class="secondary-btn" type="button" onclick="openTransferModal()">↔ Chuyển tiền</button>
+              <button
+                class="secondary-btn"
+                type="button"
+                onclick="openTransferModal()"
+              >
+                ↔ Chuyển tiền
+              </button>
 
-              <button class="primary-btn" type="button" onclick="openAddModal()">+ Giao dịch</button>
+              <button
+                class="primary-btn"
+                type="button"
+                onclick="openAddModal()"
+              >
+                + Giao dịch
+              </button>
             </div>
           </div>
 
@@ -1720,7 +2060,12 @@
             <div class="card kpi">
               <div class="kpi-label">Số dư</div>
 
-              <div id="balanceTotalValue" class="kpi-total-value balance-positive">0 ₫</div>
+              <div
+                id="balanceTotalValue"
+                class="kpi-total-value balance-positive"
+              >
+                0 ₫
+              </div>
 
               <hr class="kpi-divider" />
 
@@ -1741,7 +2086,9 @@
             <div class="card kpi">
               <div class="kpi-label">Tổng thu</div>
 
-              <div id="incomeTotalValue" class="kpi-total-value income">0 ₫</div>
+              <div id="incomeTotalValue" class="kpi-total-value income">
+                0 ₫
+              </div>
 
               <hr class="kpi-divider" />
 
@@ -1775,7 +2122,9 @@
             <div class="card kpi">
               <div class="kpi-label">Tổng chi</div>
 
-              <div id="expenseTotalValue" class="kpi-total-value expense">0 ₫</div>
+              <div id="expenseTotalValue" class="kpi-total-value expense">
+                0 ₫
+              </div>
 
               <hr class="kpi-divider" />
 
@@ -1796,29 +2145,46 @@
             <div class="card kpi">
               <div class="kpi-label">Chi tháng này</div>
 
-              <div id="monthExpenseTotalValue" class="kpi-total-value expense">0 ₫</div>
+              <div id="monthExpenseTotalValue" class="kpi-total-value expense">
+                0 ₫
+              </div>
 
               <hr class="kpi-divider" />
 
               <div class="kpi-split">
                 <div class="kpi-source-row">
                   <span class="kpi-source-label">💵 Tiền mặt</span>
-                  <div id="monthExpenseCashValue" class="kpi-value expense">0 ₫</div>
+                  <div id="monthExpenseCashValue" class="kpi-value expense">
+                    0 ₫
+                  </div>
                 </div>
 
                 <div class="kpi-source-row">
                   <span class="kpi-source-label">🏦 Ngân hàng</span>
-                  <div id="monthExpenseBankValue" class="kpi-value expense">0 ₫</div>
+                  <div id="monthExpenseBankValue" class="kpi-value expense">
+                    0 ₫
+                  </div>
                 </div>
               </div>
             </div>
           </div>
           <!-- SHARED DATE FILTER -->
           <div class="card filters" style="margin-bottom: 20px">
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap">
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                margin-bottom: 14px;
+                flex-wrap: wrap;
+              "
+            >
               <div>
                 <div class="panel-title">📅 Khoảng thời gian</div>
-                <div class="panel-subtitle" style="margin-top: 4px">Áp dụng cho Dashboard và Transactions</div>
+                <div class="panel-subtitle" style="margin-top: 4px">
+                  Áp dụng cho Dashboard và Transactions
+                </div>
               </div>
             </div>
 
@@ -1851,16 +2217,32 @@
               <div class="panel-header">
                 <div>
                   <div class="panel-title">Chi theo nhóm</div>
-                  <div class="panel-subtitle" id="categoryDateRangeLabel">Tháng hiện tại</div>
+                  <div class="panel-subtitle" id="categoryDateRangeLabel">
+                    Tháng hiện tại
+                  </div>
                 </div>
               </div>
 
               <div id="categoryList" class="category-list"></div>
 
-              <div style="margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border)">
-                <div class="panel-title" style="font-size: 14px">💳 Chi theo nguồn tiền</div>
+              <div
+                style="
+                  margin-top: 20px;
+                  padding-top: 18px;
+                  border-top: 1px solid var(--border);
+                "
+              >
+                <div class="panel-title" style="font-size: 14px">
+                  💳 Chi theo nguồn tiền
+                </div>
 
-                <div class="panel-subtitle" id="sourceDateRangeLabel" style="margin-top: 4px; margin-bottom: 14px">Tháng hiện tại</div>
+                <div
+                  class="panel-subtitle"
+                  id="sourceDateRangeLabel"
+                  style="margin-top: 4px; margin-bottom: 14px"
+                >
+                  Tháng hiện tại
+                </div>
 
                 <div id="sourceList" class="category-list"></div>
               </div>
@@ -1873,7 +2255,12 @@
                 <div class="panel-title">Giao dịch gần đây</div>
                 <div class="panel-subtitle">10 giao dịch mới nhất</div>
               </div>
-              <button class="secondary-btn" onclick="switchPage('transactions')">Xem tất cả</button>
+              <button
+                class="secondary-btn"
+                onclick="switchPage('transactions')"
+              >
+                Xem tất cả
+              </button>
             </div>
             <div id="recentTransactions" class="transaction-list"></div>
           </div>
@@ -1886,9 +2273,21 @@
               <div class="page-subtitle">Xem và quản lý các giao dịch</div>
             </div>
             <div style="display: flex; gap: 10px; flex-wrap: wrap">
-              <button class="secondary-btn" type="button" onclick="openTransferModal()">↔ Chuyển tiền</button>
+              <button
+                class="secondary-btn"
+                type="button"
+                onclick="openTransferModal()"
+              >
+                ↔ Chuyển tiền
+              </button>
 
-              <button class="primary-btn" type="button" onclick="openAddModal()">+ Giao dịch</button>
+              <button
+                class="primary-btn"
+                type="button"
+                onclick="openAddModal()"
+              >
+                + Giao dịch
+              </button>
             </div>
           </div>
 
@@ -1927,15 +2326,25 @@
               </div>
               <div class="field">
                 <label for="filterSearch">Tìm kiếm</label>
-                <input type="text" id="filterSearch" placeholder="Tìm note / category..." />
+                <input
+                  type="text"
+                  id="filterSearch"
+                  placeholder="Tìm note / category..."
+                />
               </div>
             </div>
           </div>
 
           <div class="range-summary">
-            <div class="summary-pill income">Thu: <strong id="rangeIncome">0 ₫</strong></div>
-            <div class="summary-pill expense">Chi: <strong id="rangeExpense">0 ₫</strong></div>
-            <div class="summary-pill">Số giao dịch: <strong id="rangeCount">0</strong></div>
+            <div class="summary-pill income">
+              Thu: <strong id="rangeIncome">0 ₫</strong>
+            </div>
+            <div class="summary-pill expense">
+              Chi: <strong id="rangeExpense">0 ₫</strong>
+            </div>
+            <div class="summary-pill">
+              Số giao dịch: <strong id="rangeCount">0</strong>
+            </div>
           </div>
 
           <div class="card table-card">
@@ -1964,29 +2373,10 @@
           <div class="topbar">
             <div>
               <div class="page-title">🏠 Quản lý tiền phòng</div>
-              <div class="page-subtitle">Quản lý thông tin phòng và tính tiền hàng tháng</div>
-            </div>
-          </div>
-
-          <!-- DEFAULT RATES -->
-          <div class="card rr-card">
-            <div class="panel-title">⚙️ Đơn giá mặc định</div>
-
-            <div class="settings-description">Đơn giá được lưu riêng cho Account hiện tại. Hóa đơn đã lưu sẽ không bị thay đổi khi bạn cập nhật đơn giá.</div>
-
-            <div class="rr-grid rr-grid-2">
-              <div class="field">
-                <label for="roomElectricityRate"> Giá điện (VNĐ / kWh) </label>
-                <input id="roomElectricityRate" type="number" min="0" step="1" value="4000" />
-              </div>
-
-              <div class="field">
-                <label for="roomWaterRate"> Giá nước (VNĐ / m³) </label>
-                <input id="roomWaterRate" type="number" min="0" step="1" value="25000" />
+              <div class="page-subtitle">
+                Quản lý thông tin phòng và tính tiền hàng tháng
               </div>
             </div>
-
-            <button class="primary-btn rr-actions" type="button" onclick="saveRoomRentConfig()">Lưu đơn giá</button>
           </div>
 
           <!-- ROOM MANAGEMENT -->
@@ -1994,46 +2384,108 @@
             <div class="rr-section-heading">
               <div>
                 <div class="panel-title">🚪 Danh sách phòng</div>
-                <div class="settings-description">Lưu tiền thuê và tiền rác mặc định cho từng phòng.</div>
+                <div class="settings-description">
+                  Lưu tiền thuê, tiền rác và đơn giá điện nước riêng cho từng
+                  phòng.
+                </div>
               </div>
             </div>
 
             <div class="rr-grid rr-grid-2">
               <div class="field">
                 <label for="roomName">Tên phòng</label>
-                <input id="roomName" type="text" placeholder="Ví dụ: Phòng 4" maxlength="50" />
+                <input
+                  id="roomName"
+                  type="text"
+                  placeholder="Ví dụ: Phòng 4"
+                  maxlength="50"
+                />
               </div>
 
               <div class="field">
                 <label for="roomDefaultRent">Tiền thuê mặc định (VNĐ)</label>
-                <input id="roomDefaultRent" type="text" inputmode="numeric" placeholder="Ví dụ: 3.000.000" />
+                <input
+                  id="roomDefaultRent"
+                  type="text"
+                  inputmode="numeric"
+                  placeholder="Ví dụ: 3.000.000"
+                />
               </div>
 
               <div class="field">
                 <label for="roomDefaultGarbage">Tiền rác mặc định (VNĐ)</label>
-                <input id="roomDefaultGarbage" type="text" inputmode="numeric" placeholder="Ví dụ: 25.000" />
+                <input
+                  id="roomDefaultGarbage"
+                  type="text"
+                  inputmode="numeric"
+                  placeholder="Ví dụ: 25.000"
+                />
+              </div>
+              <div class="field">
+                <label for="roomElectricityRatePerRoom">
+                  Giá điện (VNĐ / kWh)
+                </label>
+                <input
+                  id="roomElectricityRatePerRoom"
+                  type="text"
+                  inputmode="numeric"
+                  placeholder="Ví dụ: 4.000"
+                />
+              </div>
+
+              <div class="field">
+                <label for="roomWaterRatePerRoom"> Giá nước (VNĐ / m³) </label>
+                <input
+                  id="roomWaterRatePerRoom"
+                  type="text"
+                  inputmode="numeric"
+                  placeholder="Ví dụ: 25.000"
+                />
               </div>
             </div>
 
             <div class="rr-actions">
-              <button id="saveRoomBtn" class="primary-btn" type="button" onclick="saveRoomRentRoom()">＋ Thêm phòng</button>
+              <button
+                id="saveRoomBtn"
+                class="primary-btn"
+                type="button"
+                onclick="saveRoomRentRoom()"
+              >
+                ＋ Thêm phòng
+              </button>
 
-              <button id="cancelRoomEditBtn" class="secondary-btn" type="button" style="display: none" onclick="resetRoomRentRoomForm()">Hủy sửa</button>
+              <button
+                id="cancelRoomEditBtn"
+                class="secondary-btn"
+                type="button"
+                style="display: none"
+                onclick="resetRoomRentRoomForm()"
+              >
+                Hủy sửa
+              </button>
             </div>
 
             <div id="roomRentRoomList" class="rr-room-list">
-              <div class="settings-description">Đang tải danh sách phòng...</div>
+              <div class="settings-description">
+                Đang tải danh sách phòng...
+              </div>
             </div>
           </div>
           <!-- MONTHLY UTILITY SUMMARY -->
           <div class="card rr-card">
             <div class="panel-title">📊 Tổng hợp điện nước theo tháng</div>
 
-            <div class="settings-description">Thống kê các phòng đang hoạt động dựa trên hóa đơn đã lưu.</div>
+            <div class="settings-description">
+              Thống kê các phòng đang hoạt động dựa trên hóa đơn đã lưu.
+            </div>
 
             <div class="field" style="max-width: 260px">
               <label for="roomRentSummaryMonth">Tháng thống kê</label>
-              <input id="roomRentSummaryMonth" type="month" onchange="changeRoomRentSummaryMonth()" />
+              <input
+                id="roomRentSummaryMonth"
+                type="month"
+                onchange="changeRoomRentSummaryMonth()"
+              />
             </div>
 
             <div class="rr-grid rr-grid-2" style="margin-top: 16px">
@@ -2060,17 +2512,29 @@
               </div>
             </div>
 
-            <div class="settings-description" id="roomSummaryBillCount" style="margin: 14px 0">Đã có hóa đơn: 0 / 0 phòng đang hoạt động</div>
+            <div
+              class="settings-description"
+              id="roomSummaryBillCount"
+              style="margin: 14px 0"
+            >
+              Đã có hóa đơn: 0 / 0 phòng đang hoạt động
+            </div>
 
             <div style="overflow-x: auto">
-              <table style="width: 100%; border-collapse: collapse; min-width: 520px">
+              <table
+                style="width: 100%; border-collapse: collapse; min-width: 520px"
+              >
                 <thead>
                   <tr>
                     <th style="text-align: left; padding: 10px 8px">Phòng</th>
                     <th style="text-align: right; padding: 10px 8px">Điện</th>
-                    <th style="text-align: right; padding: 10px 8px">Tiền điện</th>
+                    <th style="text-align: right; padding: 10px 8px">
+                      Tiền điện
+                    </th>
                     <th style="text-align: right; padding: 10px 8px">Nước</th>
-                    <th style="text-align: right; padding: 10px 8px">Tiền nước</th>
+                    <th style="text-align: right; padding: 10px 8px">
+                      Tiền nước
+                    </th>
                   </tr>
                 </thead>
                 <tbody id="roomRentSummaryBody">
@@ -2086,19 +2550,29 @@
           <div class="card rr-card">
             <div class="panel-title">🧮 Tính tiền phòng</div>
 
-            <div class="settings-description">Chọn phòng và tháng cần tính. Chỉ số đầu kỳ sẽ tự lấy từ chỉ số cuối kỳ của hóa đơn tháng trước nếu có.</div>
+            <div class="settings-description">
+              Chọn phòng và tháng cần tính. Chỉ số đầu kỳ sẽ tự lấy từ chỉ số
+              cuối kỳ của hóa đơn tháng trước nếu có.
+            </div>
 
             <div class="rr-grid rr-grid-2">
               <div class="field">
                 <label for="roomBillRoom">Phòng</label>
-                <select id="roomBillRoom" onchange="window.prepareRoomBillForSelection()">
+                <select
+                  id="roomBillRoom"
+                  onchange="window.prepareRoomBillForSelection()"
+                >
                   <option value="">-- Chọn phòng --</option>
                 </select>
               </div>
 
               <div class="field">
                 <label for="roomBillMonth">Tháng</label>
-                <input id="roomBillMonth" type="month" onchange="window.prepareRoomBillForSelection()" />
+                <input
+                  id="roomBillMonth"
+                  type="month"
+                  onchange="window.prepareRoomBillForSelection()"
+                />
               </div>
             </div>
 
@@ -2111,17 +2585,37 @@
 
                 <div class="field">
                   <label for="roomElectricityOld">Chỉ số cũ</label>
-                  <input id="roomElectricityOld" type="number" min="0" step="1" oninput="calculateRoomBillPreview()" />
+                  <input
+                    id="roomElectricityOld"
+                    type="number"
+                    min="0"
+                    step="1"
+                    oninput="calculateRoomBillPreview()"
+                  />
                 </div>
 
                 <div class="field">
                   <label for="roomElectricityNew">Chỉ số mới</label>
-                  <input id="roomElectricityNew" type="number" min="0" step="1" oninput="calculateRoomBillPreview()" />
+                  <input
+                    id="roomElectricityNew"
+                    type="number"
+                    min="0"
+                    step="1"
+                    oninput="calculateRoomBillPreview()"
+                  />
                 </div>
 
                 <div class="field">
-                  <label for="roomElectricityRatePreview"> Đơn giá (VNĐ / kWh) </label>
-                  <input id="roomElectricityRatePreview" type="number" min="0" step="1" oninput="calculateRoomBillPreview()" />
+                  <label for="roomElectricityRatePreview">
+                    Đơn giá (VNĐ / kWh)
+                  </label>
+                  <input
+                    id="roomElectricityRatePreview"
+                    type="number"
+                    min="0"
+                    step="1"
+                    oninput="calculateRoomBillPreview()"
+                  />
                 </div>
 
                 <div class="rr-result">
@@ -2141,17 +2635,35 @@
 
                 <div class="field">
                   <label for="roomWaterOld">Chỉ số cũ</label>
-                  <input id="roomWaterOld" type="number" min="0" step="1" oninput="calculateRoomBillPreview()" />
+                  <input
+                    id="roomWaterOld"
+                    type="number"
+                    min="0"
+                    step="1"
+                    oninput="calculateRoomBillPreview()"
+                  />
                 </div>
 
                 <div class="field">
                   <label for="roomWaterNew">Chỉ số mới</label>
-                  <input id="roomWaterNew" type="number" min="0" step="1" oninput="calculateRoomBillPreview()" />
+                  <input
+                    id="roomWaterNew"
+                    type="number"
+                    min="0"
+                    step="1"
+                    oninput="calculateRoomBillPreview()"
+                  />
                 </div>
 
                 <div class="field">
                   <label for="roomWaterRatePreview"> Đơn giá (VNĐ / m³) </label>
-                  <input id="roomWaterRatePreview" type="number" min="0" step="1" oninput="calculateRoomBillPreview()" />
+                  <input
+                    id="roomWaterRatePreview"
+                    type="number"
+                    min="0"
+                    step="1"
+                    oninput="calculateRoomBillPreview()"
+                  />
                 </div>
 
                 <div class="rr-result">
@@ -2172,22 +2684,48 @@
             <div class="rr-grid rr-grid-2">
               <div class="field">
                 <label for="roomBillRent">Tiền thuê (VNĐ)</label>
-                <input id="roomBillRent" type="text" inputmode="numeric" placeholder="0" oninput="calculateRoomBillPreview()" />
+                <input
+                  id="roomBillRent"
+                  type="text"
+                  inputmode="numeric"
+                  placeholder="0"
+                  oninput="calculateRoomBillPreview()"
+                />
               </div>
 
               <div class="field">
                 <label for="roomBillGarbage">Tiền rác (VNĐ)</label>
-                <input id="roomBillGarbage" type="text" inputmode="numeric" placeholder="0" oninput="calculateRoomBillPreview()" />
+                <input
+                  id="roomBillGarbage"
+                  type="text"
+                  inputmode="numeric"
+                  placeholder="0"
+                  oninput="calculateRoomBillPreview()"
+                />
               </div>
 
               <div class="field">
                 <label for="roomBillOtherName">Khoản phát sinh</label>
-                <input id="roomBillOtherName" type="text" placeholder="Ví dụ: Phí sửa chữa" maxlength="80" oninput="calculateRoomBillPreview()" />
+                <input
+                  id="roomBillOtherName"
+                  type="text"
+                  placeholder="Ví dụ: Phí sửa chữa"
+                  maxlength="80"
+                  oninput="calculateRoomBillPreview()"
+                />
               </div>
 
               <div class="field">
-                <label for="roomBillOtherAmount"> Số tiền phát sinh (VNĐ) </label>
-                <input id="roomBillOtherAmount" type="text" inputmode="numeric" placeholder="0" oninput="calculateRoomBillPreview()" />
+                <label for="roomBillOtherAmount">
+                  Số tiền phát sinh (VNĐ)
+                </label>
+                <input
+                  id="roomBillOtherAmount"
+                  type="text"
+                  inputmode="numeric"
+                  placeholder="0"
+                  oninput="calculateRoomBillPreview()"
+                />
               </div>
             </div>
 
@@ -2197,9 +2735,22 @@
             </div>
 
             <div class="rr-actions">
-              <button id="saveRoomBillBtn" class="primary-btn" type="button" onclick="saveRoomRentBill()">💾 Lưu hóa đơn</button>
+              <button
+                id="saveRoomBillBtn"
+                class="primary-btn"
+                type="button"
+                onclick="saveRoomRentBill()"
+              >
+                💾 Lưu hóa đơn
+              </button>
 
-              <button class="secondary-btn" type="button" onclick="resetRoomRentBillForm()">Làm mới</button>
+              <button
+                class="secondary-btn"
+                type="button"
+                onclick="resetRoomRentBillForm()"
+              >
+                Làm mới
+              </button>
             </div>
 
             <div id="roomRentBillMessage" class="settings-description"></div>
@@ -2212,14 +2763,21 @@
             <div class="rr-grid rr-grid-2">
               <div class="field">
                 <label for="roomHistoryFilter">Lọc theo phòng</label>
-                <select id="roomHistoryFilter" onchange="renderRoomRentHistory()">
+                <select
+                  id="roomHistoryFilter"
+                  onchange="renderRoomRentHistory()"
+                >
                   <option value="">Tất cả phòng</option>
                 </select>
               </div>
 
               <div class="field">
                 <label for="roomHistoryMonth">Lọc theo tháng</label>
-                <input id="roomHistoryMonth" type="month" onchange="renderRoomRentHistory()" />
+                <input
+                  id="roomHistoryMonth"
+                  type="month"
+                  onchange="renderRoomRentHistory()"
+                />
               </div>
             </div>
 
@@ -2248,47 +2806,109 @@
           <div class="topbar">
             <div>
               <div class="page-title">Setting ⚙️</div>
-              <div class="page-subtitle">Quản lý bảo mật và cài đặt Money Log</div>
+              <div class="page-subtitle">
+                Quản lý bảo mật và cài đặt Money Log
+              </div>
             </div>
           </div>
 
           <div class="settings-grid">
             <!-- ADMIN: ACCOUNT MANAGEMENT -->
-            <div id="adminAccountSettingsCard" class="card settings-card" style="display: none; grid-column: 1 / -1">
+            <div
+              id="adminAccountSettingsCard"
+              class="card settings-card"
+              style="display: none; grid-column: 1 / -1"
+            >
               <div class="panel-title">👑 Quản lý Account</div>
 
-              <div class="settings-description">Chỉ Admin mới có thể thay đổi role và đặt lại mật khẩu App Lock của các Account.</div>
-
-              <div style="margin: 12px 0">
-                <button id="createAccountBtn" class="primary-btn" type="button" style="width: 100%" onclick="showCreateAccountForm()">＋ Create Account</button>
+              <div class="settings-description">
+                Chỉ Admin mới có thể thay đổi role và đặt lại mật khẩu App Lock
+                của các Account.
               </div>
 
-              <div id="createAccountForm" style="display: none; margin-top: 18px">
+              <div style="margin: 12px 0">
+                <button
+                  id="createAccountBtn"
+                  class="primary-btn"
+                  type="button"
+                  style="width: 100%"
+                  onclick="showCreateAccountForm()"
+                >
+                  ＋ Create Account
+                </button>
+              </div>
+
+              <div
+                id="createAccountForm"
+                style="display: none; margin-top: 18px"
+              >
                 <div class="field">
                   <label for="newAccountName">Tên Account</label>
-                  <input id="newAccountName" type="text" placeholder="Ví dụ: Personal" autocomplete="off" />
+                  <input
+                    id="newAccountName"
+                    type="text"
+                    placeholder="Ví dụ: Personal"
+                    autocomplete="off"
+                  />
                 </div>
 
                 <div class="field">
                   <label for="newAccountPassword">Mật khẩu App Lock</label>
-                  <input id="newAccountPassword" type="password" placeholder="Ít nhất 4 ký tự" autocomplete="new-password" minlength="4" />
+                  <input
+                    id="newAccountPassword"
+                    type="password"
+                    placeholder="Ít nhất 4 ký tự"
+                    autocomplete="new-password"
+                    minlength="4"
+                  />
                 </div>
 
                 <div class="field">
-                  <label for="confirmNewAccountPassword">Xác nhận mật khẩu</label>
-                  <input id="confirmNewAccountPassword" type="password" placeholder="Nhập lại mật khẩu" autocomplete="new-password" minlength="4" />
+                  <label for="confirmNewAccountPassword"
+                    >Xác nhận mật khẩu</label
+                  >
+                  <input
+                    id="confirmNewAccountPassword"
+                    type="password"
+                    placeholder="Nhập lại mật khẩu"
+                    autocomplete="new-password"
+                    minlength="4"
+                  />
                 </div>
 
                 <div style="display: flex; gap: 8px; margin-top: 14px">
-                  <button class="secondary-btn" type="button" onclick="hideCreateAccountForm()" style="flex: 1">Hủy</button>
+                  <button
+                    class="secondary-btn"
+                    type="button"
+                    onclick="hideCreateAccountForm()"
+                    style="flex: 1"
+                  >
+                    Hủy
+                  </button>
 
-                  <button class="primary-btn" type="button" onclick="createAccount()" style="flex: 1">Tạo Account</button>
+                  <button
+                    class="primary-btn"
+                    type="button"
+                    onclick="createAccount()"
+                    style="flex: 1"
+                  >
+                    Tạo Account
+                  </button>
                 </div>
 
-                <div id="adminCreateAccountError" class="app-lock-error" role="alert"></div>
+                <div
+                  id="adminCreateAccountError"
+                  class="app-lock-error"
+                  role="alert"
+                ></div>
               </div>
 
-              <div id="adminAccountMessage" class="settings-description" role="status" style="white-space: pre-wrap; margin-top: 10px"></div>
+              <div
+                id="adminAccountMessage"
+                class="settings-description"
+                role="status"
+                style="white-space: pre-wrap; margin-top: 10px"
+              ></div>
 
               <div id="adminAccountList"></div>
             </div>
@@ -2297,14 +2917,21 @@
               <div class="panel-title">🔒 App Lock</div>
               <div class="settings-description">
                 Account <strong id="settingsAccountName">—</strong>
-                tự khóa sau 8 tiếng kể từ lúc mở khóa thành công. Mỗi Account có App Lock riêng.
+                tự khóa sau 8 tiếng kể từ lúc mở khóa thành công. Mỗi Account có
+                App Lock riêng.
               </div>
 
               <div class="panel-subtitle">Thời gian còn lại</div>
-              <div id="lockCountdown" class="lock-countdown">Đang kiểm tra...</div>
-              <div id="lockStatusText" class="settings-description">Đang kiểm tra trạng thái khóa.</div>
+              <div id="lockCountdown" class="lock-countdown">
+                Đang kiểm tra...
+              </div>
+              <div id="lockStatusText" class="settings-description">
+                Đang kiểm tra trạng thái khóa.
+              </div>
 
-              <button class="secondary-btn" onclick="lockApp(true)">🔒 Khóa ngay</button>
+              <button class="secondary-btn" onclick="lockApp(true)">
+                🔒 Khóa ngay
+              </button>
             </div>
             <div class="card settings-card">
               <div class="panel-title">Categories</div>
@@ -2315,36 +2942,78 @@
               </div>
 
               <div class="category-add-row">
-                <input id="newCategoryName" type="text" placeholder="Tên Category mới..." autocomplete="off" maxlength="50" />
+                <input
+                  id="newCategoryName"
+                  type="text"
+                  placeholder="Tên Category mới..."
+                  autocomplete="off"
+                  maxlength="50"
+                />
 
-                <button id="addCategoryBtn" class="primary-btn" type="button" onclick="addCategory()">＋ Thêm</button>
+                <button
+                  id="addCategoryBtn"
+                  class="primary-btn"
+                  type="button"
+                  onclick="addCategory()"
+                >
+                  ＋ Thêm
+                </button>
               </div>
 
               <div id="categorySettingsList"></div>
 
-              <div id="categorySettingsMessage" class="settings-description" role="status"></div>
+              <div
+                id="categorySettingsMessage"
+                class="settings-description"
+                role="status"
+              ></div>
             </div>
             <div class="card settings-card">
               <div class="panel-title">🔑 Đổi mật khẩu App Lock</div>
-              <div class="settings-description">Nhập mật khẩu hiện tại, sau đó nhập và xác nhận mật khẩu mới.</div>
+              <div class="settings-description">
+                Nhập mật khẩu hiện tại, sau đó nhập và xác nhận mật khẩu mới.
+              </div>
 
               <form id="changePasswordForm">
                 <div class="field">
                   <label for="currentLockPassword">Mật khẩu hiện tại</label>
-                  <input id="currentLockPassword" type="password" autocomplete="current-password" required />
+                  <input
+                    id="currentLockPassword"
+                    type="password"
+                    autocomplete="current-password"
+                    required
+                  />
                 </div>
 
                 <div class="field">
                   <label for="newLockPassword">Mật khẩu mới</label>
-                  <input id="newLockPassword" type="password" autocomplete="new-password" minlength="4" required />
+                  <input
+                    id="newLockPassword"
+                    type="password"
+                    autocomplete="new-password"
+                    minlength="4"
+                    required
+                  />
                 </div>
 
                 <div class="field">
                   <label for="confirmLockPassword">Xác nhận mật khẩu mới</label>
-                  <input id="confirmLockPassword" type="password" autocomplete="new-password" minlength="4" required />
+                  <input
+                    id="confirmLockPassword"
+                    type="password"
+                    autocomplete="new-password"
+                    minlength="4"
+                    required
+                  />
                 </div>
 
-                <button id="changePasswordBtn" class="primary-btn" type="submit">Cập nhật mật khẩu</button>
+                <button
+                  id="changePasswordBtn"
+                  class="primary-btn"
+                  type="submit"
+                >
+                  Cập nhật mật khẩu
+                </button>
               </form>
             </div>
           </div>
@@ -2356,22 +3025,41 @@
       <div class="app-lock-card">
         <div class="app-lock-icon">🔐</div>
         <div id="lockTitle" class="app-lock-title">Money Log đang khóa</div>
-        <div id="lockDescription" class="app-lock-description">Nhập mật khẩu để xem dữ liệu thu chi.</div>
-        <button type="button" class="secondary-btn" onclick="backToAccountSelection()" style="width: 100%; margin-bottom: 16px; text-align: left">← Quay lại chọn Account</button>
+        <div id="lockDescription" class="app-lock-description">
+          Nhập mật khẩu để xem dữ liệu thu chi.
+        </div>
+        <button
+          type="button"
+          class="secondary-btn"
+          onclick="backToAccountSelection()"
+          style="width: 100%; margin-bottom: 16px; text-align: left"
+        >
+          ← Quay lại chọn Account
+        </button>
         <form id="lockForm">
           <div class="field">
             <label for="lockPassword">Mật khẩu</label>
-            <input id="lockPassword" type="password" autocomplete="current-password" placeholder="Nhập mật khẩu App Lock" required />
+            <input
+              id="lockPassword"
+              type="password"
+              autocomplete="current-password"
+              placeholder="Nhập mật khẩu App Lock"
+              required
+            />
           </div>
 
           <div id="lockError" class="app-lock-error" role="alert"></div>
 
-          <button id="lockSubmitBtn" class="primary-btn" type="submit">Mở khóa</button>
+          <button id="lockSubmitBtn" class="primary-btn" type="submit">
+            Mở khóa
+          </button>
         </form>
       </div>
     </div>
 
-    <div id="firebaseStatus" class="firebase-status">Connecting Firebase...</div>
+    <div id="firebaseStatus" class="firebase-status">
+      Connecting Firebase...
+    </div>
     <!-- ACCOUNT SELECTOR -->
     <div id="accountScreen" class="app-lock-screen hidden">
       <div class="app-lock-card">
@@ -2388,15 +3076,34 @@
     </div>
     <!-- ADD / EDIT TRANSACTION MODAL -->
     <div id="transactionModal" class="modal-backdrop">
-      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalTitle"
+      >
         <div class="modal-header">
           <div id="modalTitle" class="modal-title">Thêm giao dịch</div>
-          <button class="close-btn" onclick="closeModal()" aria-label="Đóng">×</button>
+          <button class="close-btn" onclick="closeModal()" aria-label="Đóng">
+            ×
+          </button>
         </div>
 
         <div class="type-switch">
-          <button id="incomeTypeBtn" class="type-btn income active" onclick="setTransactionType('income')">🟢 Thu</button>
-          <button id="expenseTypeBtn" class="type-btn expense" onclick="setTransactionType('expense')">🔴 Chi</button>
+          <button
+            id="incomeTypeBtn"
+            class="type-btn income active"
+            onclick="setTransactionType('income')"
+          >
+            🟢 Thu
+          </button>
+          <button
+            id="expenseTypeBtn"
+            class="type-btn expense"
+            onclick="setTransactionType('expense')"
+          >
+            🔴 Chi
+          </button>
         </div>
 
         <div class="modal-fields">
@@ -2407,7 +3114,13 @@
 
           <div class="field">
             <label for="transactionAmount">Số tiền</label>
-            <input type="number" id="transactionAmount" placeholder="Ví dụ: 500000" min="0" step="1000" />
+            <input
+              type="number"
+              id="transactionAmount"
+              placeholder="Ví dụ: 500000"
+              min="0"
+              step="1000"
+            />
           </div>
 
           <div id="sourceField" class="field">
@@ -2433,24 +3146,46 @@
 
           <div class="field">
             <label for="transactionNote">Note</label>
-            <input type="text" id="transactionNote" placeholder="Ví dụ: Ăn trưa..." />
+            <input
+              type="text"
+              id="transactionNote"
+              placeholder="Ví dụ: Ăn trưa..."
+            />
           </div>
         </div>
 
         <div class="modal-footer">
           <button class="secondary-btn" onclick="closeModal()">Hủy</button>
-          <button id="saveTransactionBtn" class="primary-btn" onclick="saveTransaction()">Lưu giao dịch</button>
+          <button
+            id="saveTransactionBtn"
+            class="primary-btn"
+            onclick="saveTransaction()"
+          >
+            Lưu giao dịch
+          </button>
         </div>
       </div>
     </div>
 
     <!-- TRANSFER MODAL -->
     <div id="transferModal" class="modal-backdrop">
-      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="transferModalTitle">
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="transferModalTitle"
+      >
         <div class="modal-header">
           <div id="transferModalTitle" class="modal-title">↔ Chuyển tiền</div>
 
-          <button class="close-btn" type="button" onclick="closeTransferModal()" aria-label="Đóng">×</button>
+          <button
+            class="close-btn"
+            type="button"
+            onclick="closeTransferModal()"
+            aria-label="Đóng"
+          >
+            ×
+          </button>
         </div>
 
         <div class="modal-fields">
@@ -2461,7 +3196,12 @@
 
           <div class="field">
             <label for="transferAmount">Số tiền</label>
-            <input type="text" id="transferAmount" placeholder="Ví dụ: 2.000.000" inputmode="numeric" />
+            <input
+              type="text"
+              id="transferAmount"
+              placeholder="Ví dụ: 2.000.000"
+              inputmode="numeric"
+            />
           </div>
 
           <div class="field">
@@ -2487,26 +3227,57 @@
           <div class="field">
             <label for="transferNote">Note</label>
 
-            <input type="text" id="transferNote" placeholder="Ví dụ: Rút tiền từ ATM..." />
+            <input
+              type="text"
+              id="transferNote"
+              placeholder="Ví dụ: Rút tiền từ ATM..."
+            />
           </div>
         </div>
 
         <div class="modal-footer">
-          <button class="secondary-btn" type="button" onclick="closeTransferModal()">Hủy</button>
+          <button
+            class="secondary-btn"
+            type="button"
+            onclick="closeTransferModal()"
+          >
+            Hủy
+          </button>
 
-          <button id="saveTransferBtn" class="primary-btn" type="button" onclick="saveTransfer()">Lưu chuyển tiền</button>
+          <button
+            id="saveTransferBtn"
+            class="primary-btn"
+            type="button"
+            onclick="saveTransfer()"
+          >
+            Lưu chuyển tiền
+          </button>
         </div>
       </div>
     </div>
     <!-- CUSTOM NOTIFICATION / CONFIRMATION MODAL -->
     <div id="appDialogBackdrop" class="modal-backdrop" aria-hidden="true">
-      <div class="app-dialog" role="dialog" aria-modal="true" aria-labelledby="appDialogTitle" aria-describedby="appDialogMessage">
+      <div
+        class="app-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="appDialogTitle"
+        aria-describedby="appDialogMessage"
+      >
         <div id="appDialogIcon" class="app-dialog-icon">ℹ️</div>
         <div id="appDialogTitle" class="app-dialog-title">Thông báo</div>
         <div id="appDialogMessage" class="app-dialog-message"></div>
         <div class="app-dialog-footer">
-          <button id="appDialogCancel" class="secondary-btn" type="button">Hủy</button>
-          <button id="appDialogConfirm" class="primary-btn app-dialog-confirm" type="button">Đồng ý</button>
+          <button id="appDialogCancel" class="secondary-btn" type="button">
+            Hủy
+          </button>
+          <button
+            id="appDialogConfirm"
+            class="primary-btn app-dialog-confirm"
+            type="button"
+          >
+            Đồng ý
+          </button>
         </div>
       </div>
     </div>
@@ -2514,7 +3285,20 @@
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
-      import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, getDoc, getDocs, setDoc, onSnapshot, serverTimestamp, writeBatch } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+        updateDoc,
+        deleteDoc,
+        doc,
+        getDoc,
+        getDocs,
+        setDoc,
+        onSnapshot,
+        serverTimestamp,
+        writeBatch,
+      } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
       const firebaseConfig = {
         apiKey: "AIzaSyB-0fPuTelYXlHLIpjQ7E_Nj9cTAYbrEU",
@@ -2550,7 +3334,8 @@
         if (confirmInput) confirmInput.value = "";
 
         if (errorBox) {
-          errorBox.textContent = "Hãy tạo mật khẩu mới và nhập lại để xác nhận.";
+          errorBox.textContent =
+            "Hãy tạo mật khẩu mới và nhập lại để xác nhận.";
         }
       };
       /* =====================================
@@ -2560,7 +3345,14 @@
       let appDialogResolver = null;
       let appDialogIsConfirm = false;
 
-      window.showAppDialog = function ({ title = "Thông báo", message = "", type = "info", confirm = false, confirmText = "Đồng ý", cancelText = "Hủy" } = {}) {
+      window.showAppDialog = function ({
+        title = "Thông báo",
+        message = "",
+        type = "info",
+        confirm = false,
+        confirmText = "Đồng ý",
+        cancelText = "Hủy",
+      } = {}) {
         const backdrop = document.getElementById("appDialogBackdrop");
         const titleElement = document.getElementById("appDialogTitle");
         const messageElement = document.getElementById("appDialogMessage");
@@ -2623,19 +3415,25 @@
         }
       };
 
-      document.getElementById("appDialogConfirm").addEventListener("click", () => {
-        window.closeAppDialog(true);
-      });
+      document
+        .getElementById("appDialogConfirm")
+        .addEventListener("click", () => {
+          window.closeAppDialog(true);
+        });
 
-      document.getElementById("appDialogCancel").addEventListener("click", () => {
-        window.closeAppDialog(false);
-      });
-
-      document.getElementById("appDialogBackdrop").addEventListener("click", (event) => {
-        if (event.target.id === "appDialogBackdrop") {
+      document
+        .getElementById("appDialogCancel")
+        .addEventListener("click", () => {
           window.closeAppDialog(false);
-        }
-      });
+        });
+
+      document
+        .getElementById("appDialogBackdrop")
+        .addEventListener("click", (event) => {
+          if (event.target.id === "appDialogBackdrop") {
+            window.closeAppDialog(false);
+          }
+        });
       /* =====================================
    MULTI ACCOUNT + APP LOCK
 ===================================== */
@@ -2669,18 +3467,26 @@
 
       let accountCategories = [];
 
-      const DEFAULT_CATEGORIES = ["Tiền trọ", "Tiền điện", "Ăn uống", "Mua sắm", "Khác"];
+      const DEFAULT_CATEGORIES = [
+        "Tiền trọ",
+        "Tiền điện",
+        "Ăn uống",
+        "Mua sắm",
+        "Khác",
+      ];
 
       /* =====================================
    PASSWORD
 ===================================== */
 
       function hashPassword(password) {
-        return crypto.subtle.digest("SHA-256", new TextEncoder().encode(password)).then((digest) =>
-          Array.from(new Uint8Array(digest))
-            .map((byte) => byte.toString(16).padStart(2, "0"))
-            .join(""),
-        );
+        return crypto.subtle
+          .digest("SHA-256", new TextEncoder().encode(password))
+          .then((digest) =>
+            Array.from(new Uint8Array(digest))
+              .map((byte) => byte.toString(16).padStart(2, "0"))
+              .join(""),
+          );
       }
 
       /* =====================================
@@ -2868,7 +3674,10 @@
     Transaction cũ có Category đã bị xóa:
     vẫn giữ Category cũ trong dropdown khi edit.
   */
-        if (selectedValue && !categories.some((category) => category.name === selectedValue)) {
+        if (
+          selectedValue &&
+          !categories.some((category) => category.name === selectedValue)
+        ) {
           categories.push({
             id: "__legacy__",
             name: selectedValue,
@@ -2919,7 +3728,9 @@
         }
       }
       function refreshCategoryUI() {
-        const transactionCategory = document.getElementById("transactionCategory");
+        const transactionCategory = document.getElementById(
+          "transactionCategory",
+        );
 
         const selectedTransactionCategory = transactionCategory?.value || "";
 
@@ -3051,7 +3862,9 @@
           return;
         }
 
-        const exists = accountCategories.some((category) => category.name.toLowerCase() === name.toLowerCase());
+        const exists = accountCategories.some(
+          (category) => category.name.toLowerCase() === name.toLowerCase(),
+        );
 
         if (exists) {
           await window.showAppDialog({
@@ -3092,12 +3905,17 @@
         }
       }
 
-      async function updateTransactionsCategory(oldCategoryName, newCategoryName) {
+      async function updateTransactionsCategory(
+        oldCategoryName,
+        newCategoryName,
+      ) {
         if (!db || !currentAccountId || !isAppUnlocked) {
           return;
         }
 
-        const matchingTransactions = transactions.filter((item) => item.category === oldCategoryName);
+        const matchingTransactions = transactions.filter(
+          (item) => item.category === oldCategoryName,
+        );
 
         if (!matchingTransactions.length) {
           return;
@@ -3129,11 +3947,15 @@
           return;
         }
 
-        const category = accountCategories.find((item) => item.id === categoryId);
+        const category = accountCategories.find(
+          (item) => item.id === categoryId,
+        );
 
         if (!category) return;
 
-        const row = document.querySelector(`[data-category-row="${CSS.escape(categoryId)}"]`);
+        const row = document.querySelector(
+          `[data-category-row="${CSS.escape(categoryId)}"]`,
+        );
 
         if (!row) return;
 
@@ -3192,7 +4014,11 @@
             return;
           }
 
-          const duplicate = accountCategories.some((item) => item.id !== categoryId && item.name.toLowerCase() === name.toLowerCase());
+          const duplicate = accountCategories.some(
+            (item) =>
+              item.id !== categoryId &&
+              item.name.toLowerCase() === name.toLowerCase(),
+          );
 
           if (duplicate) {
             await window.showAppDialog({
@@ -3258,7 +4084,9 @@
           return;
         }
 
-        const matchingTransactions = transactions.filter((item) => item.category === categoryName);
+        const matchingTransactions = transactions.filter(
+          (item) => item.category === categoryName,
+        );
 
         if (!matchingTransactions.length) {
           return;
@@ -3297,13 +4125,17 @@
           return;
         }
 
-        const category = accountCategories.find((item) => item.id === categoryId);
+        const category = accountCategories.find(
+          (item) => item.id === categoryId,
+        );
 
         if (!category) return;
 
         const confirmed = await window.showAppDialog({
           title: "Xóa Category?",
-          message: `Bạn có chắc muốn xóa Category "${category.name}"?\n\n` + "Các giao dịch cũ sẽ không bị xóa.",
+          message:
+            `Bạn có chắc muốn xóa Category "${category.name}"?\n\n` +
+            "Các giao dịch cũ sẽ không bị xóa.",
           type: "danger",
           confirm: true,
           confirmText: "Xóa Category",
@@ -3317,7 +4149,9 @@
           // nhưng KHÔNG xóa transaction.
           await clearTransactionsCategory(category.name);
 
-          accountCategories = accountCategories.filter((item) => item.id !== categoryId);
+          accountCategories = accountCategories.filter(
+            (item) => item.id !== categoryId,
+          );
 
           await saveAccountCategories();
 
@@ -3412,7 +4246,8 @@
         } catch (error) {
           console.error("Back to account selection error:", error);
 
-          document.getElementById("lockError").textContent = "Không thể tải danh sách Account. Vui lòng thử lại.";
+          document.getElementById("lockError").textContent =
+            "Không thể tải danh sách Account. Vui lòng thử lại.";
         } finally {
           lockActionInProgress = false;
         }
@@ -3446,11 +4281,15 @@
             id: item.id,
             ...item.data(),
           }))
-          .sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+          .sort((a, b) =>
+            String(a.name || "").localeCompare(String(b.name || "")),
+          );
 
         // Account cũ chưa có role:
         // nếu chưa có Admin nào thì Account đầu tiên sẽ trở thành Admin.
-        const hasAdmin = loadedAccounts.some((account) => account.role === "admin");
+        const hasAdmin = loadedAccounts.some(
+          (account) => account.role === "admin",
+        );
 
         if (!hasAdmin && loadedAccounts.length) {
           const firstAccount = loadedAccounts[0];
@@ -3526,7 +4365,11 @@
 
         if (!card || !list || !message) return;
 
-        const isAdmin = Boolean(db) && isAppUnlocked && Boolean(currentAccountId) && currentAccountRole === "admin";
+        const isAdmin =
+          Boolean(db) &&
+          isAppUnlocked &&
+          Boolean(currentAccountId) &&
+          currentAccountRole === "admin";
 
         card.style.display = isAdmin ? "" : "none";
 
@@ -3716,26 +4559,32 @@
             button.addEventListener("click", () => {
               const accountId = button.dataset.accountAction;
 
-              const row = list.querySelector(`[data-admin-action-row="${accountId}"]`);
+              const row = list.querySelector(
+                `[data-admin-action-row="${accountId}"]`,
+              );
 
               if (!row) return;
 
-              const panel = row.querySelector(`[data-action-panel="${accountId}"]`);
+              const panel = row.querySelector(
+                `[data-action-panel="${accountId}"]`,
+              );
 
               if (!panel) return;
 
               const isOpen = row.style.display === "table-row";
 
               // Đóng tất cả các panel khác
-              list.querySelectorAll("[data-admin-action-row]").forEach((item) => {
-                item.style.display = "none";
+              list
+                .querySelectorAll("[data-admin-action-row]")
+                .forEach((item) => {
+                  item.style.display = "none";
 
-                const itemPanel = item.querySelector("[data-action-panel]");
+                  const itemPanel = item.querySelector("[data-action-panel]");
 
-                if (itemPanel) {
-                  itemPanel.style.display = "none";
-                }
-              });
+                  if (itemPanel) {
+                    itemPanel.style.display = "none";
+                  }
+                });
 
               // Nếu đang đóng → mở
               if (!isOpen) {
@@ -3750,7 +4599,10 @@
 
           list.querySelectorAll("[data-account-role]").forEach((select) => {
             select.addEventListener("change", async () => {
-              await window.updateAccountRole(select.dataset.accountRole, select.value);
+              await window.updateAccountRole(
+                select.dataset.accountRole,
+                select.value,
+              );
             });
           });
 
@@ -3766,7 +4618,9 @@
         } catch (error) {
           console.error("Render admin account settings error:", error);
 
-          message.textContent = "Không thể tải danh sách Account.\n" + (error.message || "Lỗi không xác định.");
+          message.textContent =
+            "Không thể tải danh sách Account.\n" +
+            (error.message || "Lỗi không xác định.");
         }
       }
 
@@ -3775,7 +4629,12 @@
 ===================================== */
 
       window.updateAccountRole = async function (accountId, newRole) {
-        if (!db || !isAppUnlocked || !currentAccountId || currentAccountRole !== "admin") {
+        if (
+          !db ||
+          !isAppUnlocked ||
+          !currentAccountId ||
+          currentAccountRole !== "admin"
+        ) {
           return;
         }
 
@@ -3796,12 +4655,19 @@
           if (account.role === newRole) return;
 
           // Không cho phép hạ quyền Admin cuối cùng.
-          const adminCount = accounts.filter((item) => item.role === "admin").length;
+          const adminCount = accounts.filter(
+            (item) => item.role === "admin",
+          ).length;
 
-          if (account.role === "admin" && newRole === "user" && adminCount <= 1) {
+          if (
+            account.role === "admin" &&
+            newRole === "user" &&
+            adminCount <= 1
+          ) {
             await window.showAppDialog({
               title: "Không thể đổi role",
-              message: "Đây là Admin cuối cùng. Hãy cấp quyền Admin cho một Account khác trước.",
+              message:
+                "Đây là Admin cuối cùng. Hãy cấp quyền Admin cho một Account khác trước.",
               type: "warning",
             });
 
@@ -3811,7 +4677,12 @@
 
           const confirmed = await window.showAppDialog({
             title: "Xác nhận đổi role",
-            message: 'Bạn có chắc muốn đổi Account "' + (account.name || "Unnamed Account") + '" thành ' + newRole.toUpperCase() + " không?",
+            message:
+              'Bạn có chắc muốn đổi Account "' +
+              (account.name || "Unnamed Account") +
+              '" thành ' +
+              newRole.toUpperCase() +
+              " không?",
             type: "warning",
             confirm: true,
             confirmText: "Xác nhận",
@@ -3843,7 +4714,12 @@
 
           await window.showAppDialog({
             title: "Cập nhật thành công",
-            message: 'Role của Account "' + (account.name || "Unnamed Account") + '" đã được đổi thành ' + newRole.toUpperCase() + ".",
+            message:
+              'Role của Account "' +
+              (account.name || "Unnamed Account") +
+              '" đã được đổi thành ' +
+              newRole.toUpperCase() +
+              ".",
             type: "success",
           });
         } catch (error) {
@@ -3864,13 +4740,22 @@
 ===================================== */
 
       window.resetAccountAppLock = async function (accountId) {
-        if (!db || !isAppUnlocked || !currentAccountId || currentAccountRole !== "admin") {
+        if (
+          !db ||
+          !isAppUnlocked ||
+          !currentAccountId ||
+          currentAccountRole !== "admin"
+        ) {
           return;
         }
 
-        const actionRow = document.querySelector(`[data-admin-action-row="${accountId}"]`);
+        const actionRow = document.querySelector(
+          `[data-admin-action-row="${accountId}"]`,
+        );
 
-        const passwordInput = actionRow?.querySelector(`[data-reset-password-for="${accountId}"]`);
+        const passwordInput = actionRow?.querySelector(
+          `[data-reset-password-for="${accountId}"]`,
+        );
 
         if (!passwordInput) return;
 
@@ -3896,7 +4781,10 @@
 
           const confirmed = await window.showAppDialog({
             title: "Đặt lại App Lock?",
-            message: 'Bạn sẽ đặt mật khẩu App Lock mới cho Account "' + (account.name || "Unnamed Account") + '". Hãy đảm bảo bạn đã thông báo mật khẩu mới cho người sử dụng.',
+            message:
+              'Bạn sẽ đặt mật khẩu App Lock mới cho Account "' +
+              (account.name || "Unnamed Account") +
+              '". Hãy đảm bảo bạn đã thông báo mật khẩu mới cho người sử dụng.',
             type: "warning",
             confirm: true,
             confirmText: "Đặt lại mật khẩu",
@@ -3931,7 +4819,10 @@
 
           await window.showAppDialog({
             title: "Đặt lại thành công",
-            message: 'Mật khẩu App Lock của Account "' + (account.name || "Unnamed Account") + '" đã được cập nhật.',
+            message:
+              'Mật khẩu App Lock của Account "' +
+              (account.name || "Unnamed Account") +
+              '" đã được cập nhật.',
             type: "success",
           });
         } catch (error) {
@@ -3952,7 +4843,9 @@
 
         const confirmed = await window.showAppDialog({
           title: "Đổi Account?",
-          message: "Account hiện tại sẽ được khóa.\n\n" + "Bạn sẽ cần nhập App Lock của Account mới.",
+          message:
+            "Account hiện tại sẽ được khóa.\n\n" +
+            "Bạn sẽ cần nhập App Lock của Account mới.",
           type: "warning",
           confirm: true,
           confirmText: "Đổi Account",
@@ -3999,8 +4892,12 @@
 
         const input = document.getElementById("newAccountName");
         const passwordInput = document.getElementById("newAccountPassword");
-        const confirmInput = document.getElementById("confirmNewAccountPassword");
-        const errorBox = document.getElementById("adminCreateAccountError") || document.getElementById("accountScreenError");
+        const confirmInput = document.getElementById(
+          "confirmNewAccountPassword",
+        );
+        const errorBox =
+          document.getElementById("adminCreateAccountError") ||
+          document.getElementById("accountScreenError");
 
         if (!input || !passwordInput || !confirmInput || !errorBox) {
           console.error("Create Account form elements are missing.");
@@ -4039,11 +4936,14 @@
           });
 
           // Tạo App Lock luôn cho User mới
-          await setDoc(doc(db, "accounts", accountRef.id, "settings", "appLock"), {
-            passwordHash,
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp(),
-          });
+          await setDoc(
+            doc(db, "accounts", accountRef.id, "settings", "appLock"),
+            {
+              passwordHash,
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+            },
+          );
 
           input.value = "";
           passwordInput.value = "";
@@ -4056,13 +4956,18 @@
           await renderAdminAccountSettings();
           await window.showAppDialog({
             title: "Tạo Account thành công",
-            message: 'Account "' + name + '" đã được tạo.\n\n' + "Account này là User và đã có App Lock.",
+            message:
+              'Account "' +
+              name +
+              '" đã được tạo.\n\n' +
+              "Account này là User và đã có App Lock.",
             type: "success",
           });
         } catch (error) {
           console.error("Create account error:", error);
 
-          errorBox.textContent = "Không thể tạo Account.\n" + (error.message || "");
+          errorBox.textContent =
+            "Không thể tạo Account.\n" + (error.message || "");
         }
       };
 
@@ -4133,15 +5038,22 @@
 
         screen.classList.remove("hidden");
 
-        document.getElementById("lockTitle").textContent = setupMode ? "Tạo App Lock" : "Money Log đang khóa";
+        document.getElementById("lockTitle").textContent = setupMode
+          ? "Tạo App Lock"
+          : "Money Log đang khóa";
 
-        document.getElementById("lockDescription").textContent = setupMode ? "Tạo mật khẩu để bảo vệ Account này." : "Nhập mật khẩu để tiếp tục xem dữ liệu thu chi.";
+        document.getElementById("lockDescription").textContent = setupMode
+          ? "Tạo mật khẩu để bảo vệ Account này."
+          : "Nhập mật khẩu để tiếp tục xem dữ liệu thu chi.";
 
         document.getElementById("lockPassword").value = "";
 
-        document.getElementById("lockError").textContent = typeof message === "string" ? message : "";
+        document.getElementById("lockError").textContent =
+          typeof message === "string" ? message : "";
 
-        document.getElementById("lockSubmitBtn").textContent = setupMode ? "Tạo App Lock" : "Mở khóa";
+        document.getElementById("lockSubmitBtn").textContent = setupMode
+          ? "Tạo App Lock"
+          : "Mở khóa";
 
         setTimeout(() => {
           document.getElementById("lockPassword")?.focus();
@@ -4151,6 +5063,77 @@
       function hideLockScreen() {
         document.getElementById("appLockScreen").classList.add("hidden");
       }
+
+      function clearRoomRentBillFormUI(clearSelection = false) {
+        // Xóa toàn bộ dữ liệu đang hiển thị trong form tính tiền
+        const inputIds = [
+          "roomElectricityOld",
+          "roomElectricityNew",
+          "roomElectricityRatePreview",
+
+          "roomWaterOld",
+          "roomWaterNew",
+          "roomWaterRatePreview",
+
+          "roomBillRent",
+          "roomBillGarbage",
+          "roomBillOtherName",
+          "roomBillOtherAmount",
+        ];
+
+        inputIds.forEach((id) => {
+          const input = document.getElementById(id);
+          if (input) input.value = "";
+        });
+
+        // Chỉ xóa lựa chọn phòng/tháng khi đổi Account
+        if (clearSelection) {
+          const roomSelect = document.getElementById("roomBillRoom");
+          const monthInput = document.getElementById("roomBillMonth");
+
+          if (roomSelect) roomSelect.value = "";
+          if (monthInput) monthInput.value = "";
+        }
+
+        // Reset trạng thái chỉnh sửa hóa đơn
+        editingRoomRentBillId = null;
+
+        const saveBtn = document.getElementById("saveRoomBillBtn");
+
+        if (saveBtn) {
+          saveBtn.textContent = "💾 Lưu hóa đơn";
+        }
+
+        // Xóa các kết quả tính toán cũ
+        const outputIds = [
+          "roomElectricityUsage",
+          "roomElectricityAmount",
+          "roomWaterUsage",
+          "roomWaterAmount",
+          "roomBillTotal",
+        ];
+
+        const outputDefaults = {
+          roomElectricityUsage: "0 kWh",
+          roomElectricityAmount: "0 ₫",
+          roomWaterUsage: "0 m³",
+          roomWaterAmount: "0 ₫",
+          roomBillTotal: "0 ₫",
+        };
+
+        outputIds.forEach((id) => {
+          const element = document.getElementById(id);
+
+          if (element) {
+            element.textContent = outputDefaults[id];
+          }
+        });
+
+        const message = document.getElementById("roomRentBillMessage");
+
+        if (message) message.textContent = "";
+      }
+
       function clearRoomRentSensitiveUI() {
         roomRentRooms = [];
         roomRentBills = [];
@@ -4162,21 +5145,33 @@
 
         roomRentLoadedAccountId = null;
 
-        // Xóa đơn giá của Account trước
-        ["roomElectricityRate", "roomWaterRate"].forEach((id) => {
-          const input = document.getElementById(id);
-          if (input) input.value = "";
-        });
+        // Xóa dữ liệu form tính tiền của Account trước
+        clearRoomRentBillFormUI(true);
 
+        // Xóa danh sách phòng và lịch sử
         const roomList = document.getElementById("roomRentRoomList");
         const roomHistory = document.getElementById("roomRentHistoryBody");
 
         if (roomList) roomList.innerHTML = "";
         if (roomHistory) roomHistory.innerHTML = "";
 
+        // Reset bộ lọc lịch sử
+        const historyFilter = document.getElementById("roomHistoryFilter");
+
+        if (historyFilter) {
+          historyFilter.innerHTML = '<option value="">Tất cả phòng</option>';
+        }
+
+        const historyMonth = document.getElementById("roomHistoryMonth");
+
+        if (historyMonth) historyMonth.value = "";
+
+        // Xóa thông báo
         const message = document.getElementById("roomRentBillMessage");
+
         if (message) message.textContent = "";
       }
+
       function clearSensitiveUI() {
         transactions = [];
         accountCategories = [];
@@ -4249,11 +5244,15 @@
 
         document.getElementById("rangeCount").textContent = "—";
 
-        const adminAccountCard = document.getElementById("adminAccountSettingsCard");
+        const adminAccountCard = document.getElementById(
+          "adminAccountSettingsCard",
+        );
 
         const adminAccountList = document.getElementById("adminAccountList");
 
-        const adminAccountMessage = document.getElementById("adminAccountMessage");
+        const adminAccountMessage = document.getElementById(
+          "adminAccountMessage",
+        );
 
         if (adminAccountCard) {
           adminAccountCard.style.display = "none";
@@ -4307,7 +5306,12 @@
 
         const seconds = totalSeconds % 60;
 
-        countdown.textContent = String(hours).padStart(2, "0") + ":" + String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0");
+        countdown.textContent =
+          String(hours).padStart(2, "0") +
+          ":" +
+          String(minutes).padStart(2, "0") +
+          ":" +
+          String(seconds).padStart(2, "0");
 
         status.textContent = "Ứng dụng sẽ tự khóa khi bộ đếm về 00:00:00.";
       }
@@ -4330,7 +5334,8 @@
 
         if (!button || !badge) return;
 
-        const isAdmin = isAppUnlocked && currentAccountId && currentAccountRole === "admin";
+        const isAdmin =
+          isAppUnlocked && currentAccountId && currentAccountRole === "admin";
 
         button.style.display = isAdmin ? "block" : "none";
 
@@ -4339,7 +5344,9 @@
           return;
         }
 
-        const unreadCount = adminNotifications.filter((item) => item.read !== true).length;
+        const unreadCount = adminNotifications.filter(
+          (item) => item.read !== true,
+        ).length;
 
         if (unreadCount > 0) {
           badge.textContent = unreadCount > 99 ? "99+" : String(unreadCount);
@@ -4391,15 +5398,22 @@
               return "";
             }
 
-            const accountName = escapeHtml(notification.accountName || "Account");
+            const accountName = escapeHtml(
+              notification.accountName || "Account",
+            );
 
-            const categoryOrSource = escapeHtml(notification.category || notification.source || "Giao dịch");
+            const categoryOrSource = escapeHtml(
+              notification.category || notification.source || "Giao dịch",
+            );
 
             const amount = formatMoney(Number(notification.amount || 0));
 
             const note = notification.note ? escapeHtml(notification.note) : "";
 
-            const unreadStyle = notification.read === true ? "" : "background: rgba(59,130,246,0.08);";
+            const unreadStyle =
+              notification.read === true
+                ? ""
+                : "background: rgba(59,130,246,0.08);";
 
             // Thông tin trước khi sửa
             let previousInfo = "";
@@ -4409,7 +5423,9 @@
 
               const previousType = previous.type === "expense" ? "Chi" : "Thu";
 
-              const previousCategory = escapeHtml(previous.category || previous.source || "Giao dịch");
+              const previousCategory = escapeHtml(
+                previous.category || previous.source || "Giao dịch",
+              );
 
               const previousAmount = formatMoney(Number(previous.amount || 0));
 
@@ -4535,7 +5551,10 @@
         if (!isVisible) return;
 
         // Click bên trong panel hoặc nút toggle thì không đóng
-        if (panel.contains(event.target) || toggleButton?.contains(event.target)) {
+        if (
+          panel.contains(event.target) ||
+          toggleButton?.contains(event.target)
+        ) {
           return;
         }
 
@@ -4589,7 +5608,10 @@
 
         const confirmed = await window.showAppDialog({
           title: "Xóa tất cả thông báo?",
-          message: "Bạn có chắc muốn xóa toàn bộ " + adminNotifications.length + " thông báo không?\n\nThao tác này không thể hoàn tác.",
+          message:
+            "Bạn có chắc muốn xóa toàn bộ " +
+            adminNotifications.length +
+            " thông báo không?\n\nThao tác này không thể hoàn tác.",
           type: "danger",
           confirm: true,
           confirmText: "Xóa tất cả",
@@ -4629,7 +5651,9 @@
         }
 
         try {
-          const unread = adminNotifications.filter((item) => item.read !== true);
+          const unread = adminNotifications.filter(
+            (item) => item.read !== true,
+          );
 
           if (!unread.length) return;
 
@@ -4670,7 +5694,13 @@
 ===================================== */
 
       function startAdminNotificationListener() {
-        if (!db || !isAppUnlocked || !currentAccountId || currentAccountRole !== "admin" || unsubscribeAdminNotifications) {
+        if (
+          !db ||
+          !isAppUnlocked ||
+          !currentAccountId ||
+          currentAccountRole !== "admin" ||
+          unsubscribeAdminNotifications
+        ) {
           updateAdminNotificationUI();
           return;
         }
@@ -4689,7 +5719,13 @@
                 id: item.id,
                 ...item.data(),
               }))
-              .filter((item) => ["transaction_added", "transaction_edited", "transaction_deleted"].includes(item.type))
+              .filter((item) =>
+                [
+                  "transaction_added",
+                  "transaction_edited",
+                  "transaction_deleted",
+                ].includes(item.type),
+              )
               .sort((a, b) => {
                 const aTime = a.createdAt?.toMillis?.() || 0;
 
@@ -4712,7 +5748,12 @@
 ===================================== */
 
       async function startRealtimeListener() {
-        if (!db || !isAppUnlocked || !currentAccountId || unsubscribeTransactions) {
+        if (
+          !db ||
+          !isAppUnlocked ||
+          !currentAccountId ||
+          unsubscribeTransactions
+        ) {
           return;
         }
 
@@ -4728,7 +5769,9 @@
               ...item.data(),
             }));
 
-            transactions.sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+            transactions.sort((a, b) =>
+              String(b.date || "").localeCompare(String(a.date || "")),
+            );
 
             renderEverything();
 
@@ -4741,7 +5784,9 @@
 
             window.showAppDialog({
               title: "Lỗi tải dữ liệu",
-              message: "Không thể đọc dữ liệu từ Firestore.\n\n" + (error.message || "Lỗi không xác định."),
+              message:
+                "Không thể đọc dữ liệu từ Firestore.\n\n" +
+                (error.message || "Lỗi không xác định."),
               type: "error",
             });
           },
@@ -4763,7 +5808,8 @@
           const password = document.getElementById("lockPassword").value;
 
           if (password.length < 4) {
-            document.getElementById("lockError").textContent = "Mật khẩu cần có ít nhất 4 ký tự.";
+            document.getElementById("lockError").textContent =
+              "Mật khẩu cần có ít nhất 4 ký tự.";
 
             return;
           }
@@ -4787,7 +5833,8 @@
             isSettingUpPassword = false;
           } else {
             if (enteredHash !== lockPasswordHash) {
-              document.getElementById("lockError").textContent = "Mật khẩu không chính xác. Vui lòng thử lại.";
+              document.getElementById("lockError").textContent =
+                "Mật khẩu không chính xác. Vui lòng thử lại.";
 
               document.getElementById("lockPassword").value = "";
 
@@ -4827,13 +5874,19 @@
           await startRealtimeListener();
           startAdminNotificationListener();
 
-          if (document.getElementById("roomRentPage")?.classList.contains("active")) {
+          if (
+            document
+              .getElementById("roomRentPage")
+              ?.classList.contains("active")
+          ) {
             await loadRoomRentData();
           }
         } catch (error) {
           console.error("App Lock error:", error);
 
-          document.getElementById("lockError").textContent = "Không thể xác thực hoặc lưu mật khẩu trên Firebase.\n" + (error.message || "Vui lòng kiểm tra Firestore Rules.");
+          document.getElementById("lockError").textContent =
+            "Không thể xác thực hoặc lưu mật khẩu trên Firebase.\n" +
+            (error.message || "Vui lòng kiểm tra Firestore Rules.");
         } finally {
           lockActionInProgress = false;
         }
@@ -4939,7 +5992,10 @@
               to = getToday();
             }
           } catch (localError) {
-            console.warn("Cannot load shared date filter from localStorage:", localError);
+            console.warn(
+              "Cannot load shared date filter from localStorage:",
+              localError,
+            );
           }
         }
 
@@ -4990,7 +6046,10 @@
             }),
           );
         } catch (error) {
-          console.warn("Cannot save shared date filter to localStorage:", error);
+          console.warn(
+            "Cannot save shared date filter to localStorage:",
+            error,
+          );
         }
 
         /*
@@ -5020,13 +6079,16 @@
       }
 
       function updateDashboardDateLabels() {
-        const from = document.getElementById("dashboardFilterFrom")?.value || "";
+        const from =
+          document.getElementById("dashboardFilterFrom")?.value || "";
 
         const to = document.getElementById("dashboardFilterTo")?.value || "";
 
         const label = formatSharedDateRange(from, to);
 
-        const categorySubtitle = document.getElementById("categoryDateRangeLabel");
+        const categorySubtitle = document.getElementById(
+          "categoryDateRangeLabel",
+        );
 
         const sourceSubtitle = document.getElementById("sourceDateRangeLabel");
 
@@ -5127,7 +6189,9 @@
         try {
           const lockDoc = await getDoc(getAccountLockRef());
 
-          lockPasswordHash = lockDoc.exists() ? lockDoc.data().passwordHash || null : null;
+          lockPasswordHash = lockDoc.exists()
+            ? lockDoc.data().passwordHash || null
+            : null;
 
           lockConfigExists = Boolean(lockPasswordHash);
 
@@ -5147,7 +6211,9 @@
 
           isSettingUpPassword = false;
 
-          const savedLockExpiry = Number(localStorage.getItem(LOCK_EXPIRY_KEY) || 0);
+          const savedLockExpiry = Number(
+            localStorage.getItem(LOCK_EXPIRY_KEY) || 0,
+          );
 
           if (savedLockExpiry > Date.now()) {
             /*
@@ -5184,7 +6250,10 @@
 
           setFirebaseStatus("● App Lock error", "error");
 
-          showLockScreen("Không thể kiểm tra App Lock của Account này.\n" + (error.message || ""));
+          showLockScreen(
+            "Không thể kiểm tra App Lock của Account này.\n" +
+              (error.message || ""),
+          );
         }
       }
 
@@ -5220,9 +6289,13 @@
 
           const savedAccountId = localStorage.getItem(SELECTED_ACCOUNT_KEY);
 
-          const savedLockExpiry = Number(localStorage.getItem(LOCK_EXPIRY_KEY) || 0);
+          const savedLockExpiry = Number(
+            localStorage.getItem(LOCK_EXPIRY_KEY) || 0,
+          );
 
-          const savedAccount = accounts.find((account) => account.id === savedAccountId);
+          const savedAccount = accounts.find(
+            (account) => account.id === savedAccountId,
+          );
 
           /*
       Có Account đã chọn trước đó
@@ -5231,7 +6304,8 @@
           if (savedAccount) {
             currentAccountId = savedAccount.id;
             currentAccountName = savedAccount.name || "Account";
-            currentAccountRole = savedAccount.role === "admin" ? "admin" : "user";
+            currentAccountRole =
+              savedAccount.role === "admin" ? "admin" : "user";
 
             lockPasswordHash = null;
             lockConfigExists = false;
@@ -5263,7 +6337,11 @@
 
               await startRealtimeListener();
               startAdminNotificationListener();
-              if (document.getElementById("roomRentPage")?.classList.contains("active")) {
+              if (
+                document
+                  .getElementById("roomRentPage")
+                  ?.classList.contains("active")
+              ) {
                 await loadRoomRentData();
               }
               setFirebaseStatus("● Firebase connected", "ok");
@@ -5275,7 +6353,10 @@
         Nếu đã hết 8 tiếng:
         → lock lại và yêu cầu password.
       */
-            if (lockConfigExists && (!savedLockExpiry || savedLockExpiry <= Date.now())) {
+            if (
+              lockConfigExists &&
+              (!savedLockExpiry || savedLockExpiry <= Date.now())
+            ) {
               isAppUnlocked = false;
               lockExpiry = 0;
 
@@ -5331,7 +6412,8 @@
 
           setFirebaseStatus("● Account error", "error");
 
-          document.getElementById("accountScreenError").textContent = "Không thể tải danh sách Account.\n" + (error.message || "");
+          document.getElementById("accountScreenError").textContent =
+            "Không thể tải danh sách Account.\n" + (error.message || "");
         } finally {
           hideStartupScreen();
         }
@@ -5386,7 +6468,13 @@
           let count = 0;
 
           for (const oldDoc of oldTransactions.docs) {
-            const targetRef = doc(db, "accounts", accountId, "transactions", oldDoc.id);
+            const targetRef = doc(
+              db,
+              "accounts",
+              accountId,
+              "transactions",
+              oldDoc.id,
+            );
 
             batch.set(targetRef, oldDoc.data());
 
@@ -5428,100 +6516,113 @@
    LOCK FORM
 ===================================== */
 
-      document.getElementById("lockForm").addEventListener("submit", async (event) => {
-        event.preventDefault();
+      document
+        .getElementById("lockForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
 
-        await unlockApp();
-      });
+          await unlockApp();
+        });
 
       /* =====================================
    CHANGE PASSWORD
 ===================================== */
 
-      document.getElementById("changePasswordForm").addEventListener("submit", async (event) => {
-        event.preventDefault();
+      document
+        .getElementById("changePasswordForm")
+        .addEventListener("submit", async (event) => {
+          event.preventDefault();
 
-        if (!isAppUnlocked || !db || !currentAccountId) {
-          return;
-        }
+          if (!isAppUnlocked || !db || !currentAccountId) {
+            return;
+          }
 
-        const currentPassword = document.getElementById("currentLockPassword").value;
+          const currentPassword = document.getElementById(
+            "currentLockPassword",
+          ).value;
 
-        const newPassword = document.getElementById("newLockPassword").value;
+          const newPassword = document.getElementById("newLockPassword").value;
 
-        const confirmation = document.getElementById("confirmLockPassword").value;
+          const confirmation = document.getElementById(
+            "confirmLockPassword",
+          ).value;
 
-        const button = document.getElementById("changePasswordBtn");
+          const button = document.getElementById("changePasswordBtn");
 
-        if (newPassword.length < 4) {
-          await window.showAppDialog({
-            title: "Mật khẩu chưa hợp lệ",
-            message: "Mật khẩu mới cần có ít nhất 4 ký tự.",
-            type: "warning",
-          });
-
-          return;
-        }
-
-        if (newPassword !== confirmation) {
-          await window.showAppDialog({
-            title: "Mật khẩu không khớp",
-            message: "Vui lòng nhập lại mật khẩu xác nhận.",
-            type: "warning",
-          });
-
-          return;
-        }
-
-        button.disabled = true;
-        button.textContent = "Đang cập nhật...";
-
-        try {
-          const currentHash = await hashPassword(currentPassword);
-
-          if (currentHash !== lockPasswordHash) {
+          if (newPassword.length < 4) {
             await window.showAppDialog({
-              title: "Sai mật khẩu hiện tại",
-              message: "Mật khẩu hiện tại không chính xác.",
-              type: "error",
+              title: "Mật khẩu chưa hợp lệ",
+              message: "Mật khẩu mới cần có ít nhất 4 ký tự.",
+              type: "warning",
             });
 
             return;
           }
 
-          const newHash = await hashPassword(newPassword);
+          if (newPassword !== confirmation) {
+            await window.showAppDialog({
+              title: "Mật khẩu không khớp",
+              message: "Vui lòng nhập lại mật khẩu xác nhận.",
+              type: "warning",
+            });
 
-          await setDoc(
-            getAccountLockRef(),
-            {
-              passwordHash: newHash,
-              updatedAt: serverTimestamp(),
-            },
-            { merge: true },
-          );
+            return;
+          }
 
-          lockPasswordHash = newHash;
+          button.disabled = true;
+          button.textContent = "Đang cập nhật...";
 
-          document.getElementById("changePasswordForm").reset();
+          try {
+            const currentHash = await hashPassword(currentPassword);
 
-          await window.showAppDialog({
-            title: "Đổi mật khẩu thành công",
-            message: 'Mật khẩu App Lock của Account "' + currentAccountName + '" đã được cập nhật.',
-            type: "success",
-          });
-        } catch (error) {
-          console.error("Change App Lock password error:", error);
+            if (currentHash !== lockPasswordHash) {
+              await window.showAppDialog({
+                title: "Sai mật khẩu hiện tại",
+                message: "Mật khẩu hiện tại không chính xác.",
+                type: "error",
+              });
 
-          await window.showAppDialog({
-            title: "Không thể đổi mật khẩu",
-            message: "Không thể cập nhật mật khẩu trên Firebase.\n\n" + (error.message || "Lỗi không xác định."),
-            type: "error",
-          });
-        } finally {
-          button.disabled = false;
-          button.textContent = "Cập nhật mật khẩu";
-        }
-      });
+              return;
+            }
+
+            const newHash = await hashPassword(newPassword);
+
+            await setDoc(
+              getAccountLockRef(),
+              {
+                passwordHash: newHash,
+                updatedAt: serverTimestamp(),
+              },
+              { merge: true },
+            );
+
+            lockPasswordHash = newHash;
+
+            document.getElementById("changePasswordForm").reset();
+
+            await window.showAppDialog({
+              title: "Đổi mật khẩu thành công",
+              message:
+                'Mật khẩu App Lock của Account "' +
+                currentAccountName +
+                '" đã được cập nhật.',
+              type: "success",
+            });
+          } catch (error) {
+            console.error("Change App Lock password error:", error);
+
+            await window.showAppDialog({
+              title: "Không thể đổi mật khẩu",
+              message:
+                "Không thể cập nhật mật khẩu trên Firebase.\n\n" +
+                (error.message || "Lỗi không xác định."),
+              type: "error",
+            });
+          } finally {
+            button.disabled = false;
+            button.textContent = "Cập nhật mật khẩu";
+          }
+        });
 
       /* =====================================
    FIREBASE INITIALIZATION
@@ -5540,7 +6641,10 @@
 
         setFirebaseStatus("Firebase connection error", "error");
 
-        showLockScreen("Không thể khởi tạo Firebase.\n" + "Vui lòng kiểm tra cấu hình và tải lại trang.");
+        showLockScreen(
+          "Không thể khởi tạo Firebase.\n" +
+            "Vui lòng kiểm tra cấu hình và tải lại trang.",
+        );
       }
       /* =====================================
    MONEY INPUT HELPERS
@@ -5572,7 +6676,8 @@
       }
 
       // Tự động định dạng khi nhập tiền.
-      const transactionAmountInput = document.getElementById("transactionAmount");
+      const transactionAmountInput =
+        document.getElementById("transactionAmount");
 
       if (transactionAmountInput) {
         // Dùng text để cho phép nhập cả dấu . và ,
@@ -5585,11 +6690,15 @@
           const oldPosition = input.selectionStart ?? oldValue.length;
 
           // Đếm số chữ số trước vị trí con trỏ.
-          const digitsBeforeCursor = oldValue.slice(0, oldPosition).replace(/\D/g, "").length;
+          const digitsBeforeCursor = oldValue
+            .slice(0, oldPosition)
+            .replace(/\D/g, "").length;
 
           // Chỉ giữ lại chữ số, sau đó thêm dấu phân cách.
           const digits = oldValue.replace(/\D/g, "");
-          const formatted = digits ? Number(digits).toLocaleString("vi-VN") : "";
+          const formatted = digits
+            ? Number(digits).toLocaleString("vi-VN")
+            : "";
 
           input.value = formatted;
 
@@ -5597,7 +6706,10 @@
           let newPosition = 0;
           let digitCount = 0;
 
-          while (newPosition < formatted.length && digitCount < digitsBeforeCursor) {
+          while (
+            newPosition < formatted.length &&
+            digitCount < digitsBeforeCursor
+          ) {
             if (/\d/.test(formatted[newPosition])) {
               digitCount++;
             }
@@ -5619,18 +6731,25 @@
           const oldValue = input.value;
           const oldPosition = input.selectionStart ?? oldValue.length;
 
-          const digitsBeforeCursor = oldValue.slice(0, oldPosition).replace(/\D/g, "").length;
+          const digitsBeforeCursor = oldValue
+            .slice(0, oldPosition)
+            .replace(/\D/g, "").length;
 
           const digits = oldValue.replace(/\D/g, "");
 
-          const formatted = digits ? Number(digits).toLocaleString("vi-VN") : "";
+          const formatted = digits
+            ? Number(digits).toLocaleString("vi-VN")
+            : "";
 
           input.value = formatted;
 
           let newPosition = 0;
           let digitCount = 0;
 
-          while (newPosition < formatted.length && digitCount < digitsBeforeCursor) {
+          while (
+            newPosition < formatted.length &&
+            digitCount < digitsBeforeCursor
+          ) {
             if (/\d/.test(formatted[newPosition])) {
               digitCount++;
             }
@@ -5645,7 +6764,12 @@
    CREATE ADMIN NOTIFICATION
 ===================================== */
 
-      async function createAdminTransactionNotification(eventType, transactionId, transaction, previousTransaction = null) {
+      async function createAdminTransactionNotification(
+        eventType,
+        transactionId,
+        transaction,
+        previousTransaction = null,
+      ) {
         // Admin tự thao tác thì không thông báo
         if (!db || !currentAccountId || currentAccountRole === "admin") {
           return;
@@ -5721,19 +6845,28 @@
 
           if (!transaction) return;
 
-          document.getElementById("transferModalTitle").textContent = "Sửa chuyển tiền";
+          document.getElementById("transferModalTitle").textContent =
+            "Sửa chuyển tiền";
 
-          document.getElementById("transferDate").value = transaction.date || "";
+          document.getElementById("transferDate").value =
+            transaction.date || "";
 
-          document.getElementById("transferAmount").value = transaction.amount != null ? formatMoneyInput(transaction.amount) : "";
+          document.getElementById("transferAmount").value =
+            transaction.amount != null
+              ? formatMoneyInput(transaction.amount)
+              : "";
 
-          document.getElementById("transferFrom").value = transaction.fromSource || "cash";
+          document.getElementById("transferFrom").value =
+            transaction.fromSource || "cash";
 
-          document.getElementById("transferTo").value = transaction.toSource || "bank";
+          document.getElementById("transferTo").value =
+            transaction.toSource || "bank";
 
-          document.getElementById("transferNote").value = transaction.note || "";
+          document.getElementById("transferNote").value =
+            transaction.note || "";
         } else {
-          document.getElementById("transferModalTitle").textContent = "↔ Chuyển tiền";
+          document.getElementById("transferModalTitle").textContent =
+            "↔ Chuyển tiền";
 
           document.getElementById("transferDate").value = getToday();
 
@@ -5749,7 +6882,9 @@
         modal.classList.add("show");
         updateTransferToSource();
       };
-      document.getElementById("transferFrom")?.addEventListener("change", updateTransferToSource);
+      document
+        .getElementById("transferFrom")
+        ?.addEventListener("change", updateTransferToSource);
 
       window.closeTransferModal = function () {
         editingTransferId = null;
@@ -5765,7 +6900,8 @@
         if (!db) {
           await window.showAppDialog({
             title: "Chưa kết nối Firebase",
-            message: "Firebase chưa được kết nối. Vui lòng kiểm tra và thử lại.",
+            message:
+              "Firebase chưa được kết nối. Vui lòng kiểm tra và thử lại.",
             type: "error",
           });
 
@@ -5784,7 +6920,9 @@
 
         const date = document.getElementById("transferDate").value;
 
-        const amountInput = document.getElementById("transferAmount").value.trim();
+        const amountInput = document
+          .getElementById("transferAmount")
+          .value.trim();
 
         const amount = parseMoneyInput(amountInput);
 
@@ -5804,7 +6942,11 @@
           return;
         }
 
-        if (amountInput === "" || !Number.isSafeInteger(amount) || amount <= 0) {
+        if (
+          amountInput === "" ||
+          !Number.isSafeInteger(amount) ||
+          amount <= 0
+        ) {
           await window.showAppDialog({
             title: "Số tiền không hợp lệ",
             message: "Vui lòng nhập số tiền nguyên lớn hơn 0.",
@@ -5841,25 +6983,38 @@
 
         try {
           if (editingTransferId) {
-            const previousTransaction = transactions.find((item) => item.id === editingTransferId);
+            const previousTransaction = transactions.find(
+              (item) => item.id === editingTransferId,
+            );
 
             await updateDoc(getAccountTransactionRef(editingTransferId), data);
 
-            await createAdminTransactionNotification("transaction_edited", editingTransferId, data, previousTransaction || null);
+            await createAdminTransactionNotification(
+              "transaction_edited",
+              editingTransferId,
+              data,
+              previousTransaction || null,
+            );
           } else {
             const transactionRef = await addDoc(getAccountTransactionsRef(), {
               ...data,
               createdAt: serverTimestamp(),
             });
 
-            await createAdminTransactionNotification("transaction_added", transactionRef.id, data);
+            await createAdminTransactionNotification(
+              "transaction_added",
+              transactionRef.id,
+              data,
+            );
           }
 
           closeTransferModal();
 
           await window.showAppDialog({
             title: "Lưu thành công",
-            message: editingTransferId ? "Chuyển tiền đã được cập nhật." : "Chuyển tiền đã được lưu.",
+            message: editingTransferId
+              ? "Chuyển tiền đã được cập nhật."
+              : "Chuyển tiền đã được lưu.",
             type: "success",
           });
         } catch (error) {
@@ -5867,7 +7022,9 @@
 
           await window.showAppDialog({
             title: "Không thể lưu",
-            message: "Đã xảy ra lỗi khi lưu chuyển tiền.\n\n" + (error.message || "Lỗi không xác định."),
+            message:
+              "Đã xảy ra lỗi khi lưu chuyển tiền.\n\n" +
+              (error.message || "Lỗi không xác định."),
             type: "error",
           });
         } finally {
@@ -5883,7 +7040,8 @@
         if (!db) {
           await window.showAppDialog({
             title: "Chưa kết nối Firebase",
-            message: "Firebase chưa được kết nối. Vui lòng kiểm tra kết nối và thử lại.",
+            message:
+              "Firebase chưa được kết nối. Vui lòng kiểm tra kết nối và thử lại.",
             type: "error",
           });
           return;
@@ -5891,17 +7049,27 @@
 
         const date = document.getElementById("transactionDate").value;
 
-        const amountInput = document.getElementById("transactionAmount").value.trim();
+        const amountInput = document
+          .getElementById("transactionAmount")
+          .value.trim();
 
         const amount = parseMoneyInput(amountInput);
 
         const note = document.getElementById("transactionNote").value.trim();
 
-        let source = document.getElementById("transactionSource").value || "cash";
+        let source =
+          document.getElementById("transactionSource").value || "cash";
 
-        const incomeKind = currentTransactionType === "income" ? document.getElementById("transactionIncomeKind")?.value || "normal" : "normal";
+        const incomeKind =
+          currentTransactionType === "income"
+            ? document.getElementById("transactionIncomeKind")?.value ||
+              "normal"
+            : "normal";
 
-        const category = currentTransactionType === "expense" ? document.getElementById("transactionCategory").value : "";
+        const category =
+          currentTransactionType === "expense"
+            ? document.getElementById("transactionCategory").value
+            : "";
 
         // =====================================
         // TIỀN TRỌ LUÔN VÀO NGÂN HÀNG
@@ -5919,7 +7087,11 @@
           return;
         }
 
-        if (amountInput === "" || !Number.isSafeInteger(amount) || amount <= 0) {
+        if (
+          amountInput === "" ||
+          !Number.isSafeInteger(amount) ||
+          amount <= 0
+        ) {
           await window.showAppDialog({
             title: "Số tiền không hợp lệ",
             message: "Vui lòng nhập số tiền nguyên lớn hơn 0.",
@@ -5962,11 +7134,18 @@
 
             const transactionId = editingId;
 
-            const previousTransaction = transactions.find((item) => item.id === transactionId);
+            const previousTransaction = transactions.find(
+              (item) => item.id === transactionId,
+            );
 
             await updateDoc(getAccountTransactionRef(transactionId), data);
 
-            await createAdminTransactionNotification("transaction_edited", transactionId, data, previousTransaction || null);
+            await createAdminTransactionNotification(
+              "transaction_edited",
+              transactionId,
+              data,
+              previousTransaction || null,
+            );
           } else {
             // =====================================
             // ADD
@@ -5977,14 +7156,20 @@
               createdAt: serverTimestamp(),
             });
 
-            await createAdminTransactionNotification("transaction_added", transactionRef.id, data);
+            await createAdminTransactionNotification(
+              "transaction_added",
+              transactionRef.id,
+              data,
+            );
           }
 
           closeModal();
 
           await window.showAppDialog({
             title: "Lưu thành công",
-            message: editingId ? "Giao dịch đã được cập nhật thành công." : "Giao dịch mới đã được lưu thành công.",
+            message: editingId
+              ? "Giao dịch đã được cập nhật thành công."
+              : "Giao dịch mới đã được lưu thành công.",
             type: "success",
           });
         } catch (error) {
@@ -5992,7 +7177,9 @@
 
           await window.showAppDialog({
             title: "Không thể lưu giao dịch",
-            message: "Đã xảy ra lỗi khi lưu giao dịch.\n\n" + (error.message || "Lỗi không xác định."),
+            message:
+              "Đã xảy ra lỗi khi lưu giao dịch.\n\n" +
+              (error.message || "Lỗi không xác định."),
             type: "error",
           });
         } finally {
@@ -6037,7 +7224,18 @@
 
         const confirmed = await window.showAppDialog({
           title: "Xóa giao dịch?",
-          message: "Bạn có chắc muốn xóa giao dịch này không?\n\n" + (transaction.note || transaction.category || "Giao dịch") + "\nLoại: " + (transaction.type === "transfer" ? "Chuyển tiền" : transaction.type === "income" ? "Thu" : "Chi") + "\nSố tiền: " + formatMoney(transaction.amount) + "\n\nThao tác này không thể hoàn tác.",
+          message:
+            "Bạn có chắc muốn xóa giao dịch này không?\n\n" +
+            (transaction.note || transaction.category || "Giao dịch") +
+            "\nLoại: " +
+            (transaction.type === "transfer"
+              ? "Chuyển tiền"
+              : transaction.type === "income"
+                ? "Thu"
+                : "Chi") +
+            "\nSố tiền: " +
+            formatMoney(transaction.amount) +
+            "\n\nThao tác này không thể hoàn tác.",
           type: "danger",
           confirm: true,
           confirmText: "Xóa giao dịch",
@@ -6051,7 +7249,11 @@
           await deleteDoc(getAccountTransactionRef(id));
 
           // Tạo notification cho Admin
-          await createAdminTransactionNotification("transaction_deleted", id, transaction);
+          await createAdminTransactionNotification(
+            "transaction_deleted",
+            id,
+            transaction,
+          );
 
           await window.showAppDialog({
             title: "Đã xóa giao dịch",
@@ -6063,7 +7265,9 @@
 
           await window.showAppDialog({
             title: "Không thể xóa giao dịch",
-            message: "Đã xảy ra lỗi khi xóa giao dịch.\n\n" + (error.message || "Lỗi không xác định."),
+            message:
+              "Đã xảy ra lỗi khi xóa giao dịch.\n\n" +
+              (error.message || "Lỗi không xác định."),
             type: "error",
           });
         }
@@ -6091,21 +7295,32 @@
 
         document.getElementById("modalTitle").textContent = "Sửa giao dịch";
 
-        document.getElementById("transactionDate").value = transaction.date || "";
+        document.getElementById("transactionDate").value =
+          transaction.date || "";
 
-        document.getElementById("transactionAmount").value = transaction.amount != null ? formatMoneyInput(transaction.amount) : "";
+        document.getElementById("transactionAmount").value =
+          transaction.amount != null
+            ? formatMoneyInput(transaction.amount)
+            : "";
 
-        document.getElementById("transactionNote").value = transaction.note || "";
+        document.getElementById("transactionNote").value =
+          transaction.note || "";
 
-        document.getElementById("transactionSource").value = transaction.source || "cash";
+        document.getElementById("transactionSource").value =
+          transaction.source || "cash";
 
         // =====================================
         // LOAD LOẠI KHOẢN THU
         // =====================================
-        const incomeKindSelect = document.getElementById("transactionIncomeKind");
+        const incomeKindSelect = document.getElementById(
+          "transactionIncomeKind",
+        );
 
         if (incomeKindSelect) {
-          incomeKindSelect.value = transaction.type === "income" ? transaction.incomeKind || "normal" : "normal";
+          incomeKindSelect.value =
+            transaction.type === "income"
+              ? transaction.incomeKind || "normal"
+              : "normal";
         }
 
         // =====================================
@@ -6190,7 +7405,9 @@
 
         const categorySelect = document.getElementById("transactionCategory");
 
-        const incomeKindSelect = document.getElementById("transactionIncomeKind");
+        const incomeKindSelect = document.getElementById(
+          "transactionIncomeKind",
+        );
 
         const sourceSelect = document.getElementById("transactionSource");
 
@@ -6244,11 +7461,19 @@
 
         const sourceSelect = document.getElementById("transactionSource");
 
-        const incomeKindSelect = document.getElementById("transactionIncomeKind");
+        const incomeKindSelect = document.getElementById(
+          "transactionIncomeKind",
+        );
 
-        incomeBtn.classList.toggle("active", currentTransactionType === "income");
+        incomeBtn.classList.toggle(
+          "active",
+          currentTransactionType === "income",
+        );
 
-        expenseBtn.classList.toggle("active", currentTransactionType === "expense");
+        expenseBtn.classList.toggle(
+          "active",
+          currentTransactionType === "expense",
+        );
 
         sourceField.style.display = "flex";
 
@@ -6281,18 +7506,20 @@
           sourceSelect.disabled = false;
         }
       }
-      document.getElementById("transactionIncomeKind")?.addEventListener("change", function () {
-        const sourceSelect = document.getElementById("transactionSource");
+      document
+        .getElementById("transactionIncomeKind")
+        ?.addEventListener("change", function () {
+          const sourceSelect = document.getElementById("transactionSource");
 
-        if (!sourceSelect) return;
+          if (!sourceSelect) return;
 
-        if (this.value === "rent") {
-          sourceSelect.value = "bank";
-          sourceSelect.disabled = true;
-        } else {
-          sourceSelect.disabled = false;
-        }
-      });
+          if (this.value === "rent") {
+            sourceSelect.value = "bank";
+            sourceSelect.disabled = true;
+          } else {
+            sourceSelect.disabled = false;
+          }
+        });
       /* =====================================
    ROOM RENT MODULE
 ===================================== */
@@ -6314,15 +7541,15 @@
 ===================================== */
       function setupRoomRentMoneyInputs() {
         const inputIds = [
-          "roomElectricityRate",
-          "roomWaterRate",
           "roomDefaultRent",
           "roomDefaultGarbage",
+          "roomElectricityRatePerRoom",
+          "roomWaterRatePerRoom",
+
           "roomBillRent",
           "roomBillGarbage",
           "roomBillOtherAmount",
 
-          // Đơn giá trong phần tính hóa đơn
           "roomElectricityRatePreview",
           "roomWaterRatePreview",
         ];
@@ -6339,18 +7566,25 @@
             const oldValue = this.value;
             const oldPosition = this.selectionStart ?? oldValue.length;
 
-            const digitsBeforeCursor = oldValue.slice(0, oldPosition).replace(/\D/g, "").length;
+            const digitsBeforeCursor = oldValue
+              .slice(0, oldPosition)
+              .replace(/\D/g, "").length;
 
             const digits = oldValue.replace(/\D/g, "");
 
-            const formatted = digits ? Number(digits).toLocaleString("vi-VN") : "";
+            const formatted = digits
+              ? Number(digits).toLocaleString("vi-VN")
+              : "";
 
             this.value = formatted;
 
             let newPosition = 0;
             let digitCount = 0;
 
-            while (newPosition < formatted.length && digitCount < digitsBeforeCursor) {
+            while (
+              newPosition < formatted.length &&
+              digitCount < digitsBeforeCursor
+            ) {
               if (/\d/.test(formatted[newPosition])) {
                 digitCount++;
               }
@@ -6409,7 +7643,13 @@
           throw new Error("Chưa chọn Account.");
         }
 
-        return doc(db, "accounts", currentAccountId, "settings", "roomRentConfig");
+        return doc(
+          db,
+          "accounts",
+          currentAccountId,
+          "settings",
+          "roomRentConfig",
+        );
       }
 
       /* =====================================
@@ -6451,7 +7691,9 @@
       function roomRentCurrentMonth() {
         const now = new Date();
 
-        return now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+        return (
+          now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0")
+        );
       }
 
       function roomRentSetInput(id, value) {
@@ -6459,9 +7701,26 @@
 
         if (!element) return;
 
-        const moneyInputIds = ["roomElectricityRate", "roomWaterRate", "roomDefaultRent", "roomDefaultGarbage", "roomBillRent", "roomBillGarbage", "roomBillOtherAmount", "roomElectricityRatePreview", "roomWaterRatePreview"];
+        const moneyInputIds = [
+          "roomDefaultRent",
+          "roomDefaultGarbage",
+          "roomElectricityRatePerRoom",
+          "roomWaterRatePerRoom",
 
-        if (moneyInputIds.includes(id) && value !== "" && value !== null && value !== undefined) {
+          "roomBillRent",
+          "roomBillGarbage",
+          "roomBillOtherAmount",
+
+          "roomElectricityRatePreview",
+          "roomWaterRatePreview",
+        ];
+
+        if (
+          moneyInputIds.includes(id) &&
+          value !== "" &&
+          value !== null &&
+          value !== undefined
+        ) {
           element.value = Number(value).toLocaleString("vi-VN");
         } else {
           element.value = value ?? "";
@@ -6479,7 +7738,12 @@
 
         try {
           const loadingAccountId = currentAccountId;
-          const [roomsSnapshot, billsSnapshot, configSnapshot] = await Promise.all([getDocs(getRoomRentRoomsRef()), getDocs(getRoomRentBillsRef()), getDoc(getRoomRentConfigRef())]);
+          const [roomsSnapshot, billsSnapshot, configSnapshot] =
+            await Promise.all([
+              getDocs(getRoomRentRoomsRef()),
+              getDocs(getRoomRentBillsRef()),
+              getDoc(getRoomRentConfigRef()),
+            ]);
           // Account đã thay đổi trong lúc chờ Firebase trả dữ liệu
           if (currentAccountId !== loadingAccountId) {
             return;
@@ -6508,6 +7772,34 @@
             };
           }
 
+          // =====================================
+          // MIGRATE OLD ROOM RATES
+          // Chuyển đơn giá chung cũ vào từng phòng
+          // =====================================
+
+          for (const room of roomRentRooms) {
+            const patch = {};
+
+            if (room.electricityRate == null) {
+              patch.electricityRate = roomRentConfig.electricityRate;
+            }
+
+            if (room.waterRate == null) {
+              patch.waterRate = roomRentConfig.waterRate;
+            }
+
+            if (Object.keys(patch).length > 0) {
+              await updateDoc(
+                doc(db, "accounts", loadingAccountId, "rooms", room.id),
+                {
+                  ...patch,
+                  updatedAt: serverTimestamp(),
+                },
+              );
+
+              Object.assign(room, patch);
+            }
+          }
           roomRentLoadedAccountId = currentAccountId;
 
           renderRoomRentConfig();
@@ -6521,10 +7813,13 @@
             monthInput.value = roomRentCurrentMonth();
           }
 
-          const summaryMonthInput = document.getElementById("roomRentSummaryMonth");
+          const summaryMonthInput = document.getElementById(
+            "roomRentSummaryMonth",
+          );
 
           if (summaryMonthInput) {
-            summaryMonthInput.value = monthInput?.value || roomRentCurrentMonth();
+            summaryMonthInput.value =
+              monthInput?.value || roomRentCurrentMonth();
           }
 
           renderRoomRentSummary();
@@ -6535,7 +7830,9 @@
 
           await window.showAppDialog({
             title: "Không thể tải dữ liệu phòng",
-            message: "Vui lòng kiểm tra Firestore Rules và thử lại.\n\n" + (error.message || ""),
+            message:
+              "Vui lòng kiểm tra Firestore Rules và thử lại.\n\n" +
+              (error.message || ""),
             type: "error",
           });
         }
@@ -6560,7 +7857,12 @@
 
         const waterRate = roomRentInputMoney("roomWaterRate");
 
-        if (!Number.isSafeInteger(electricityRate) || electricityRate < 0 || !Number.isSafeInteger(waterRate) || waterRate < 0) {
+        if (
+          !Number.isSafeInteger(electricityRate) ||
+          electricityRate < 0 ||
+          !Number.isSafeInteger(waterRate) ||
+          waterRate < 0
+        ) {
           await window.showAppDialog({
             title: "Đơn giá không hợp lệ",
             message: "Vui lòng nhập đơn giá là số nguyên không âm.",
@@ -6620,11 +7922,14 @@
         Chưa có phòng nào. Hãy thêm phòng đầu tiên nhé.
       </div>
     `;
-
           return;
         }
 
-        const sortedRooms = [...roomRentRooms].sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "vi", { numeric: true }));
+        const sortedRooms = [...roomRentRooms].sort((a, b) =>
+          String(a.name || "").localeCompare(String(b.name || ""), "vi", {
+            numeric: true,
+          }),
+        );
 
         container.innerHTML = sortedRooms
           .map((room) => {
@@ -6635,7 +7940,11 @@
 
         <div class="rr-room-name">
           ${roomRentEscapeHtml(room.name)}
-          ${inactive ? '<span style="color:var(--muted);font-size:11px"> · Ngừng sử dụng</span>' : ""}
+          ${
+            inactive
+              ? '<span style="color:var(--muted);font-size:11px"> · Ngừng sử dụng</span>'
+              : ""
+          }
         </div>
 
         <div class="rr-room-info">
@@ -6645,6 +7954,14 @@
 
           Tiền rác mặc định:
           <strong>${roomRentMoney(room.defaultGarbage)}</strong>
+          <br>
+
+          Giá điện:
+          <strong>${roomRentMoney(room.electricityRate)} / kWh</strong>
+          <br>
+
+          Giá nước:
+          <strong>${roomRentMoney(room.waterRate)} / m³</strong>
         </div>
 
         <div class="rr-room-actions">
@@ -6679,7 +7996,11 @@
         const currentBillRoom = billSelect?.value || "";
         const currentHistoryRoom = historySelect?.value || "";
 
-        const sortedRooms = [...roomRentRooms].sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "vi", { numeric: true }));
+        const sortedRooms = [...roomRentRooms].sort((a, b) =>
+          String(a.name || "").localeCompare(String(b.name || ""), "vi", {
+            numeric: true,
+          }),
+        );
 
         const options = sortedRooms
           .map(
@@ -6721,8 +8042,13 @@
         const name = document.getElementById("roomName").value.trim();
 
         const defaultRent = roomRentInputMoney("roomDefaultRent");
-
         const defaultGarbage = roomRentInputMoney("roomDefaultGarbage");
+
+        const electricityRate = roomRentInputMoney(
+          "roomElectricityRatePerRoom",
+        );
+
+        const waterRate = roomRentInputMoney("roomWaterRatePerRoom");
 
         if (!name) {
           await window.showAppDialog({
@@ -6730,17 +8056,25 @@
             message: "Vui lòng nhập tên phòng.",
             type: "warning",
           });
-
           return;
         }
 
-        if (!Number.isSafeInteger(defaultRent) || defaultRent < 0 || !Number.isSafeInteger(defaultGarbage) || defaultGarbage < 0) {
+        if (
+          !Number.isSafeInteger(defaultRent) ||
+          defaultRent < 0 ||
+          !Number.isSafeInteger(defaultGarbage) ||
+          defaultGarbage < 0 ||
+          !Number.isSafeInteger(electricityRate) ||
+          electricityRate < 0 ||
+          !Number.isSafeInteger(waterRate) ||
+          waterRate < 0
+        ) {
           await window.showAppDialog({
-            title: "Số tiền không hợp lệ",
-            message: "Vui lòng kiểm tra tiền thuê và tiền rác.",
+            title: "Đơn giá không hợp lệ",
+            message:
+              "Vui lòng kiểm tra lại tiền thuê, tiền rác, giá điện và giá nước.",
             type: "warning",
           });
-
           return;
         }
 
@@ -6748,6 +8082,8 @@
           name,
           defaultRent,
           defaultGarbage,
+          electricityRate,
+          waterRate,
           updatedAt: serverTimestamp(),
         };
 
@@ -6790,10 +8126,23 @@
         editingRoomRentRoomId = id;
 
         roomRentSetInput("roomName", room.name);
+
         roomRentSetInput("roomDefaultRent", room.defaultRent || 0);
+
         roomRentSetInput("roomDefaultGarbage", room.defaultGarbage || 0);
 
-        document.getElementById("saveRoomBtn").textContent = "💾 Cập nhật phòng";
+        roomRentSetInput(
+          "roomElectricityRatePerRoom",
+          room.electricityRate ?? roomRentConfig.electricityRate,
+        );
+
+        roomRentSetInput(
+          "roomWaterRatePerRoom",
+          room.waterRate ?? roomRentConfig.waterRate,
+        );
+
+        document.getElementById("saveRoomBtn").textContent =
+          "💾 Cập nhật phòng";
 
         document.getElementById("cancelRoomEditBtn").style.display = "";
       };
@@ -6804,6 +8153,14 @@
         roomRentSetInput("roomName", "");
         roomRentSetInput("roomDefaultRent", "");
         roomRentSetInput("roomDefaultGarbage", "");
+
+        // Phòng mới mặc định nhận đơn giá cũ làm giá khởi tạo.
+        roomRentSetInput(
+          "roomElectricityRatePerRoom",
+          roomRentConfig.electricityRate,
+        );
+
+        roomRentSetInput("roomWaterRatePerRoom", roomRentConfig.waterRate);
 
         document.getElementById("saveRoomBtn").textContent = "＋ Thêm phòng";
 
@@ -6819,7 +8176,9 @@
 
         const confirmed = await window.showAppDialog({
           title: nextStatus ? "Kích hoạt phòng?" : "Ngừng sử dụng phòng?",
-          message: nextStatus ? `Bạn muốn kích hoạt lại ${room.name}?` : `Bạn muốn ngừng sử dụng ${room.name}?\n\nLịch sử hóa đơn vẫn được giữ lại.`,
+          message: nextStatus
+            ? `Bạn muốn kích hoạt lại ${room.name}?`
+            : `Bạn muốn ngừng sử dụng ${room.name}?\n\nLịch sử hóa đơn vẫn được giữ lại.`,
           type: "warning",
           confirm: true,
           confirmText: nextStatus ? "Kích hoạt" : "Ngừng sử dụng",
@@ -6848,15 +8207,21 @@
 ===================================== */
 
       function calculateRoomRentValues() {
-        const electricityOld = Number(document.getElementById("roomElectricityOld").value);
+        const electricityOld = Number(
+          document.getElementById("roomElectricityOld").value,
+        );
 
-        const electricityNew = Number(document.getElementById("roomElectricityNew").value);
+        const electricityNew = Number(
+          document.getElementById("roomElectricityNew").value,
+        );
 
         const waterOld = Number(document.getElementById("roomWaterOld").value);
 
         const waterNew = Number(document.getElementById("roomWaterNew").value);
 
-        const electricityRate = roomRentInputMoney("roomElectricityRatePreview");
+        const electricityRate = roomRentInputMoney(
+          "roomElectricityRatePreview",
+        );
 
         const waterRate = roomRentInputMoney("roomWaterRatePreview");
 
@@ -6864,15 +8229,20 @@
         const garbage = roomRentInputMoney("roomBillGarbage");
         const otherAmount = roomRentInputMoney("roomBillOtherAmount");
 
-        const electricityUsage = electricityNew >= electricityOld ? electricityNew - electricityOld : -1;
+        const electricityUsage =
+          electricityNew >= electricityOld
+            ? electricityNew - electricityOld
+            : -1;
 
         const waterUsage = waterNew >= waterOld ? waterNew - waterOld : -1;
 
-        const electricityAmount = electricityUsage >= 0 ? electricityUsage * electricityRate : 0;
+        const electricityAmount =
+          electricityUsage >= 0 ? electricityUsage * electricityRate : 0;
 
         const waterAmount = waterUsage >= 0 ? waterUsage * waterRate : 0;
 
-        const total = electricityAmount + waterAmount + rent + garbage + otherAmount;
+        const total =
+          electricityAmount + waterAmount + rent + garbage + otherAmount;
 
         return {
           electricityOld,
@@ -6900,15 +8270,26 @@
       window.calculateRoomBillPreview = function () {
         const values = calculateRoomRentValues();
 
-        document.getElementById("roomElectricityUsage").textContent = values.electricityUsage >= 0 ? values.electricityUsage.toLocaleString("vi-VN") + " kWh" : "Chỉ số không hợp lệ";
+        document.getElementById("roomElectricityUsage").textContent =
+          values.electricityUsage >= 0
+            ? values.electricityUsage.toLocaleString("vi-VN") + " kWh"
+            : "Chỉ số không hợp lệ";
 
-        document.getElementById("roomElectricityAmount").textContent = roomRentMoney(values.electricityAmount);
+        document.getElementById("roomElectricityAmount").textContent =
+          roomRentMoney(values.electricityAmount);
 
-        document.getElementById("roomWaterUsage").textContent = values.waterUsage >= 0 ? values.waterUsage.toLocaleString("vi-VN") + " m³" : "Chỉ số không hợp lệ";
+        document.getElementById("roomWaterUsage").textContent =
+          values.waterUsage >= 0
+            ? values.waterUsage.toLocaleString("vi-VN") + " m³"
+            : "Chỉ số không hợp lệ";
 
-        document.getElementById("roomWaterAmount").textContent = roomRentMoney(values.waterAmount);
+        document.getElementById("roomWaterAmount").textContent = roomRentMoney(
+          values.waterAmount,
+        );
 
-        document.getElementById("roomBillTotal").textContent = roomRentMoney(values.total);
+        document.getElementById("roomBillTotal").textContent = roomRentMoney(
+          values.total,
+        );
       };
 
       /* =====================================
@@ -6942,7 +8323,9 @@
         const roomId = document.getElementById("roomBillRoom")?.value;
 
         const month = document.getElementById("roomBillMonth")?.value;
-        const summaryMonthInput = document.getElementById("roomRentSummaryMonth");
+        const summaryMonthInput = document.getElementById(
+          "roomRentSummaryMonth",
+        );
 
         if (summaryMonthInput && month) {
           summaryMonthInput.value = month;
@@ -6950,7 +8333,7 @@
 
         renderRoomRentSummary();
         if (!roomId || !month) {
-          editingRoomRentBillId = null;
+          clearRoomRentBillFormUI(false);
           return;
         }
 
@@ -6958,42 +8341,54 @@
 
         if (!room) return;
 
-        const existingBill = roomRentBills.find((item) => item.roomId === roomId && item.month === month);
+        const existingBill = roomRentBills.find(
+          (item) => item.roomId === roomId && item.month === month,
+        );
 
         if (existingBill) {
           editingRoomRentBillId = existingBill.id;
 
           fillRoomRentBillForm(existingBill);
 
-          document.getElementById("saveRoomBillBtn").textContent = "💾 Cập nhật hóa đơn";
+          document.getElementById("saveRoomBillBtn").textContent =
+            "💾 Cập nhật hóa đơn";
 
-          document.getElementById("roomRentBillMessage").textContent = "Đang chỉnh sửa hóa đơn đã lưu.";
+          document.getElementById("roomRentBillMessage").textContent =
+            "Đang chỉnh sửa hóa đơn đã lưu.";
 
           return;
         }
 
         editingRoomRentBillId = null;
 
-        document.getElementById("saveRoomBillBtn").textContent = "💾 Lưu hóa đơn";
+        document.getElementById("saveRoomBillBtn").textContent =
+          "💾 Lưu hóa đơn";
 
         document.getElementById("roomRentBillMessage").textContent = "";
 
         // Tìm hóa đơn gần nhất trước tháng hiện tại.
-        const previousBill = roomRentBills.filter((item) => item.roomId === roomId && String(item.month || "") < month).sort((a, b) => String(b.month || "").localeCompare(String(a.month || "")))[0];
+        const previousBill = roomRentBills
+          .filter(
+            (item) =>
+              item.roomId === roomId && String(item.month || "") < month,
+          )
+          .sort((a, b) =>
+            String(b.month || "").localeCompare(String(a.month || "")),
+          )[0];
 
         fillRoomRentBillForm({
           electricityOld: previousBill?.electricityNew ?? "",
 
           electricityNew: "",
 
-          electricityRate: roomRentConfig.electricityRate,
+          electricityRate:
+            room.electricityRate ?? roomRentConfig.electricityRate,
 
           waterOld: previousBill?.waterNew ?? "",
 
           waterNew: "",
 
-          waterRate: roomRentConfig.waterRate,
-
+          waterRate: room.waterRate ?? roomRentConfig.waterRate,
           rent: room.defaultRent || 0,
 
           garbage: room.defaultGarbage || 0,
@@ -7047,17 +8442,40 @@
 
         const values = calculateRoomRentValues();
 
-        if (!Number.isSafeInteger(values.electricityOld) || !Number.isSafeInteger(values.electricityNew) || !Number.isSafeInteger(values.waterOld) || !Number.isSafeInteger(values.waterNew) || values.electricityOld < 0 || values.electricityNew < values.electricityOld || values.waterOld < 0 || values.waterNew < values.waterOld) {
+        if (
+          !Number.isSafeInteger(values.electricityOld) ||
+          !Number.isSafeInteger(values.electricityNew) ||
+          !Number.isSafeInteger(values.waterOld) ||
+          !Number.isSafeInteger(values.waterNew) ||
+          values.electricityOld < 0 ||
+          values.electricityNew < values.electricityOld ||
+          values.waterOld < 0 ||
+          values.waterNew < values.waterOld
+        ) {
           await window.showAppDialog({
             title: "Chỉ số công tơ không hợp lệ",
-            message: "Vui lòng kiểm tra lại chỉ số cũ và chỉ số mới.\n\n" + "Chỉ số mới không được nhỏ hơn chỉ số cũ.",
+            message:
+              "Vui lòng kiểm tra lại chỉ số cũ và chỉ số mới.\n\n" +
+              "Chỉ số mới không được nhỏ hơn chỉ số cũ.",
             type: "warning",
           });
 
           return;
         }
 
-        if (!Number.isSafeInteger(values.electricityRate) || values.electricityRate < 0 || !Number.isSafeInteger(values.waterRate) || values.waterRate < 0 || !Number.isSafeInteger(values.rent) || values.rent < 0 || !Number.isSafeInteger(values.garbage) || values.garbage < 0 || !Number.isSafeInteger(values.otherAmount) || values.otherAmount < 0 || !Number.isSafeInteger(values.total)) {
+        if (
+          !Number.isSafeInteger(values.electricityRate) ||
+          values.electricityRate < 0 ||
+          !Number.isSafeInteger(values.waterRate) ||
+          values.waterRate < 0 ||
+          !Number.isSafeInteger(values.rent) ||
+          values.rent < 0 ||
+          !Number.isSafeInteger(values.garbage) ||
+          values.garbage < 0 ||
+          !Number.isSafeInteger(values.otherAmount) ||
+          values.otherAmount < 0 ||
+          !Number.isSafeInteger(values.total)
+        ) {
           await window.showAppDialog({
             title: "Số tiền không hợp lệ",
             message: "Vui lòng kiểm tra lại các khoản tiền.",
@@ -7106,18 +8524,23 @@
 
           await setDoc(billRef, {
             ...data,
-            createdAt: existingSnapshot.exists() ? existingSnapshot.data().createdAt || serverTimestamp() : serverTimestamp(),
+            createdAt: existingSnapshot.exists()
+              ? existingSnapshot.data().createdAt || serverTimestamp()
+              : serverTimestamp(),
           });
 
           editingRoomRentBillId = billId;
 
           await loadRoomRentData();
 
-          document.getElementById("roomRentBillMessage").textContent = "Đã lưu hóa đơn thành công.";
+          document.getElementById("roomRentBillMessage").textContent =
+            "Đã lưu hóa đơn thành công.";
 
           await window.showAppDialog({
             title: "Đã lưu hóa đơn",
-            message: `Hóa đơn ${room.name} - ${month} đã được lưu.\n\n` + `Tổng tiền: ${roomRentMoney(values.total)}`,
+            message:
+              `Hóa đơn ${room.name} - ${month} đã được lưu.\n\n` +
+              `Tổng tiền: ${roomRentMoney(values.total)}`,
             type: "success",
           });
         } catch (error) {
@@ -7125,7 +8548,9 @@
 
           await window.showAppDialog({
             title: "Không thể lưu hóa đơn",
-            message: "Vui lòng kiểm tra Firebase và thử lại.\n\n" + (error.message || ""),
+            message:
+              "Vui lòng kiểm tra Firebase và thử lại.\n\n" +
+              (error.message || ""),
             type: "error",
           });
         }
@@ -7136,19 +8561,31 @@
 ===================================== */
 
       function renderRoomRentSummary() {
-        const month = document.getElementById("roomRentSummaryMonth")?.value || roomRentCurrentMonth();
+        const month =
+          document.getElementById("roomRentSummaryMonth")?.value ||
+          roomRentCurrentMonth();
 
         const tbody = document.getElementById("roomRentSummaryBody");
 
         if (!tbody) return;
 
         // Chỉ lấy phòng đang hoạt động.
-        const activeRooms = roomRentRooms.filter((room) => room.isActive !== false).sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "vi", { numeric: true }));
+        const activeRooms = roomRentRooms
+          .filter((room) => room.isActive !== false)
+          .sort((a, b) =>
+            String(a.name || "").localeCompare(String(b.name || ""), "vi", {
+              numeric: true,
+            }),
+          );
 
         // Chỉ lấy hóa đơn đã lưu của tháng được chọn.
-        const monthlyBills = roomRentBills.filter((bill) => bill.month === month);
+        const monthlyBills = roomRentBills.filter(
+          (bill) => bill.month === month,
+        );
 
-        const billByRoom = new Map(monthlyBills.map((bill) => [bill.roomId, bill]));
+        const billByRoom = new Map(
+          monthlyBills.map((bill) => [bill.roomId, bill]),
+        );
 
         const rows = activeRooms.map((room) => ({
           room,
@@ -7157,23 +8594,40 @@
 
         const savedRows = rows.filter((item) => item.bill);
 
-        const totalElectricityUsage = savedRows.reduce((sum, item) => sum + Number(item.bill.electricityUsage || 0), 0);
+        const totalElectricityUsage = savedRows.reduce(
+          (sum, item) => sum + Number(item.bill.electricityUsage || 0),
+          0,
+        );
 
-        const totalElectricityAmount = savedRows.reduce((sum, item) => sum + Number(item.bill.electricityAmount || 0), 0);
+        const totalElectricityAmount = savedRows.reduce(
+          (sum, item) => sum + Number(item.bill.electricityAmount || 0),
+          0,
+        );
 
-        const totalWaterUsage = savedRows.reduce((sum, item) => sum + Number(item.bill.waterUsage || 0), 0);
+        const totalWaterUsage = savedRows.reduce(
+          (sum, item) => sum + Number(item.bill.waterUsage || 0),
+          0,
+        );
 
-        const totalWaterAmount = savedRows.reduce((sum, item) => sum + Number(item.bill.waterAmount || 0), 0);
+        const totalWaterAmount = savedRows.reduce(
+          (sum, item) => sum + Number(item.bill.waterAmount || 0),
+          0,
+        );
 
-        document.getElementById("roomSummaryElectricityUsage").textContent = totalElectricityUsage.toLocaleString("vi-VN") + " kWh";
+        document.getElementById("roomSummaryElectricityUsage").textContent =
+          totalElectricityUsage.toLocaleString("vi-VN") + " kWh";
 
-        document.getElementById("roomSummaryElectricityAmount").textContent = roomRentMoney(totalElectricityAmount);
+        document.getElementById("roomSummaryElectricityAmount").textContent =
+          roomRentMoney(totalElectricityAmount);
 
-        document.getElementById("roomSummaryWaterUsage").textContent = totalWaterUsage.toLocaleString("vi-VN") + " m³";
+        document.getElementById("roomSummaryWaterUsage").textContent =
+          totalWaterUsage.toLocaleString("vi-VN") + " m³";
 
-        document.getElementById("roomSummaryWaterAmount").textContent = roomRentMoney(totalWaterAmount);
+        document.getElementById("roomSummaryWaterAmount").textContent =
+          roomRentMoney(totalWaterAmount);
 
-        document.getElementById("roomSummaryBillCount").textContent = `Đã có hóa đơn: ${savedRows.length} / ${activeRooms.length} phòng đang hoạt động`;
+        document.getElementById("roomSummaryBillCount").textContent =
+          `Đã có hóa đơn: ${savedRows.length} / ${activeRooms.length} phòng đang hoạt động`;
 
         if (!rows.length) {
           tbody.innerHTML = `
@@ -7238,7 +8692,9 @@
       }
 
       window.changeRoomRentSummaryMonth = function () {
-        const summaryMonth = document.getElementById("roomRentSummaryMonth")?.value;
+        const summaryMonth = document.getElementById(
+          "roomRentSummaryMonth",
+        )?.value;
 
         const billMonth = document.getElementById("roomBillMonth");
 
@@ -7258,9 +8714,11 @@
 
         if (!tbody) return;
 
-        const roomFilter = document.getElementById("roomHistoryFilter")?.value || "";
+        const roomFilter =
+          document.getElementById("roomHistoryFilter")?.value || "";
 
-        const monthFilter = document.getElementById("roomHistoryMonth")?.value || "";
+        const monthFilter =
+          document.getElementById("roomHistoryMonth")?.value || "";
 
         const filteredBills = roomRentBills
           .filter((bill) => {
@@ -7275,11 +8733,17 @@
             return true;
           })
           .sort((a, b) => {
-            const monthCompare = String(b.month || "").localeCompare(String(a.month || ""));
+            const monthCompare = String(b.month || "").localeCompare(
+              String(a.month || ""),
+            );
 
             if (monthCompare !== 0) return monthCompare;
 
-            return String(a.roomName || "").localeCompare(String(b.roomName || ""), "vi", { numeric: true });
+            return String(a.roomName || "").localeCompare(
+              String(b.roomName || ""),
+              "vi",
+              { numeric: true },
+            );
           });
 
         if (!filteredBills.length) {
@@ -7372,9 +8836,11 @@
 
         fillRoomRentBillForm(bill);
 
-        document.getElementById("saveRoomBillBtn").textContent = "💾 Cập nhật hóa đơn";
+        document.getElementById("saveRoomBillBtn").textContent =
+          "💾 Cập nhật hóa đơn";
 
-        document.getElementById("roomRentBillMessage").textContent = "Đang chỉnh sửa hóa đơn đã lưu.";
+        document.getElementById("roomRentBillMessage").textContent =
+          "Đang chỉnh sửa hóa đơn đã lưu.";
 
         document.getElementById("roomRentPage").scrollIntoView({
           behavior: "smooth",
@@ -7389,7 +8855,9 @@
 
         const confirmed = await window.showAppDialog({
           title: "Xóa hóa đơn?",
-          message: `Bạn có chắc muốn xóa hóa đơn ${bill.roomName} - ${bill.month}?\n\n` + "Thao tác này không thể hoàn tác.",
+          message:
+            `Bạn có chắc muốn xóa hóa đơn ${bill.roomName} - ${bill.month}?\n\n` +
+            "Thao tác này không thể hoàn tác.",
           type: "danger",
           confirm: true,
           confirmText: "Xóa hóa đơn",
@@ -7482,7 +8950,10 @@
 
               if (item.type !== type) return false;
 
-              if (monthOnly && !String(item.date || "").startsWith(currentMonth)) {
+              if (
+                monthOnly &&
+                !String(item.date || "").startsWith(currentMonth)
+              ) {
                 return false;
               }
 
@@ -7499,10 +8970,19 @@
         const cashExpense = getTransactionTotal("cash", "expense");
 
         const cashMonthExpense = getTransactionTotal("cash", "expense", true);
-        const cashTransferOut = transactions.filter((item) => item.type === "transfer" && item.fromSource === "cash").reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        const cashTransferOut = transactions
+          .filter(
+            (item) => item.type === "transfer" && item.fromSource === "cash",
+          )
+          .reduce((sum, item) => sum + Number(item.amount || 0), 0);
 
-        const cashTransferIn = transactions.filter((item) => item.type === "transfer" && item.toSource === "cash").reduce((sum, item) => sum + Number(item.amount || 0), 0);
-        const cashBalance = cashIncome - cashExpense - cashTransferOut + cashTransferIn;
+        const cashTransferIn = transactions
+          .filter(
+            (item) => item.type === "transfer" && item.toSource === "cash",
+          )
+          .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        const cashBalance =
+          cashIncome - cashExpense - cashTransferOut + cashTransferIn;
         // ==============================
         // NGÂN HÀNG
         // ==============================
@@ -7511,10 +8991,19 @@
         const bankExpense = getTransactionTotal("bank", "expense");
 
         const bankMonthExpense = getTransactionTotal("bank", "expense", true);
-        const bankTransferOut = transactions.filter((item) => item.type === "transfer" && item.fromSource === "bank").reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        const bankTransferOut = transactions
+          .filter(
+            (item) => item.type === "transfer" && item.fromSource === "bank",
+          )
+          .reduce((sum, item) => sum + Number(item.amount || 0), 0);
 
-        const bankTransferIn = transactions.filter((item) => item.type === "transfer" && item.toSource === "bank").reduce((sum, item) => sum + Number(item.amount || 0), 0);
-        const bankBalance = bankIncome - bankExpense - bankTransferOut + bankTransferIn;
+        const bankTransferIn = transactions
+          .filter(
+            (item) => item.type === "transfer" && item.toSource === "bank",
+          )
+          .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        const bankBalance =
+          bankIncome - bankExpense - bankTransferOut + bankTransferIn;
         // ==============================
         // TỔNG CỘNG
         // ==============================
@@ -7528,7 +9017,11 @@
         // ==============================
         // THU TIỀN TRỌ
         // ==============================
-        const rentIncome = transactions.filter((item) => item.type === "income" && item.incomeKind === "rent").reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        const rentIncome = transactions
+          .filter(
+            (item) => item.type === "income" && item.incomeKind === "rent",
+          )
+          .reduce((sum, item) => sum + Number(item.amount || 0), 0);
         // ==============================
         // HIỂN THỊ DASHBOARD
         // ==============================
@@ -7592,7 +9085,9 @@
 
           element.classList.remove("balance-positive", "balance-negative");
 
-          element.classList.add(value >= 0 ? "balance-positive" : "balance-negative");
+          element.classList.add(
+            value >= 0 ? "balance-positive" : "balance-negative",
+          );
         });
 
         // ==============================
@@ -7621,9 +9116,17 @@
           const dateString = toDateString(date);
           labels.push(formatShortDate(date));
 
-          const income = transactions.filter((item) => item.date === dateString && item.type === "income").reduce((sum, item) => sum + Number(item.amount || 0), 0);
+          const income = transactions
+            .filter(
+              (item) => item.date === dateString && item.type === "income",
+            )
+            .reduce((sum, item) => sum + Number(item.amount || 0), 0);
 
-          const expense = transactions.filter((item) => item.date === dateString && item.type === "expense").reduce((sum, item) => sum + Number(item.amount || 0), 0);
+          const expense = transactions
+            .filter(
+              (item) => item.date === dateString && item.type === "expense",
+            )
+            .reduce((sum, item) => sum + Number(item.amount || 0), 0);
 
           incomeData.push(income);
           expenseData.push(expense);
@@ -7699,9 +9202,15 @@
           return;
         }
 
-        const from = document.getElementById("dashboardFilterFrom")?.value || document.getElementById("filterFrom")?.value || "";
+        const from =
+          document.getElementById("dashboardFilterFrom")?.value ||
+          document.getElementById("filterFrom")?.value ||
+          "";
 
-        const to = document.getElementById("dashboardFilterTo")?.value || document.getElementById("filterTo")?.value || "";
+        const to =
+          document.getElementById("dashboardFilterTo")?.value ||
+          document.getElementById("filterTo")?.value ||
+          "";
 
         const values = accountCategories.map((category) => {
           const amount = transactions
@@ -7732,7 +9241,8 @@
 
         container.innerHTML = values
           .map((item) => {
-            const width = item.amount > 0 ? Math.max(5, (item.amount / max) * 100) : 0;
+            const width =
+              item.amount > 0 ? Math.max(5, (item.amount / max) * 100) : 0;
 
             return `
         <div class="category-row">
@@ -7765,9 +9275,15 @@
           { key: "bank", label: "Ngân hàng", icon: "🏦" },
         ];
 
-        const from = document.getElementById("dashboardFilterFrom")?.value || document.getElementById("filterFrom")?.value || "";
+        const from =
+          document.getElementById("dashboardFilterFrom")?.value ||
+          document.getElementById("filterFrom")?.value ||
+          "";
 
-        const to = document.getElementById("dashboardFilterTo")?.value || document.getElementById("filterTo")?.value || "";
+        const to =
+          document.getElementById("dashboardFilterTo")?.value ||
+          document.getElementById("filterTo")?.value ||
+          "";
 
         const values = sources.map((source) => {
           const amount = transactions
@@ -7804,7 +9320,8 @@
 
         container.innerHTML = values
           .map((item) => {
-            const width = item.amount > 0 ? Math.max(5, (item.amount / max) * 100) : 0;
+            const width =
+              item.amount > 0 ? Math.max(5, (item.amount / max) * 100) : 0;
 
             return `
         <div class="category-row">
@@ -7839,7 +9356,11 @@
       function renderRecentTransactions() {
         const container = document.getElementById("recentTransactions");
 
-        const recent = [...transactions].sort((a, b) => String(b.date || "").localeCompare(String(a.date || ""))).slice(0, 10);
+        const recent = [...transactions]
+          .sort((a, b) =>
+            String(b.date || "").localeCompare(String(a.date || "")),
+          )
+          .slice(0, 10);
 
         if (!recent.length) {
           container.innerHTML = `
@@ -7848,7 +9369,9 @@
           return;
         }
 
-        container.innerHTML = recent.map((item) => createTransactionItem(item)).join("");
+        container.innerHTML = recent
+          .map((item) => createTransactionItem(item))
+          .join("");
       }
 
       function createTransactionItem(item) {
@@ -7867,7 +9390,9 @@
         if (isTransfer) {
           title = item.note || "Chuyển tiền";
 
-          meta = `${formatDate(item.date)} · ` + `${getSourceLabel(item.fromSource)} → ${getSourceLabel(item.toSource)}`;
+          meta =
+            `${formatDate(item.date)} · ` +
+            `${getSourceLabel(item.fromSource)} → ${getSourceLabel(item.toSource)}`;
 
           sign = "↔ ";
           amountClass = "";
@@ -7877,9 +9402,15 @@
         // 🟢 THU
         // ==============================
         else if (isIncome) {
-          title = item.incomeKind === "rent" ? "🏠 Tiền trọ" : item.note || "Thu nhập";
+          title =
+            item.incomeKind === "rent"
+              ? "🏠 Tiền trọ"
+              : item.note || "Thu nhập";
 
-          meta = `${formatDate(item.date)}` + (item.incomeKind === "rent" ? " · 🏠 Tiền trọ" : "") + ` · ${getSourceLabel(item.source)}`;
+          meta =
+            `${formatDate(item.date)}` +
+            (item.incomeKind === "rent" ? " · 🏠 Tiền trọ" : "") +
+            ` · ${getSourceLabel(item.source)}`;
 
           sign = "+";
           amountClass = "income";
@@ -7891,7 +9422,10 @@
         else {
           title = item.note || item.category || "Chi tiêu";
 
-          meta = `${formatDate(item.date)}` + (item.category ? " · " + escapeHtml(item.category) : "") + ` · ${getSourceLabel(item.source)}`;
+          meta =
+            `${formatDate(item.date)}` +
+            (item.category ? " · " + escapeHtml(item.category) : "") +
+            ` · ${getSourceLabel(item.source)}`;
 
           sign = "-";
           amountClass = "expense";
@@ -7933,7 +9467,10 @@
         const category = document.getElementById("filterCategory").value;
         const source = document.getElementById("filterSource").value;
 
-        const search = document.getElementById("filterSearch").value.toLowerCase().trim();
+        const search = document
+          .getElementById("filterSearch")
+          .value.toLowerCase()
+          .trim();
 
         return transactions
           .filter((item) => {
@@ -7945,14 +9482,30 @@
               return false;
             }
             if (search) {
-              const haystack = [item.note, item.category, item.date, item.type === "income" && item.incomeKind === "rent" ? "tiền trọ thu tiền trọ rent" : "", item.type === "transfer" ? "chuyển tiền transfer" : "", getSourceLabel(item.source), getSourceLabel(item.fromSource), getSourceLabel(item.toSource)].filter(Boolean).join(" ").toLowerCase();
+              const haystack = [
+                item.note,
+                item.category,
+                item.date,
+                item.type === "income" && item.incomeKind === "rent"
+                  ? "tiền trọ thu tiền trọ rent"
+                  : "",
+                item.type === "transfer" ? "chuyển tiền transfer" : "",
+                getSourceLabel(item.source),
+                getSourceLabel(item.fromSource),
+                getSourceLabel(item.toSource),
+              ]
+                .filter(Boolean)
+                .join(" ")
+                .toLowerCase();
 
               if (!haystack.includes(search)) return false;
             }
 
             return true;
           })
-          .sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+          .sort((a, b) =>
+            String(b.date || "").localeCompare(String(a.date || "")),
+          );
       }
 
       /* =====================================
@@ -7976,8 +9529,10 @@
           }
         });
 
-        document.getElementById("rangeIncome").textContent = formatMoney(income);
-        document.getElementById("rangeExpense").textContent = formatMoney(expense);
+        document.getElementById("rangeIncome").textContent =
+          formatMoney(income);
+        document.getElementById("rangeExpense").textContent =
+          formatMoney(expense);
         document.getElementById("rangeCount").textContent = filtered.length;
 
         if (!filtered.length) {
@@ -8093,14 +9648,16 @@
       // OTHER TRANSACTION FILTERS
       // =====================================
 
-      ["filterType", "filterCategory", "filterSource", "filterSearch"].forEach((id) => {
-        const element = document.getElementById(id);
+      ["filterType", "filterCategory", "filterSource", "filterSearch"].forEach(
+        (id) => {
+          const element = document.getElementById(id);
 
-        if (!element) return;
+          if (!element) return;
 
-        element.addEventListener("input", renderTransactions);
-        element.addEventListener("change", renderTransactions);
-      });
+          element.addEventListener("input", renderTransactions);
+          element.addEventListener("change", renderTransactions);
+        },
+      );
 
       /* =====================================
          DARK MODE
@@ -8155,7 +9712,11 @@
       }
 
       function formatShortDate(date) {
-        return String(date.getDate()).padStart(2, "0") + "/" + String(date.getMonth() + 1).padStart(2, "0");
+        return (
+          String(date.getDate()).padStart(2, "0") +
+          "/" +
+          String(date.getMonth() + 1).padStart(2, "0")
+        );
       }
 
       function formatMoney(value) {
@@ -8213,18 +9774,29 @@
         }
       });
 
-      document.getElementById("transactionModal").addEventListener("click", (event) => {
-        if (event.target.id === "transactionModal") {
-          window.closeModal();
-        }
-      });
+      document
+        .getElementById("transactionModal")
+        .addEventListener("click", (event) => {
+          if (event.target.id === "transactionModal") {
+            window.closeModal();
+          }
+        });
       document.addEventListener("input", (e) => {
         if (e.target.tagName !== "INPUT") return;
 
         const input = e.target;
 
         // Bỏ qua input số, date, password, email...
-        if (["number", "date", "datetime-local", "time", "password", "email"].includes(input.type)) {
+        if (
+          [
+            "number",
+            "date",
+            "datetime-local",
+            "time",
+            "password",
+            "email",
+          ].includes(input.type)
+        ) {
           return;
         }
 
