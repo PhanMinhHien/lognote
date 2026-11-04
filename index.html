@@ -45,7 +45,19 @@
         --expense-bg: rgba(239, 68, 68, 0.12);
         --shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
       }
+      /* Date input - Dark mode */
+      body.dark input[type="date"],
+      body.dark input[type="month"] {
+        color: #ffffff !important;
+        color-scheme: dark;
+      }
 
+      body.dark input[type="date"]::-webkit-calendar-picker-indicator,
+      body.dark input[type="month"]::-webkit-calendar-picker-indicator {
+        filter: brightness(0) invert(1) !important;
+        opacity: 1 !important;
+        cursor: pointer;
+      }
       body {
         font-family:
           Inter,
@@ -1739,34 +1751,63 @@
         font-weight: 700;
       }
 
-      /* Action buttons */
+      /* Action buttons - subtle style */
       .rr-room-actions {
         display: flex;
         align-items: center;
         justify-content: flex-end;
-        gap: 8px;
+        gap: 6px;
         flex-wrap: wrap;
       }
 
-      .rr-room-actions .rr-small-btn {
+      #roomRentRoomList .rr-room-actions .rr-small-btn {
         white-space: nowrap;
-        padding: 7px 10px;
-      }
-      .rr-room-actions .rr-small-btn.danger {
-        color: var(--expense);
-        border-color: var(--border);
+        padding: 6px 9px;
+        min-height: 32px;
+
+        background: transparent;
+        color: var(--muted);
+        border: 1px solid transparent;
+        border-radius: 7px;
+
+        font-size: 12px;
+        font-weight: 600;
+        box-shadow: none;
+        transform: none;
+
+        transition:
+          background 0.18s ease,
+          color 0.18s ease,
+          border-color 0.18s ease;
       }
 
-      .rr-room-actions .rr-small-btn.danger:hover {
+      #roomRentRoomList .rr-room-actions .rr-small-btn:hover {
+        background: var(--bg);
+        color: var(--text);
+        border-color: var(--border);
+        box-shadow: none;
+        transform: none;
+      }
+
+      /* Delete / Clear bills */
+      #roomRentRoomList .rr-room-actions .rr-small-btn.danger {
+        color: var(--muted);
+        background: transparent;
+        border-color: transparent;
+      }
+
+      #roomRentRoomList .rr-room-actions .rr-small-btn.danger:hover {
         color: var(--expense);
-        border-color: var(--expense);
+        background: rgba(220, 70, 70, 0.07);
+        border-color: transparent;
       }
 
       @media (max-width: 420px) {
-        .rr-room-actions .rr-small-btn {
+        #roomRentRoomList .rr-room-actions .rr-small-btn {
           width: 100%;
         }
       }
+
       /* =====================================
    RESPONSIVE
 ===================================== */
