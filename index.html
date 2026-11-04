@@ -2847,7 +2847,20 @@
         <div id="lockDescription" class="app-lock-description">
           Nhập mật khẩu để xem dữ liệu thu chi.
         </div>
+        <button
+  type="button"
+  class="secondary-btn"
+  onclick="backToAccountSelection()"
+  style="
+    width: 100%;
+    margin-bottom: 16px;
+    text-align: left;
+  "
+>
+  ← Quay lại chọn Account
+</button>
 
+<form id="lockForm">
         <form id="lockForm">
           <div class="field">
             <label for="lockPassword">Mật khẩu</label>
@@ -2862,18 +2875,8 @@
 
           <div id="lockError" class="app-lock-error" role="alert"></div>
 
-                    <button id="lockSubmitBtn" class="primary-btn" type="submit">
+          <button id="lockSubmitBtn" class="primary-btn" type="submit">
             Mở khóa
-          </button>
-
-          <button
-            id="backToAccountBtn"
-            class="secondary-btn"
-            type="button"
-            onclick="backToAccountSelection()"
-            style="width:100%;margin-top:10px"
-          >
-            ← Quay lại chọn Account
           </button>
         </form>
       </div>
@@ -4175,6 +4178,52 @@ try {
       function hideAccountScreen() {
         document.getElementById("accountScreen").classList.add("hidden");
       }
+      // =====================================
+// BACK TO ACCOUNT SELECTION
+// =====================================
+window.backToAccountSelection = async function () {
+  if (lockActionInProgress) return;
+
+  lockActionInProgress = true;
+
+  try {
+    // Xóa thông tin Account đang chọn
+    currentAccountId = null;
+    currentAccountName = "";
+    currentAccountRole = "user";
+
+    lockPasswordHash = null;
+    lockConfigExists = false;
+    isAppUnlocked = false;
+    lockExpiry = 0;
+
+    // Xóa trạng thái Account đã chọn
+    localStorage.removeItem(SELECTED_ACCOUNT_KEY);
+    localStorage.removeItem(LOCK_EXPIRY_KEY);
+
+    // Xóa mật khẩu và thông báo lỗi
+    document.getElementById("lockPassword").value = "";
+    document.getElementById("lockError").textContent = "";
+
+    // Tải danh sách Account trước
+    await loadAccounts();
+    renderAccountList();
+
+    setFirebaseStatus("● Chọn Account", "");
+
+    // Chỉ hiện màn hình khi mọi thứ đã sẵn sàng
+    showAccountScreen(false);
+
+  } catch (error) {
+    console.error("Back to account selection error:", error);
+
+    document.getElementById("lockError").textContent =
+      "Không thể tải danh sách Account. Vui lòng thử lại.";
+
+  } finally {
+    lockActionInProgress = false;
+  }
+};
 
       window.showCreateAccountForm = function () {
         document.getElementById("createAccountForm").style.display = "block";
@@ -4919,7 +4968,8 @@ lockActionInProgress = true;
 accountCategories = [];
 updateSettingsAccountName();
 
-// Lưu Account được chọn ngay lập tức
+await loadSharedDateFilter();
+
 localStorage.setItem(
   SELECTED_ACCOUNT_KEY,
   currentAccountId,
@@ -4988,12 +5038,6 @@ localStorage.setItem(
       function hideLockScreen() {
         document.getElementById("appLockScreen").classList.add("hidden");
       }
-            window.backToAccountSelection = async function () {
-        if (lockActionInProgress) return;
-
-        // Quay lại màn hình chọn Account và xóa phiên đang chọn.
-        await window.lockApp();
-      };
 function clearRoomRentSensitiveUI() {
   roomRentRooms = [];
   roomRentBills = [];
@@ -6124,16 +6168,6 @@ async function applySharedDateFilter(source) {
           localStorage.removeItem(LOCK_EXPIRY_KEY);
 
           showLockScreen(false);
-          updateLockCountdown();
-
-          setFirebaseStatus("● App locked", "");
-
-          localStorage.removeItem(LOCK_EXPIRY_KEY);
-
-          isAppUnlocked = false;
-
-          showLockScreen(false);
-
           updateLockCountdown();
 
           setFirebaseStatus("● App locked", "");
