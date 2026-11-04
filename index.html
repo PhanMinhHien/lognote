@@ -2278,7 +2278,74 @@
     </div>
 
   </div>
+  <!-- MONTHLY UTILITY SUMMARY -->
+  <div class="card rr-card">
+    <div class="panel-title">📊 Tổng hợp điện nước theo tháng</div>
 
+    <div class="settings-description">
+      Thống kê các phòng đang hoạt động dựa trên hóa đơn đã lưu.
+    </div>
+
+    <div class="field" style="max-width:260px">
+      <label for="roomRentSummaryMonth">Tháng thống kê</label>
+      <input
+        id="roomRentSummaryMonth"
+        type="month"
+        onchange="changeRoomRentSummaryMonth()"
+      />
+    </div>
+
+    <div class="rr-grid rr-grid-2" style="margin-top:16px">
+      <div class="rr-utility-card">
+        <div class="rr-utility-title">⚡ Tổng điện sử dụng</div>
+        <div class="rr-result">
+          <strong id="roomSummaryElectricityUsage">0 kWh</strong>
+        </div>
+        <div class="settings-description">
+          Thành tiền:
+          <strong id="roomSummaryElectricityAmount">0 ₫</strong>
+        </div>
+      </div>
+
+      <div class="rr-utility-card">
+        <div class="rr-utility-title">💧 Tổng nước sử dụng</div>
+        <div class="rr-result">
+          <strong id="roomSummaryWaterUsage">0 m³</strong>
+        </div>
+        <div class="settings-description">
+          Thành tiền:
+          <strong id="roomSummaryWaterAmount">0 ₫</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-description" id="roomSummaryBillCount"
+         style="margin:14px 0">
+      Đã có hóa đơn: 0 / 0 phòng đang hoạt động
+    </div>
+
+    <div style="overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;min-width:520px">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:10px 8px">Phòng</th>
+            <th style="text-align:right;padding:10px 8px">Điện</th>
+            <th style="text-align:right;padding:10px 8px">Tiền điện</th>
+            <th style="text-align:right;padding:10px 8px">Nước</th>
+            <th style="text-align:right;padding:10px 8px">Tiền nước</th>
+          </tr>
+        </thead>
+        <tbody id="roomRentSummaryBody">
+          <tr>
+            <td colspan="5" class="rr-empty">
+              Chưa có dữ liệu.
+            </td>
+          </tr>
+        </tbody>
+        <tfoot id="roomRentSummaryFoot"></tfoot>
+      </table>
+    </div>
+  </div>
   <!-- MONTHLY BILL -->
   <div class="card rr-card">
 
@@ -7714,9 +7781,20 @@ if (currentAccountId !== loadingAccountId) {
       "roomBillMonth",
     );
 
-    if (monthInput && !monthInput.value) {
+        if (monthInput && !monthInput.value) {
       monthInput.value = roomRentCurrentMonth();
     }
+
+    const summaryMonthInput = document.getElementById(
+      "roomRentSummaryMonth",
+    );
+
+    if (summaryMonthInput) {
+      summaryMonthInput.value =
+        monthInput?.value || roomRentCurrentMonth();
+    }
+
+    renderRoomRentSummary();
 
     await prepareRoomBillForSelection();
 
@@ -8299,7 +8377,15 @@ async function prepareRoomBillForSelection() {
   const month = document.getElementById(
     "roomBillMonth",
   )?.value;
+  const summaryMonthInput = document.getElementById(
+    "roomRentSummaryMonth",
+  );
 
+  if (summaryMonthInput && month) {
+    summaryMonthInput.value = month;
+  }
+
+  renderRoomRentSummary();
   if (!roomId || !month) {
     editingRoomRentBillId = null;
     return;
@@ -8557,7 +8643,181 @@ window.saveRoomRentBill = async function () {
   }
 };
 
+/* =====================================
+   MONTHLY UTILITY SUMMARY
+===================================== */
 
+function renderRoomRentSummary() {
+  const month = document.getElementById(
+    "roomRentSummaryMonth",
+  )?.value || roomRentCurrentMonth();
+
+  const tbody = document.getElementById(
+    "roomRentSummaryBody",
+  );
+
+  if (!tbody) return;
+
+  // Chỉ lấy phòng đang hoạt động.
+  const activeRooms = roomRentRooms
+    .filter((room) => room.isActive !== false)
+    .sort((a, b) =>
+      String(a.name || "").localeCompare(
+        String(b.name || ""),
+        "vi",
+        { numeric: true },
+      ),
+    );
+
+  // Chỉ lấy hóa đơn đã lưu của tháng được chọn.
+  const monthlyBills = roomRentBills.filter(
+    (bill) => bill.month === month,
+  );
+
+  const billByRoom = new Map(
+    monthlyBills.map((bill) => [bill.roomId, bill]),
+  );
+
+  const rows = activeRooms.map((room) => ({
+    room,
+    bill: billByRoom.get(room.id) || null,
+  }));
+
+  const savedRows = rows.filter((item) => item.bill);
+
+  const totalElectricityUsage = savedRows.reduce(
+    (sum, item) =>
+      sum + Number(item.bill.electricityUsage || 0),
+    0,
+  );
+
+  const totalElectricityAmount = savedRows.reduce(
+    (sum, item) =>
+      sum + Number(item.bill.electricityAmount || 0),
+    0,
+  );
+
+  const totalWaterUsage = savedRows.reduce(
+    (sum, item) =>
+      sum + Number(item.bill.waterUsage || 0),
+    0,
+  );
+
+  const totalWaterAmount = savedRows.reduce(
+    (sum, item) =>
+      sum + Number(item.bill.waterAmount || 0),
+    0,
+  );
+
+  document.getElementById(
+    "roomSummaryElectricityUsage",
+  ).textContent =
+    totalElectricityUsage.toLocaleString("vi-VN") + " kWh";
+
+  document.getElementById(
+    "roomSummaryElectricityAmount",
+  ).textContent = roomRentMoney(totalElectricityAmount);
+
+  document.getElementById(
+    "roomSummaryWaterUsage",
+  ).textContent =
+    totalWaterUsage.toLocaleString("vi-VN") + " m³";
+
+  document.getElementById(
+    "roomSummaryWaterAmount",
+  ).textContent = roomRentMoney(totalWaterAmount);
+
+  document.getElementById(
+    "roomSummaryBillCount",
+  ).textContent =
+    `Đã có hóa đơn: ${savedRows.length} / ${activeRooms.length} phòng đang hoạt động`;
+
+  if (!rows.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="5" class="rr-empty">
+          Chưa có phòng đang hoạt động.
+        </td>
+      </tr>
+    `;
+  } else {
+    tbody.innerHTML = rows.map(({ room, bill }) => `
+      <tr>
+        <td style="padding:10px 8px">
+          <strong>${roomRentEscapeHtml(room.name)}</strong>
+          ${
+            bill
+              ? ""
+              : '<div style="color:var(--muted);font-size:11px">Chưa có hóa đơn</div>'
+          }
+        </td>
+
+        <td style="text-align:right;padding:10px 8px">
+          ${
+            bill
+              ? Number(bill.electricityUsage || 0).toLocaleString("vi-VN") + " kWh"
+              : "—"
+          }
+        </td>
+
+        <td style="text-align:right;padding:10px 8px">
+          ${bill ? roomRentMoney(bill.electricityAmount) : "—"}
+        </td>
+
+        <td style="text-align:right;padding:10px 8px">
+          ${
+            bill
+              ? Number(bill.waterUsage || 0).toLocaleString("vi-VN") + " m³"
+              : "—"
+          }
+        </td>
+
+        <td style="text-align:right;padding:10px 8px">
+          ${bill ? roomRentMoney(bill.waterAmount) : "—"}
+        </td>
+      </tr>
+    `).join("");
+  }
+
+  const foot = document.getElementById("roomRentSummaryFoot");
+
+  if (foot) {
+    foot.innerHTML = `
+      <tr>
+        <th style="text-align:left;padding:10px 8px">Tổng cộng</th>
+        <th style="text-align:right;padding:10px 8px">
+          ${totalElectricityUsage.toLocaleString("vi-VN")} kWh
+        </th>
+        <th style="text-align:right;padding:10px 8px">
+          ${roomRentMoney(totalElectricityAmount)}
+        </th>
+        <th style="text-align:right;padding:10px 8px">
+          ${totalWaterUsage.toLocaleString("vi-VN")} m³
+        </th>
+        <th style="text-align:right;padding:10px 8px">
+          ${roomRentMoney(totalWaterAmount)}
+        </th>
+      </tr>
+    `;
+  }
+}
+
+window.changeRoomRentSummaryMonth = function () {
+  const summaryMonth = document.getElementById(
+    "roomRentSummaryMonth",
+  )?.value;
+
+  const billMonth = document.getElementById(
+    "roomBillMonth",
+  );
+
+  if (summaryMonth && billMonth) {
+    billMonth.value = summaryMonth;
+  }
+
+  renderRoomRentSummary();
+  void prepareRoomBillForSelection();
+};
 /* =====================================
    BILL HISTORY
 ===================================== */
