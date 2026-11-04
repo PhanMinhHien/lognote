@@ -1460,6 +1460,191 @@
     padding: 0 10px;
   }
 }
+/* =====================================
+   ROOM RENT MODULE
+===================================== */
+
+.rr-card {
+  margin-bottom: 20px;
+      padding: 20px;
+}
+
+.rr-grid {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.rr-grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.rr-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.rr-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.rr-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 20px 0;
+}
+
+.rr-utility-card {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  min-width: 0;
+}
+
+.rr-utility-title {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 14px;
+}
+
+.rr-result {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.rr-result span {
+  color: var(--muted);
+}
+
+.rr-result strong {
+  text-align: right;
+  font-weight: 700;
+}
+
+.rr-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 12px;
+  background: var(--primary-soft);
+}
+
+.rr-total span {
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.rr-total strong {
+  font-size: 23px;
+  font-weight: 900;
+  color: var(--income);
+  text-align: right;
+}
+
+.rr-room-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.rr-room-item {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  min-width: 0;
+}
+
+.rr-room-name {
+  font-size: 15px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.rr-room-info {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.rr-room-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.rr-small-btn {
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  padding: 7px 11px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.rr-small-btn.danger {
+  color: var(--expense);
+}
+
+.rr-history-table {
+  min-width: 720px;
+  margin-top: 20px;
+}
+
+.rr-history-table td {
+  vertical-align: middle;
+}
+
+.rr-history-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.rr-empty {
+  color: var(--muted);
+  text-align: center;
+  padding: 22px 10px;
+}
+
+@media (max-width: 760px) {
+  .rr-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .rr-room-list {
+    grid-template-columns: 1fr;
+  }
+
+  .rr-total {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .rr-total strong {
+    text-align: left;
+  }
+
+  .rr-actions > button {
+    flex: 1;
+  }
+}
     </style>
   </head>
 
@@ -1493,6 +1678,13 @@
           >
             💳 Transactions
           </button>
+          <button
+  class="nav-btn"
+  data-page="roomRent"
+  onclick="switchPage('roomRent')"
+>
+  🏠 Quản lý tiền phòng
+</button>
           <button
             class="nav-btn"
             data-page="settings"
@@ -1950,7 +2142,418 @@
             </div>
           </div>
         </section>
+<!-- =====================================
+     ROOM RENT PAGE
+===================================== -->
+<section id="roomRentPage" class="page">
 
+  <div class="topbar">
+    <div>
+      <div class="page-title">🏠 Quản lý tiền phòng</div>
+      <div class="page-subtitle">
+        Quản lý thông tin phòng và tính tiền hàng tháng
+      </div>
+    </div>
+  </div>
+
+  <!-- DEFAULT RATES -->
+  <div class="card rr-card">
+    <div class="panel-title">⚙️ Đơn giá mặc định</div>
+
+    <div class="settings-description">
+      Đơn giá được lưu riêng cho Account hiện tại.
+      Hóa đơn đã lưu sẽ không bị thay đổi khi bạn cập nhật đơn giá.
+    </div>
+
+    <div class="rr-grid rr-grid-2">
+
+      <div class="field">
+        <label for="roomElectricityRate">
+          Giá điện (VNĐ / kWh)
+        </label>
+        <input
+          id="roomElectricityRate"
+          type="number"
+          min="0"
+          step="1"
+          value="4000"
+        />
+      </div>
+
+      <div class="field">
+        <label for="roomWaterRate">
+          Giá nước (VNĐ / m³)
+        </label>
+        <input
+          id="roomWaterRate"
+          type="number"
+          min="0"
+          step="1"
+          value="25000"
+        />
+      </div>
+
+    </div>
+
+    <button
+      class="primary-btn rr-actions"
+      type="button"
+      onclick="saveRoomRentConfig()"
+    >
+      Lưu đơn giá
+    </button>
+  </div>
+
+  <!-- ROOM MANAGEMENT -->
+  <div class="card rr-card">
+
+    <div class="rr-section-heading">
+      <div>
+        <div class="panel-title">🚪 Danh sách phòng</div>
+        <div class="settings-description">
+          Lưu tiền thuê và tiền rác mặc định cho từng phòng.
+        </div>
+      </div>
+    </div>
+
+    <div class="rr-grid rr-grid-2">
+
+      <div class="field">
+        <label for="roomName">Tên phòng</label>
+        <input
+          id="roomName"
+          type="text"
+          placeholder="Ví dụ: Phòng 4"
+          maxlength="50"
+        />
+      </div>
+
+      <div class="field">
+        <label for="roomDefaultRent">Tiền thuê mặc định (VNĐ)</label>
+        <input
+          id="roomDefaultRent"
+          type="text"
+          inputmode="numeric"
+          placeholder="Ví dụ: 3.000.000"
+        />
+      </div>
+
+      <div class="field">
+        <label for="roomDefaultGarbage">Tiền rác mặc định (VNĐ)</label>
+        <input
+          id="roomDefaultGarbage"
+          type="text"
+          inputmode="numeric"
+          placeholder="Ví dụ: 25.000"
+        />
+      </div>
+
+    </div>
+
+    <div class="rr-actions">
+      <button
+        id="saveRoomBtn"
+        class="primary-btn"
+        type="button"
+        onclick="saveRoomRentRoom()"
+      >
+        ＋ Thêm phòng
+      </button>
+
+      <button
+        id="cancelRoomEditBtn"
+        class="secondary-btn"
+        type="button"
+        style="display:none"
+        onclick="resetRoomRentRoomForm()"
+      >
+        Hủy sửa
+      </button>
+    </div>
+
+    <div id="roomRentRoomList" class="rr-room-list">
+      <div class="settings-description">
+        Đang tải danh sách phòng...
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MONTHLY BILL -->
+  <div class="card rr-card">
+
+    <div class="panel-title">🧮 Tính tiền phòng</div>
+
+    <div class="settings-description">
+      Chọn phòng và tháng cần tính. Chỉ số đầu kỳ sẽ tự lấy từ
+      chỉ số cuối kỳ của hóa đơn tháng trước nếu có.
+    </div>
+
+    <div class="rr-grid rr-grid-2">
+
+      <div class="field">
+        <label for="roomBillRoom">Phòng</label>
+        <select
+          id="roomBillRoom"
+          onchange="window.prepareRoomBillForSelection()"
+        >
+          <option value="">-- Chọn phòng --</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="roomBillMonth">Tháng</label>
+        <input
+          id="roomBillMonth"
+          type="month"
+          onchange="window.prepareRoomBillForSelection()"
+        />
+      </div>
+
+    </div>
+
+    <div class="rr-divider"></div>
+
+    <div class="rr-grid rr-grid-2">
+
+      <!-- ELECTRICITY -->
+      <div class="rr-utility-card">
+
+        <div class="rr-utility-title">⚡ Tiền điện</div>
+
+        <div class="field">
+          <label for="roomElectricityOld">Chỉ số cũ</label>
+          <input
+            id="roomElectricityOld"
+            type="number"
+            min="0"
+            step="1"
+            oninput="calculateRoomBillPreview()"
+          />
+        </div>
+
+        <div class="field">
+          <label for="roomElectricityNew">Chỉ số mới</label>
+          <input
+            id="roomElectricityNew"
+            type="number"
+            min="0"
+            step="1"
+            oninput="calculateRoomBillPreview()"
+          />
+        </div>
+
+        <div class="field">
+          <label for="roomElectricityRatePreview">
+            Đơn giá (VNĐ / kWh)
+          </label>
+          <input
+            id="roomElectricityRatePreview"
+            type="number"
+            min="0"
+            step="1"
+            oninput="calculateRoomBillPreview()"
+          />
+        </div>
+
+        <div class="rr-result">
+          <span>Số điện sử dụng</span>
+          <strong id="roomElectricityUsage">0 kWh</strong>
+        </div>
+
+        <div class="rr-result">
+          <span>Thành tiền</span>
+          <strong id="roomElectricityAmount">0 ₫</strong>
+        </div>
+
+      </div>
+
+      <!-- WATER -->
+      <div class="rr-utility-card">
+
+        <div class="rr-utility-title">💧 Tiền nước</div>
+
+        <div class="field">
+          <label for="roomWaterOld">Chỉ số cũ</label>
+          <input
+            id="roomWaterOld"
+            type="number"
+            min="0"
+            step="1"
+            oninput="calculateRoomBillPreview()"
+          />
+        </div>
+
+        <div class="field">
+          <label for="roomWaterNew">Chỉ số mới</label>
+          <input
+            id="roomWaterNew"
+            type="number"
+            min="0"
+            step="1"
+            oninput="calculateRoomBillPreview()"
+          />
+        </div>
+
+        <div class="field">
+          <label for="roomWaterRatePreview">
+            Đơn giá (VNĐ / m³)
+          </label>
+          <input
+            id="roomWaterRatePreview"
+            type="number"
+            min="0"
+            step="1"
+            oninput="calculateRoomBillPreview()"
+          />
+        </div>
+
+        <div class="rr-result">
+          <span>Lượng nước sử dụng</span>
+          <strong id="roomWaterUsage">0 m³</strong>
+        </div>
+
+        <div class="rr-result">
+          <span>Thành tiền</span>
+          <strong id="roomWaterAmount">0 ₫</strong>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="rr-divider"></div>
+
+    <!-- OTHER COSTS -->
+    <div class="rr-grid rr-grid-2">
+
+      <div class="field">
+        <label for="roomBillRent">Tiền thuê (VNĐ)</label>
+        <input
+          id="roomBillRent"
+          type="text"
+          inputmode="numeric"
+          placeholder="0"
+          oninput="calculateRoomBillPreview()"
+        />
+      </div>
+
+      <div class="field">
+        <label for="roomBillGarbage">Tiền rác (VNĐ)</label>
+        <input
+          id="roomBillGarbage"
+          type="text"
+          inputmode="numeric"
+          placeholder="0"
+          oninput="calculateRoomBillPreview()"
+        />
+      </div>
+
+      <div class="field">
+        <label for="roomBillOtherName">Khoản phát sinh</label>
+        <input
+          id="roomBillOtherName"
+          type="text"
+          placeholder="Ví dụ: Phí sửa chữa"
+          maxlength="80"
+          oninput="calculateRoomBillPreview()"
+        />
+      </div>
+
+      <div class="field">
+        <label for="roomBillOtherAmount">
+          Số tiền phát sinh (VNĐ)
+        </label>
+        <input
+          id="roomBillOtherAmount"
+          type="text"
+          inputmode="numeric"
+          placeholder="0"
+          oninput="calculateRoomBillPreview()"
+        />
+      </div>
+
+    </div>
+
+    <div class="rr-total">
+      <span>TỔNG TIỀN PHÒNG</span>
+      <strong id="roomBillTotal">0 ₫</strong>
+    </div>
+
+    <div class="rr-actions">
+      <button
+        id="saveRoomBillBtn"
+        class="primary-btn"
+        type="button"
+        onclick="saveRoomRentBill()"
+      >
+        💾 Lưu hóa đơn
+      </button>
+
+      <button
+        class="secondary-btn"
+        type="button"
+        onclick="resetRoomRentBillForm()"
+      >
+        Làm mới
+      </button>
+    </div>
+
+    <div id="roomRentBillMessage" class="settings-description"></div>
+
+  </div>
+
+  <!-- HISTORY -->
+  <div class="card rr-card">
+
+    <div class="panel-title">📚 Lịch sử hóa đơn</div>
+
+    <div class="rr-grid rr-grid-2">
+
+      <div class="field">
+        <label for="roomHistoryFilter">Lọc theo phòng</label>
+        <select
+          id="roomHistoryFilter"
+          onchange="renderRoomRentHistory()"
+        >
+          <option value="">Tất cả phòng</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="roomHistoryMonth">Lọc theo tháng</label>
+        <input
+          id="roomHistoryMonth"
+          type="month"
+          onchange="renderRoomRentHistory()"
+        />
+      </div>
+
+    </div>
+
+    <div class="table-wrapper">
+      <table class="rr-history-table">
+        <thead>
+          <tr>
+            <th>Tháng</th>
+            <th>Phòng</th>
+            <th>Điện</th>
+            <th>Nước</th>
+            <th>Tổng tiền</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody id="roomRentHistoryBody">
+          <tr>
+            <td colspan="6">Đang tải dữ liệu...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</section>
         <section id="settingsPage" class="page">
           <div class="topbar">
             <div>
@@ -4224,10 +4827,13 @@ try {
       async function selectAccount(accountId) {
         if (!db || lockActionInProgress) return;
 
-        const account = accounts.find((item) => item.id === accountId);
-        if (!account) return;
+      const account = accounts.find((item) => item.id === accountId);
+if (!account) return;
 
-        lockActionInProgress = true;
+// Xóa dữ liệu Room Rent của Account trước
+clearRoomRentSensitiveUI();
+
+lockActionInProgress = true;
 
         try {
           currentAccountId = account.id;
@@ -4306,10 +4912,60 @@ localStorage.setItem(
       function hideLockScreen() {
         document.getElementById("appLockScreen").classList.add("hidden");
       }
+function clearRoomRentSensitiveUI() {
+  roomRentRooms = [];
+  roomRentBills = [];
 
-     function clearSensitiveUI() {
+  roomRentConfig = {
+    electricityRate: 4000,
+    waterRate: 25000,
+  };
+
+  roomRentLoadedAccountId = null;
+
+  // Xóa đơn giá của Account trước
+  [
+    "roomElectricityRate",
+    "roomWaterRate",
+  ].forEach((id) => {
+    const input = document.getElementById(id);
+    if (input) input.value = "";
+  });
+
+  const roomList = document.getElementById("roomRentRoomList");
+  const roomHistory = document.getElementById("roomRentHistoryBody");
+
+  if (roomList) roomList.innerHTML = "";
+  if (roomHistory) roomHistory.innerHTML = "";
+
+  const message = document.getElementById("roomRentBillMessage");
+  if (message) message.textContent = "";
+}
+    function clearSensitiveUI() {
   transactions = [];
   accountCategories = [];
+
+// Clear Room Rent data
+clearRoomRentSensitiveUI();
+
+  const roomList = document.getElementById("roomRentRoomList");
+  const roomHistory = document.getElementById("roomRentHistoryBody");
+
+  if (roomList) {
+    roomList.innerHTML = "";
+  }
+
+  if (roomHistory) {
+    roomHistory.innerHTML = "";
+  }
+
+  const roomBillMessage = document.getElementById(
+    "roomRentBillMessage",
+  );
+
+  if (roomBillMessage) {
+    roomBillMessage.textContent = "";
+  }
 
         if (weeklyChart) {
           weeklyChart.destroy();
@@ -4990,6 +5646,14 @@ await loadSharedDateFilter();
 
           await startRealtimeListener();
           startAdminNotificationListener();
+
+          if (
+  document
+    .getElementById("roomRentPage")
+    ?.classList.contains("active")
+) {
+  await loadRoomRentData();
+}
         } catch (error) {
           console.error("App Lock error:", error);
 
@@ -5486,7 +6150,13 @@ await loadSharedDateFilter();
 
   await startRealtimeListener();
   startAdminNotificationListener();
-
+if (
+  document
+    .getElementById("roomRentPage")
+    ?.classList.contains("active")
+) {
+  await loadRoomRentData();
+}
   setFirebaseStatus(
     "● Firebase connected",
     "ok",
@@ -6747,6 +7417,1341 @@ document
       sourceSelect.disabled = false;
     }
   });
+  /* =====================================
+   ROOM RENT MODULE
+===================================== */
+
+let roomRentRooms = [];
+let roomRentBills = [];
+
+let roomRentConfig = {
+  electricityRate: 4000,
+  waterRate: 25000,
+};
+
+let editingRoomRentRoomId = null;
+let editingRoomRentBillId = null;
+
+let roomRentLoadedAccountId = null;
+/* =====================================
+   ROOM RENT - MONEY INPUT FORMATTING
+===================================== */
+function setupRoomRentMoneyInputs() {
+  const inputIds = [
+    "roomElectricityRate",
+    "roomWaterRate",
+    "roomDefaultRent",
+    "roomDefaultGarbage",
+    "roomBillRent",
+    "roomBillGarbage",
+    "roomBillOtherAmount",
+
+    // Đơn giá trong phần tính hóa đơn
+    "roomElectricityRatePreview",
+    "roomWaterRatePreview",
+  ];
+
+  inputIds.forEach((id) => {
+    const input = document.getElementById(id);
+    if (!input || input.dataset.moneyFormatReady) return;
+
+    input.type = "text";
+    input.inputMode = "numeric";
+    input.dataset.moneyFormatReady = "true";
+
+    input.addEventListener("input", function () {
+      const oldValue = this.value;
+      const oldPosition = this.selectionStart ?? oldValue.length;
+
+      const digitsBeforeCursor = oldValue
+        .slice(0, oldPosition)
+        .replace(/\D/g, "").length;
+
+      const digits = oldValue.replace(/\D/g, "");
+
+      const formatted = digits
+        ? Number(digits).toLocaleString("vi-VN")
+        : "";
+
+      this.value = formatted;
+
+      let newPosition = 0;
+      let digitCount = 0;
+
+      while (
+        newPosition < formatted.length &&
+        digitCount < digitsBeforeCursor
+      ) {
+        if (/\d/.test(formatted[newPosition])) {
+          digitCount++;
+        }
+        newPosition++;
+      }
+
+      this.setSelectionRange(newPosition, newPosition);
+
+      if (typeof window.calculateRoomBillPreview === "function") {
+        window.calculateRoomBillPreview();
+      }
+    });
+  });
+}
+
+setupRoomRentMoneyInputs();
+
+/* =====================================
+   FIRESTORE REFERENCES
+===================================== */
+
+function getRoomRentRoomsRef() {
+  if (!db || !currentAccountId) {
+    throw new Error("Chưa chọn Account.");
+  }
+
+  return collection(
+    db,
+    "accounts",
+    currentAccountId,
+    "rooms",
+  );
+}
+
+function getRoomRentRoomRef(id) {
+  if (!db || !currentAccountId) {
+    throw new Error("Chưa chọn Account.");
+  }
+
+  return doc(
+    db,
+    "accounts",
+    currentAccountId,
+    "rooms",
+    id,
+  );
+}
+
+function getRoomRentBillsRef() {
+  if (!db || !currentAccountId) {
+    throw new Error("Chưa chọn Account.");
+  }
+
+  return collection(
+    db,
+    "accounts",
+    currentAccountId,
+    "roomBills",
+  );
+}
+
+function getRoomRentBillRef(id) {
+  if (!db || !currentAccountId) {
+    throw new Error("Chưa chọn Account.");
+  }
+
+  return doc(
+    db,
+    "accounts",
+    currentAccountId,
+    "roomBills",
+    id,
+  );
+}
+
+function getRoomRentConfigRef() {
+  if (!db || !currentAccountId) {
+    throw new Error("Chưa chọn Account.");
+  }
+
+  return doc(
+    db,
+    "accounts",
+    currentAccountId,
+    "settings",
+    "roomRentConfig",
+  );
+}
+
+
+/* =====================================
+   HELPERS
+===================================== */
+
+function roomRentMoney(value) {
+  const amount = Number(value || 0);
+
+  return amount.toLocaleString("vi-VN") + " ₫";
+}
+
+function roomRentNumber(value) {
+  const number = Number(value);
+
+  return Number.isFinite(number) ? number : 0;
+}
+
+function roomRentInputMoney(id) {
+  const element = document.getElementById(id);
+
+  return parseMoneyInput(element?.value || "0");
+}
+
+function roomRentEscapeHtml(value) {
+  return String(value ?? "").replace(
+    /[&<>"']/g,
+    (character) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    })[character],
+  );
+}
+
+function roomRentCurrentMonth() {
+  const now = new Date();
+
+  return (
+    now.getFullYear() +
+    "-" +
+    String(now.getMonth() + 1).padStart(2, "0")
+  );
+}
+
+function roomRentSetInput(id, value) {
+  const element = document.getElementById(id);
+
+  if (!element) return;
+
+  const moneyInputIds = [
+    "roomElectricityRate",
+    "roomWaterRate",
+    "roomDefaultRent",
+    "roomDefaultGarbage",
+    "roomBillRent",
+    "roomBillGarbage",
+    "roomBillOtherAmount",
+    "roomElectricityRatePreview",
+    "roomWaterRatePreview",
+  ];
+
+  if (
+    moneyInputIds.includes(id) &&
+    value !== "" &&
+    value !== null &&
+    value !== undefined
+  ) {
+    element.value = Number(value).toLocaleString("vi-VN");
+  } else {
+    element.value = value ?? "";
+  }
+}
+
+
+/* =====================================
+   LOAD DATA
+===================================== */
+
+async function loadRoomRentData() {
+  if (
+    !db ||
+    !currentAccountId ||
+    !isAppUnlocked
+  ) {
+    return;
+  }
+
+  try {
+    const loadingAccountId = currentAccountId;
+    const [
+      roomsSnapshot,
+      billsSnapshot,
+      configSnapshot,
+    ] = await Promise.all([
+      getDocs(getRoomRentRoomsRef()),
+      getDocs(getRoomRentBillsRef()),
+      getDoc(getRoomRentConfigRef()),
+    ]);
+// Account đã thay đổi trong lúc chờ Firebase trả dữ liệu
+if (currentAccountId !== loadingAccountId) {
+  return;
+}
+    roomRentRooms = roomsSnapshot.docs.map((item) => ({
+      id: item.id,
+      ...item.data(),
+    }));
+
+    roomRentBills = billsSnapshot.docs.map((item) => ({
+      id: item.id,
+      ...item.data(),
+    }));
+
+    if (configSnapshot.exists()) {
+      const data = configSnapshot.data();
+
+      roomRentConfig = {
+        electricityRate: roomRentNumber(
+          data.electricityRate ?? 4000,
+        ),
+        waterRate: roomRentNumber(
+          data.waterRate ?? 25000,
+        ),
+      };
+    } else {
+      roomRentConfig = {
+        electricityRate: 4000,
+        waterRate: 25000,
+      };
+    }
+
+    roomRentLoadedAccountId = currentAccountId;
+
+    renderRoomRentConfig();
+    renderRoomRentRooms();
+    renderRoomRentRoomOptions();
+    renderRoomRentHistory();
+
+    const monthInput = document.getElementById(
+      "roomBillMonth",
+    );
+
+    if (monthInput && !monthInput.value) {
+      monthInput.value = roomRentCurrentMonth();
+    }
+
+    await prepareRoomBillForSelection();
+
+  } catch (error) {
+    console.error("Load room rent data error:", error);
+
+    await window.showAppDialog({
+      title: "Không thể tải dữ liệu phòng",
+      message:
+        "Vui lòng kiểm tra Firestore Rules và thử lại.\n\n" +
+        (error.message || ""),
+      type: "error",
+    });
+  }
+}
+
+
+/* =====================================
+   CONFIG
+===================================== */
+
+function renderRoomRentConfig() {
+  roomRentSetInput(
+    "roomElectricityRate",
+    roomRentConfig.electricityRate,
+  );
+
+  roomRentSetInput(
+    "roomWaterRate",
+    roomRentConfig.waterRate,
+  );
+}
+
+window.saveRoomRentConfig = async function () {
+  if (!isAppUnlocked || !currentAccountId) {
+    return;
+  }
+
+const electricityRate = roomRentInputMoney(
+  "roomElectricityRate",
+);
+
+const waterRate = roomRentInputMoney(
+  "roomWaterRate",
+);
+
+  if (
+    !Number.isSafeInteger(electricityRate) ||
+    electricityRate < 0 ||
+    !Number.isSafeInteger(waterRate) ||
+    waterRate < 0
+  ) {
+    await window.showAppDialog({
+      title: "Đơn giá không hợp lệ",
+      message: "Vui lòng nhập đơn giá là số nguyên không âm.",
+      type: "warning",
+    });
+
+    return;
+  }
+
+  try {
+    roomRentConfig = {
+      electricityRate,
+      waterRate,
+    };
+
+    await setDoc(
+      getRoomRentConfigRef(),
+      {
+        ...roomRentConfig,
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true },
+    );
+
+    await window.showAppDialog({
+      title: "Đã lưu đơn giá",
+      message: "Đơn giá điện và nước mặc định đã được cập nhật.",
+      type: "success",
+    });
+
+    // Chỉ cập nhật đơn giá cho hóa đơn mới.
+    // Hóa đơn cũ giữ nguyên snapshot.
+    await prepareRoomBillForSelection();
+
+  } catch (error) {
+    console.error("Save room rent config error:", error);
+
+    await window.showAppDialog({
+      title: "Không thể lưu đơn giá",
+      message: error.message || "",
+      type: "error",
+    });
+  }
+};
+
+
+/* =====================================
+   ROOM MANAGEMENT
+===================================== */
+
+function renderRoomRentRooms() {
+  const container = document.getElementById(
+    "roomRentRoomList",
+  );
+
+  if (!container) return;
+
+  if (!roomRentRooms.length) {
+    container.innerHTML = `
+      <div class="rr-empty">
+        Chưa có phòng nào. Hãy thêm phòng đầu tiên nhé.
+      </div>
+    `;
+
+    return;
+  }
+
+  const sortedRooms = [...roomRentRooms].sort((a, b) =>
+    String(a.name || "").localeCompare(
+      String(b.name || ""),
+      "vi",
+      { numeric: true },
+    ),
+  );
+
+  container.innerHTML = sortedRooms.map((room) => {
+    const inactive = room.isActive === false;
+
+    return `
+      <div class="rr-room-item">
+
+        <div class="rr-room-name">
+          ${roomRentEscapeHtml(room.name)}
+          ${
+            inactive
+              ? '<span style="color:var(--muted);font-size:11px"> · Ngừng sử dụng</span>'
+              : ""
+          }
+        </div>
+
+        <div class="rr-room-info">
+          Tiền thuê mặc định:
+          <strong>${roomRentMoney(room.defaultRent)}</strong>
+          <br>
+
+          Tiền rác mặc định:
+          <strong>${roomRentMoney(room.defaultGarbage)}</strong>
+        </div>
+
+        <div class="rr-room-actions">
+
+          <button
+            class="rr-small-btn"
+            onclick="editRoomRentRoom('${room.id}')"
+          >
+            ✏️ Sửa
+          </button>
+
+          <button
+            class="rr-small-btn"
+            onclick="toggleRoomRentRoomStatus('${room.id}')"
+          >
+            ${inactive ? "▶️ Kích hoạt" : "⏸ Ngừng sử dụng"}
+          </button>
+
+        </div>
+
+      </div>
+    `;
+  }).join("");
+}
+
+
+function renderRoomRentRoomOptions() {
+  const billSelect = document.getElementById(
+    "roomBillRoom",
+  );
+
+  const historySelect = document.getElementById(
+    "roomHistoryFilter",
+  );
+
+  const currentBillRoom = billSelect?.value || "";
+  const currentHistoryRoom = historySelect?.value || "";
+
+  const sortedRooms = [...roomRentRooms].sort((a, b) =>
+    String(a.name || "").localeCompare(
+      String(b.name || ""),
+      "vi",
+      { numeric: true },
+    ),
+  );
+
+  const options = sortedRooms.map((room) => `
+    <option value="${room.id}">
+      ${roomRentEscapeHtml(room.name)}
+      ${room.isActive === false ? " (Ngừng sử dụng)" : ""}
+    </option>
+  `).join("");
+
+  if (billSelect) {
+    billSelect.innerHTML = `
+      <option value="">-- Chọn phòng --</option>
+      ${options}
+    `;
+
+    if (
+      sortedRooms.some((room) => room.id === currentBillRoom)
+    ) {
+      billSelect.value = currentBillRoom;
+    }
+  }
+
+  if (historySelect) {
+    historySelect.innerHTML = `
+      <option value="">Tất cả phòng</option>
+      ${options}
+    `;
+
+    historySelect.value = currentHistoryRoom;
+  }
+}
+
+
+window.saveRoomRentRoom = async function () {
+  if (!isAppUnlocked || !currentAccountId) {
+    return;
+  }
+
+  const name = document.getElementById(
+    "roomName",
+  ).value.trim();
+
+  const defaultRent = roomRentInputMoney(
+    "roomDefaultRent",
+  );
+
+  const defaultGarbage = roomRentInputMoney(
+    "roomDefaultGarbage",
+  );
+
+  if (!name) {
+    await window.showAppDialog({
+      title: "Thiếu tên phòng",
+      message: "Vui lòng nhập tên phòng.",
+      type: "warning",
+    });
+
+    return;
+  }
+
+  if (
+    !Number.isSafeInteger(defaultRent) ||
+    defaultRent < 0 ||
+    !Number.isSafeInteger(defaultGarbage) ||
+    defaultGarbage < 0
+  ) {
+    await window.showAppDialog({
+      title: "Số tiền không hợp lệ",
+      message: "Vui lòng kiểm tra tiền thuê và tiền rác.",
+      type: "warning",
+    });
+
+    return;
+  }
+
+  const data = {
+    name,
+    defaultRent,
+    defaultGarbage,
+    updatedAt: serverTimestamp(),
+  };
+
+  try {
+    if (editingRoomRentRoomId) {
+      await updateDoc(
+        getRoomRentRoomRef(editingRoomRentRoomId),
+        data,
+      );
+    } else {
+      await addDoc(
+        getRoomRentRoomsRef(),
+        {
+          ...data,
+          isActive: true,
+          createdAt: serverTimestamp(),
+        },
+      );
+    }
+
+    resetRoomRentRoomForm();
+
+    await loadRoomRentData();
+
+    await window.showAppDialog({
+      title: "Đã lưu phòng",
+      message: "Thông tin phòng đã được lưu thành công.",
+      type: "success",
+    });
+
+  } catch (error) {
+    console.error("Save room error:", error);
+
+    await window.showAppDialog({
+      title: "Không thể lưu phòng",
+      message: error.message || "",
+      type: "error",
+    });
+  }
+};
+
+
+window.editRoomRentRoom = function (id) {
+  const room = roomRentRooms.find(
+    (item) => item.id === id,
+  );
+
+  if (!room) return;
+
+  editingRoomRentRoomId = id;
+
+  roomRentSetInput("roomName", room.name);
+  roomRentSetInput(
+    "roomDefaultRent",
+    room.defaultRent || 0,
+  );
+  roomRentSetInput(
+    "roomDefaultGarbage",
+    room.defaultGarbage || 0,
+  );
+
+  document.getElementById("saveRoomBtn").textContent =
+    "💾 Cập nhật phòng";
+
+  document.getElementById(
+    "cancelRoomEditBtn",
+  ).style.display = "";
+};
+
+
+window.resetRoomRentRoomForm = function () {
+  editingRoomRentRoomId = null;
+
+  roomRentSetInput("roomName", "");
+  roomRentSetInput("roomDefaultRent", "");
+  roomRentSetInput("roomDefaultGarbage", "");
+
+  document.getElementById("saveRoomBtn").textContent =
+    "＋ Thêm phòng";
+
+  document.getElementById(
+    "cancelRoomEditBtn",
+  ).style.display = "none";
+};
+
+
+window.toggleRoomRentRoomStatus = async function (id) {
+  const room = roomRentRooms.find(
+    (item) => item.id === id,
+  );
+
+  if (!room) return;
+
+  const nextStatus = room.isActive === false;
+
+  const confirmed = await window.showAppDialog({
+    title: nextStatus
+      ? "Kích hoạt phòng?"
+      : "Ngừng sử dụng phòng?",
+    message: nextStatus
+      ? `Bạn muốn kích hoạt lại ${room.name}?`
+      : `Bạn muốn ngừng sử dụng ${room.name}?\n\nLịch sử hóa đơn vẫn được giữ lại.`,
+    type: "warning",
+    confirm: true,
+    confirmText: nextStatus ? "Kích hoạt" : "Ngừng sử dụng",
+  });
+
+  if (!confirmed) return;
+
+  try {
+    await updateDoc(
+      getRoomRentRoomRef(id),
+      {
+        isActive: nextStatus,
+        updatedAt: serverTimestamp(),
+      },
+    );
+
+    await loadRoomRentData();
+
+  } catch (error) {
+    await window.showAppDialog({
+      title: "Không thể cập nhật phòng",
+      message: error.message || "",
+      type: "error",
+    });
+  }
+};
+
+
+/* =====================================
+   BILL CALCULATION
+===================================== */
+
+function calculateRoomRentValues() {
+  const electricityOld = Number(
+    document.getElementById("roomElectricityOld").value,
+  );
+
+  const electricityNew = Number(
+    document.getElementById("roomElectricityNew").value,
+  );
+
+  const waterOld = Number(
+    document.getElementById("roomWaterOld").value,
+  );
+
+  const waterNew = Number(
+    document.getElementById("roomWaterNew").value,
+  );
+
+const electricityRate = roomRentInputMoney(
+  "roomElectricityRatePreview",
+);
+
+const waterRate = roomRentInputMoney(
+  "roomWaterRatePreview",
+);
+
+  const rent = roomRentInputMoney("roomBillRent");
+  const garbage = roomRentInputMoney("roomBillGarbage");
+  const otherAmount = roomRentInputMoney("roomBillOtherAmount");
+
+  const electricityUsage =
+    electricityNew >= electricityOld
+      ? electricityNew - electricityOld
+      : -1;
+
+  const waterUsage =
+    waterNew >= waterOld
+      ? waterNew - waterOld
+      : -1;
+
+  const electricityAmount =
+    electricityUsage >= 0
+      ? electricityUsage * electricityRate
+      : 0;
+
+  const waterAmount =
+    waterUsage >= 0
+      ? waterUsage * waterRate
+      : 0;
+
+  const total =
+    electricityAmount +
+    waterAmount +
+    rent +
+    garbage +
+    otherAmount;
+
+  return {
+    electricityOld,
+    electricityNew,
+    electricityUsage,
+    electricityRate,
+    electricityAmount,
+
+    waterOld,
+    waterNew,
+    waterUsage,
+    waterRate,
+    waterAmount,
+
+    rent,
+    garbage,
+
+    otherName: document.getElementById(
+      "roomBillOtherName",
+    ).value.trim(),
+
+    otherAmount,
+    total,
+  };
+}
+
+window.calculateRoomBillPreview = function () {
+  const values = calculateRoomRentValues();
+
+  document.getElementById(
+    "roomElectricityUsage",
+  ).textContent =
+    values.electricityUsage >= 0
+      ? values.electricityUsage.toLocaleString("vi-VN") + " kWh"
+      : "Chỉ số không hợp lệ";
+
+  document.getElementById(
+    "roomElectricityAmount",
+  ).textContent = roomRentMoney(
+    values.electricityAmount,
+  );
+
+  document.getElementById(
+    "roomWaterUsage",
+  ).textContent =
+    values.waterUsage >= 0
+      ? values.waterUsage.toLocaleString("vi-VN") + " m³"
+      : "Chỉ số không hợp lệ";
+
+  document.getElementById(
+    "roomWaterAmount",
+  ).textContent = roomRentMoney(
+    values.waterAmount,
+  );
+
+  document.getElementById(
+    "roomBillTotal",
+  ).textContent = roomRentMoney(values.total);
+};
+
+
+/* =====================================
+   BILL FORM
+===================================== */
+
+function fillRoomRentBillForm(bill) {
+  roomRentSetInput(
+    "roomElectricityOld",
+    bill.electricityOld,
+  );
+
+  roomRentSetInput(
+    "roomElectricityNew",
+    bill.electricityNew,
+  );
+
+  roomRentSetInput(
+    "roomElectricityRatePreview",
+    bill.electricityRate,
+  );
+
+  roomRentSetInput(
+    "roomWaterOld",
+    bill.waterOld,
+  );
+
+  roomRentSetInput(
+    "roomWaterNew",
+    bill.waterNew,
+  );
+
+  roomRentSetInput(
+    "roomWaterRatePreview",
+    bill.waterRate,
+  );
+
+  roomRentSetInput("roomBillRent", bill.rent);
+  roomRentSetInput("roomBillGarbage", bill.garbage);
+
+  roomRentSetInput(
+    "roomBillOtherName",
+    bill.otherName || "",
+  );
+
+  roomRentSetInput(
+    "roomBillOtherAmount",
+    bill.otherAmount || 0,
+  );
+
+  window.calculateRoomBillPreview();
+}
+
+
+async function prepareRoomBillForSelection() {
+  const roomId = document.getElementById(
+    "roomBillRoom",
+  )?.value;
+
+  const month = document.getElementById(
+    "roomBillMonth",
+  )?.value;
+
+  if (!roomId || !month) {
+    editingRoomRentBillId = null;
+    return;
+  }
+
+  const room = roomRentRooms.find(
+    (item) => item.id === roomId,
+  );
+
+  if (!room) return;
+
+  const existingBill = roomRentBills.find(
+    (item) =>
+      item.roomId === roomId &&
+      item.month === month,
+  );
+
+  if (existingBill) {
+    editingRoomRentBillId = existingBill.id;
+
+    fillRoomRentBillForm(existingBill);
+
+    document.getElementById(
+      "saveRoomBillBtn",
+    ).textContent = "💾 Cập nhật hóa đơn";
+
+    document.getElementById(
+      "roomRentBillMessage",
+    ).textContent = "Đang chỉnh sửa hóa đơn đã lưu.";
+
+    return;
+  }
+
+  editingRoomRentBillId = null;
+
+  document.getElementById(
+    "saveRoomBillBtn",
+  ).textContent = "💾 Lưu hóa đơn";
+
+  document.getElementById(
+    "roomRentBillMessage",
+  ).textContent = "";
+
+  // Tìm hóa đơn gần nhất trước tháng hiện tại.
+  const previousBill = roomRentBills
+    .filter(
+      (item) =>
+        item.roomId === roomId &&
+        String(item.month || "") < month,
+    )
+    .sort((a, b) =>
+      String(b.month || "").localeCompare(
+        String(a.month || ""),
+      ),
+    )[0];
+
+  fillRoomRentBillForm({
+    electricityOld:
+      previousBill?.electricityNew ?? "",
+
+    electricityNew: "",
+
+    electricityRate:
+      roomRentConfig.electricityRate,
+
+    waterOld:
+      previousBill?.waterNew ?? "",
+
+    waterNew: "",
+
+    waterRate:
+      roomRentConfig.waterRate,
+
+    rent: room.defaultRent || 0,
+
+    garbage: room.defaultGarbage || 0,
+
+    otherName: "",
+    otherAmount: 0,
+  });
+}
+window.prepareRoomBillForSelection =
+  prepareRoomBillForSelection;
+
+window.resetRoomRentBillForm = function () {
+  editingRoomRentBillId = null;
+
+  const monthInput = document.getElementById(
+    "roomBillMonth",
+  );
+
+  if (monthInput) {
+    monthInput.value = roomRentCurrentMonth();
+  }
+
+  const message = document.getElementById(
+    "roomRentBillMessage",
+  );
+
+  if (message) message.textContent = "";
+
+  void prepareRoomBillForSelection();
+};
+
+
+/* =====================================
+   SAVE BILL
+===================================== */
+
+window.saveRoomRentBill = async function () {
+  if (!isAppUnlocked || !currentAccountId) {
+    return;
+  }
+
+  const roomId = document.getElementById(
+    "roomBillRoom",
+  ).value;
+
+  const month = document.getElementById(
+    "roomBillMonth",
+  ).value;
+
+  const room = roomRentRooms.find(
+    (item) => item.id === roomId,
+  );
+
+  if (!room || !month) {
+    await window.showAppDialog({
+      title: "Thiếu thông tin",
+      message: "Vui lòng chọn phòng và tháng cần tính.",
+      type: "warning",
+    });
+
+    return;
+  }
+
+  const values = calculateRoomRentValues();
+
+  if (
+    !Number.isSafeInteger(values.electricityOld) ||
+    !Number.isSafeInteger(values.electricityNew) ||
+    !Number.isSafeInteger(values.waterOld) ||
+    !Number.isSafeInteger(values.waterNew) ||
+    values.electricityOld < 0 ||
+    values.electricityNew < values.electricityOld ||
+    values.waterOld < 0 ||
+    values.waterNew < values.waterOld
+  ) {
+    await window.showAppDialog({
+      title: "Chỉ số công tơ không hợp lệ",
+      message:
+        "Vui lòng kiểm tra lại chỉ số cũ và chỉ số mới.\n\n" +
+        "Chỉ số mới không được nhỏ hơn chỉ số cũ.",
+      type: "warning",
+    });
+
+    return;
+  }
+
+  if (
+    !Number.isSafeInteger(values.electricityRate) ||
+    values.electricityRate < 0 ||
+    !Number.isSafeInteger(values.waterRate) ||
+    values.waterRate < 0 ||
+    !Number.isSafeInteger(values.rent) ||
+    values.rent < 0 ||
+    !Number.isSafeInteger(values.garbage) ||
+    values.garbage < 0 ||
+    !Number.isSafeInteger(values.otherAmount) ||
+    values.otherAmount < 0 ||
+    !Number.isSafeInteger(values.total)
+  ) {
+    await window.showAppDialog({
+      title: "Số tiền không hợp lệ",
+      message: "Vui lòng kiểm tra lại các khoản tiền.",
+      type: "warning",
+    });
+
+    return;
+  }
+
+  // ID cố định theo phòng + tháng:
+  // Mỗi phòng chỉ có một hóa đơn trong một tháng.
+  const billId = `${month}_${roomId}`;
+
+  const data = {
+    roomId,
+    roomName: room.name,
+    month,
+
+    electricityOld: values.electricityOld,
+    electricityNew: values.electricityNew,
+    electricityUsage: values.electricityUsage,
+    electricityRate: values.electricityRate,
+    electricityAmount: values.electricityAmount,
+
+    waterOld: values.waterOld,
+    waterNew: values.waterNew,
+    waterUsage: values.waterUsage,
+    waterRate: values.waterRate,
+    waterAmount: values.waterAmount,
+
+    rent: values.rent,
+    garbage: values.garbage,
+
+    otherName: values.otherName,
+    otherAmount: values.otherAmount,
+
+    total: values.total,
+
+    updatedAt: serverTimestamp(),
+  };
+
+  try {
+    const billRef = getRoomRentBillRef(billId);
+
+    const existingSnapshot = await getDoc(billRef);
+
+    await setDoc(
+      billRef,
+      {
+        ...data,
+        createdAt: existingSnapshot.exists()
+          ? existingSnapshot.data().createdAt || serverTimestamp()
+          : serverTimestamp(),
+      },
+    );
+
+    editingRoomRentBillId = billId;
+
+    await loadRoomRentData();
+
+    document.getElementById(
+      "roomRentBillMessage",
+    ).textContent = "Đã lưu hóa đơn thành công.";
+
+    await window.showAppDialog({
+      title: "Đã lưu hóa đơn",
+      message:
+        `Hóa đơn ${room.name} - ${month} đã được lưu.\n\n` +
+        `Tổng tiền: ${roomRentMoney(values.total)}`,
+      type: "success",
+    });
+
+  } catch (error) {
+    console.error("Save room rent bill error:", error);
+
+    await window.showAppDialog({
+      title: "Không thể lưu hóa đơn",
+      message:
+        "Vui lòng kiểm tra Firebase và thử lại.\n\n" +
+        (error.message || ""),
+      type: "error",
+    });
+  }
+};
+
+
+/* =====================================
+   BILL HISTORY
+===================================== */
+
+function renderRoomRentHistory() {
+  const tbody = document.getElementById(
+    "roomRentHistoryBody",
+  );
+
+  if (!tbody) return;
+
+  const roomFilter = document.getElementById(
+    "roomHistoryFilter",
+  )?.value || "";
+
+  const monthFilter = document.getElementById(
+    "roomHistoryMonth",
+  )?.value || "";
+
+  const filteredBills = roomRentBills
+    .filter((bill) => {
+      if (roomFilter && bill.roomId !== roomFilter) {
+        return false;
+      }
+
+      if (monthFilter && bill.month !== monthFilter) {
+        return false;
+      }
+
+      return true;
+    })
+    .sort((a, b) => {
+      const monthCompare = String(b.month || "").localeCompare(
+        String(a.month || ""),
+      );
+
+      if (monthCompare !== 0) return monthCompare;
+
+      return String(a.roomName || "").localeCompare(
+        String(b.roomName || ""),
+        "vi",
+        { numeric: true },
+      );
+    });
+
+  if (!filteredBills.length) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" class="rr-empty">
+          Chưa có hóa đơn nào.
+        </td>
+      </tr>
+    `;
+
+    return;
+  }
+
+  tbody.innerHTML = filteredBills.map((bill) => `
+    <tr>
+      <td>${roomRentEscapeHtml(bill.month)}</td>
+
+      <td>
+        <strong>
+          ${roomRentEscapeHtml(bill.roomName)}
+        </strong>
+      </td>
+
+      <td>
+        ${Number(bill.electricityUsage || 0).toLocaleString("vi-VN")}
+        kWh
+        <br>
+        <span style="color:var(--muted);font-size:12px">
+          ${roomRentMoney(bill.electricityAmount)}
+        </span>
+      </td>
+
+      <td>
+        ${Number(bill.waterUsage || 0).toLocaleString("vi-VN")}
+        m³
+        <br>
+        <span style="color:var(--muted);font-size:12px">
+          ${roomRentMoney(bill.waterAmount)}
+        </span>
+      </td>
+
+      <td>
+        <strong style="color:var(--income)">
+          ${roomRentMoney(bill.total)}
+        </strong>
+      </td>
+
+      <td>
+        <div class="rr-history-actions">
+
+          <button
+            class="rr-small-btn"
+            onclick="editRoomRentBill('${bill.id}')"
+          >
+            ✏️
+          </button>
+
+          <button
+            class="rr-small-btn danger"
+            onclick="deleteRoomRentBill('${bill.id}')"
+          >
+            🗑️
+          </button>
+
+        </div>
+      </td>
+    </tr>
+  `).join("");
+}
+window.renderRoomRentHistory = renderRoomRentHistory;
+
+window.editRoomRentBill = async function (id) {
+  const bill = roomRentBills.find(
+    (item) => item.id === id,
+  );
+
+  if (!bill) return;
+
+  const roomSelect = document.getElementById(
+    "roomBillRoom",
+  );
+
+  const monthInput = document.getElementById(
+    "roomBillMonth",
+  );
+
+  if (roomSelect) roomSelect.value = bill.roomId;
+  if (monthInput) monthInput.value = bill.month;
+
+  editingRoomRentBillId = bill.id;
+
+  fillRoomRentBillForm(bill);
+
+  document.getElementById(
+    "saveRoomBillBtn",
+  ).textContent = "💾 Cập nhật hóa đơn";
+
+  document.getElementById(
+    "roomRentBillMessage",
+  ).textContent = "Đang chỉnh sửa hóa đơn đã lưu.";
+
+  document.getElementById("roomRentPage").scrollIntoView({
+    behavior: "smooth",
+    block: "start",
+  });
+};
+
+
+window.deleteRoomRentBill = async function (id) {
+  const bill = roomRentBills.find(
+    (item) => item.id === id,
+  );
+
+  if (!bill) return;
+
+  const confirmed = await window.showAppDialog({
+    title: "Xóa hóa đơn?",
+    message:
+      `Bạn có chắc muốn xóa hóa đơn ${bill.roomName} - ${bill.month}?\n\n` +
+      "Thao tác này không thể hoàn tác.",
+    type: "danger",
+    confirm: true,
+    confirmText: "Xóa hóa đơn",
+  });
+
+  if (!confirmed) return;
+
+  try {
+    await deleteDoc(getRoomRentBillRef(id));
+
+    if (editingRoomRentBillId === id) {
+      editingRoomRentBillId = null;
+    }
+
+    await loadRoomRentData();
+
+    await window.showAppDialog({
+      title: "Đã xóa hóa đơn",
+      message: "Hóa đơn đã được xóa.",
+      type: "success",
+    });
+
+  } catch (error) {
+    await window.showAppDialog({
+      title: "Không thể xóa hóa đơn",
+      message: error.message || "",
+      type: "error",
+    });
+  }
+};
       /* =====================================
          PAGE SWITCH
       ===================================== */
@@ -6773,7 +8778,13 @@ document
   void renderAdminAccountSettings();
 }
 
-        if (page === "transactions") renderTransactions();
+        if (page === "transactions") {
+  renderTransactions();
+}
+
+if (page === "roomRent") {
+  void loadRoomRentData();
+}
       };
 
       /* =====================================
