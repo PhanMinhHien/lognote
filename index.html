@@ -4919,8 +4919,7 @@ lockActionInProgress = true;
 accountCategories = [];
 updateSettingsAccountName();
 
-await loadSharedDateFilter();
-
+// Lưu Account được chọn ngay lập tức
 localStorage.setItem(
   SELECTED_ACCOUNT_KEY,
   currentAccountId,
