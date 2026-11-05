@@ -1779,6 +1779,9 @@
         gap: 6px;
         flex-wrap: wrap;
       }
+      #roomRentBillSection {
+        scroll-margin-top: 20px;
+      }
 
       #roomRentRoomList .rr-room-actions .rr-small-btn {
         white-space: nowrap;
@@ -1940,6 +1943,97 @@
       /* =====================================
    SUMMARY TABLE
 ===================================== */
+
+      .rr-payment-cell {
+        min-width: 220px;
+        text-align: center;
+        padding: 10px 8px !important;
+      }
+
+      /* Payment buttons - compact layout */
+      .rr-payment-cell {
+        text-align: center;
+      }
+
+      .rr-payment-cell .rr-payment-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+        min-width: 0;
+        max-width: 100%;
+        min-height: 34px;
+        padding: 7px 13px;
+        border-radius: 8px;
+        white-space: nowrap;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      /* Chưa thanh toán đủ */
+      .rr-payment-cell .rr-payment-btn.is-payment-incomplete {
+        color: #f59e0b;
+        background: rgba(245, 158, 11, 0.12);
+        border: 1px solid rgba(245, 158, 11, 0.45);
+      }
+
+      .rr-payment-cell .rr-payment-btn.is-payment-incomplete:hover {
+        background: rgba(245, 158, 11, 0.22);
+      }
+
+      /* Nhập tiền đã nhận */
+      .rr-payment-cell .rr-payment-btn.is-payment-entry {
+        color: var(--primary);
+        background: transparent;
+        border: 1px solid var(--primary);
+      }
+
+      .rr-payment-cell .rr-payment-btn.is-payment-entry:hover {
+        background: var(--primary-soft);
+      }
+
+      .rr-payment-info-top {
+        color: var(--income);
+        font-weight: 700;
+      }
+
+      .rr-payment-info-bottom {
+        color: var(--muted);
+      }
+
+      .rr-payment-info-bottom strong {
+        color: var(--warning, #f59e0b);
+      }
+
+      .rr-payment-progress {
+        width: 100%;
+        height: 6px;
+        background: var(--border);
+        border-radius: 20px;
+        overflow: hidden;
+      }
+
+      .rr-payment-progress-fill {
+        height: 100%;
+        background: var(--income);
+        border-radius: inherit;
+        transition: width 0.2s ease;
+      }
+
+      /* .rr-payment-cell .rr-payment-btn {
+        width: 100%;
+        min-height: 36px;
+      } */
+
+      .rr-payment-complete {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        color: var(--income);
+        font-size: 13px;
+        font-weight: 800;
+      }
       .rr-payment-btn {
         padding: 7px 10px;
         border: 1px solid var(--border);
@@ -1958,10 +2052,15 @@
         color: var(--primary);
       }
 
-      .rr-payment-btn.paid {
-        color: var(--income);
-        border-color: var(--income);
-        background: var(--primary-soft);
+      .rr-payment-info {
+        font-size: 11px;
+        line-height: 1.5;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+
+      .rr-payment-info strong {
+        color: var(--text);
       }
       #roomRentSummaryBody td,
       #roomRentSummaryFoot th {
@@ -2104,6 +2203,42 @@
 
         .rr-total strong {
           font-size: 22px;
+        }
+      }
+
+      #roomPaymentModal {
+        z-index: 120;
+      }
+
+      #roomPaymentModal .modal {
+        animation: roomPaymentModalIn 0.18s ease;
+      }
+
+      #roomPaymentAmount {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--card);
+        color: var(--text);
+        font-size: 17px;
+        font-weight: 700;
+        outline: none;
+      }
+
+      #roomPaymentAmount:focus {
+        border-color: var(--primary);
+      }
+
+      @keyframes roomPaymentModalIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px) scale(0.98);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
         }
       }
     </style>
@@ -2794,7 +2929,7 @@
             </div>
           </div>
           <!-- MONTHLY BILL -->
-          <div class="card rr-card">
+          <div class="card rr-card" id="roomRentBillSection">
             <div class="panel-title">🧮 Tính tiền phòng</div>
 
             <div class="settings-description">
@@ -3528,7 +3663,137 @@
         </div>
       </div>
     </div>
+    <!-- ROOM RENT PAYMENT MODAL -->
+    <div id="roomPaymentModal" class="modal-backdrop" aria-hidden="true">
+      <div class="modal" style="max-width: 420px">
+        <div class="modal-header">
+          <div>
+            <div class="modal-title" id="roomPaymentModalTitle">
+              Ghi nhận thanh toán
+            </div>
+            <div
+              id="roomPaymentModalSubtitle"
+              style="font-size: 12px; color: var(--muted); margin-top: 5px"
+            ></div>
+          </div>
 
+          <button
+            type="button"
+            class="close-btn"
+            onclick="closeRoomPaymentModal()"
+          >
+            ×
+          </button>
+        </div>
+
+        <div class="modal-fields">
+          <div
+            style="
+              padding: 13px;
+              background: var(--bg);
+              border: 1px solid var(--border);
+              border-radius: 12px;
+            "
+          >
+            <div style="font-size: 12px; color: var(--muted)">Tổng hóa đơn</div>
+
+            <div
+              id="roomPaymentTotal"
+              style="font-size: 19px; font-weight: 800; margin-top: 4px"
+            >
+              0 ₫
+            </div>
+
+            <div
+              id="roomPaymentPrevious"
+              style="font-size: 12px; color: var(--muted); margin-top: 8px"
+            ></div>
+          </div>
+
+          <div class="field">
+            <label id="roomPaymentAmountLabel"> Số tiền vừa nhận </label>
+
+            <input
+              id="roomPaymentAmount"
+              type="text"
+              inputmode="numeric"
+              placeholder="Nhập số tiền"
+              autocomplete="off"
+            />
+          </div>
+
+          <div
+            style="
+              padding: 12px;
+              background: var(--primary-soft);
+              border-radius: 10px;
+              display: flex;
+              justify-content: space-between;
+              gap: 10px;
+              align-items: center;
+            "
+          >
+            <span style="font-size: 13px; color: var(--muted)">
+              Còn thiếu
+            </span>
+
+            <strong id="roomPaymentRemaining" style="font-size: 16px">
+              0 ₫
+            </strong>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="secondary-btn"
+            onclick="closeRoomPaymentModal()"
+          >
+            Hủy
+          </button>
+
+          <button
+            type="button"
+            class="primary-btn"
+            id="roomPaymentSaveBtn"
+            onclick="saveRoomPaymentModal()"
+          >
+            Lưu thanh toán
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="roomPaymentDetailBackdrop" class="modal-backdrop">
+      <div class="modal" style="max-width: 420px">
+        <div class="modal-header">
+          <div class="modal-title">Chi tiết thanh toán</div>
+          <button class="close-btn" onclick="closeRoomPaymentDetail()">
+            &times;
+          </button>
+        </div>
+
+        <div id="roomPaymentDetailContent"></div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="secondary-btn"
+            onclick="closeRoomPaymentDetail()"
+          >
+            Đóng
+          </button>
+
+          <button
+            type="button"
+            class="primary-btn"
+            id="roomPaymentDetailEditBtn"
+          >
+            ✎ Cập nhật tiền đã nhận
+          </button>
+        </div>
+      </div>
+    </div>
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
@@ -3742,14 +4007,6 @@
    ACCOUNT PATH HELPERS
 ===================================== */
 
-      function getCurrentAccountRef() {
-        if (!db || !currentAccountId) {
-          throw new Error("Chưa chọn Account.");
-        }
-
-        return doc(db, "accounts", currentAccountId);
-      }
-
       function getAccountTransactionsRef() {
         if (!db || !currentAccountId) {
           throw new Error("Chưa chọn Account.");
@@ -3772,14 +4029,6 @@
         }
 
         return doc(db, "accounts", currentAccountId, "settings", "appLock");
-      }
-
-      function getAccountProfileRef() {
-        if (!db || !currentAccountId) {
-          throw new Error("Chưa chọn Account.");
-        }
-
-        return doc(db, "accounts", currentAccountId, "profile");
       }
       function getAccountCategoriesRef() {
         if (!db || !currentAccountId) {
@@ -9022,10 +9271,18 @@
 
           const existingSnapshot = await getDoc(billRef);
 
+          const existingData = existingSnapshot.exists()
+            ? existingSnapshot.data()
+            : {};
+
           await setDoc(billRef, {
             ...data,
+
+            // Giữ lại số tiền đã nhận trước đó.
+            paidAmount: Number(existingData.paidAmount || 0),
+
             createdAt: existingSnapshot.exists()
-              ? existingSnapshot.data().createdAt || serverTimestamp()
+              ? existingData.createdAt || serverTimestamp()
               : serverTimestamp(),
           });
 
@@ -9056,6 +9313,95 @@
         }
       };
 
+      let currentRoomPaymentDetail = null;
+
+      window.openRoomPaymentDetail = function (roomId, month) {
+        const room = roomRentRooms.find((r) => r.id === roomId);
+        const bill = roomRentBills.find(
+          (b) => b.roomId === roomId && b.month === month,
+        );
+
+        if (!room || !bill) return;
+
+        const legacyPaid =
+          Array.isArray(room.paidMonths) && room.paidMonths.includes(month);
+
+        const total = Number(bill.total || 0);
+
+        const paidAmount = Number(bill.paidAmount ?? (legacyPaid ? total : 0));
+
+        const remaining = Math.max(0, total - paidAmount);
+
+        const progress =
+          total > 0 ? Math.min(100, (paidAmount / total) * 100) : 0;
+
+        currentRoomPaymentDetail = { roomId, month };
+
+        document.getElementById("roomPaymentDetailContent").innerHTML = `
+    <div style="padding:16px 0">
+
+      <div style="color:var(--muted);font-size:13px;margin-bottom:18px">
+        ${roomRentEscapeHtml(room.name)} · Tháng ${month}
+      </div>
+
+      <div style="margin-bottom:18px">
+        <div style="font-size:12px;color:var(--muted)">
+          ĐÃ NHẬN
+        </div>
+        <div style="font-size:25px;font-weight:800;color:var(--income)">
+          ${roomRentMoney(paidAmount)}
+        </div>
+      </div>
+
+      <div style="margin-bottom:18px">
+        <div style="font-size:12px;color:var(--muted)">
+          CÒN THIẾU
+        </div>
+        <div style="font-size:25px;font-weight:800;color:var(--warning, #f59e0b)">
+          ${roomRentMoney(remaining)}
+        </div>
+      </div>
+
+      <div style="margin-bottom:18px">
+        <div style="display:flex;justify-content:space-between;
+                    font-size:12px;margin-bottom:7px">
+          <span>Tiến độ thanh toán</span>
+          <strong>${progress.toFixed(0)}%</strong>
+        </div>
+
+        <div class="rr-payment-progress">
+          <div class="rr-payment-progress-fill"
+               style="width:${progress}%"></div>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid var(--border);
+                  padding-top:14px;display:flex;
+                  justify-content:space-between">
+        <span style="color:var(--muted)">Tổng hóa đơn</span>
+        <strong>${roomRentMoney(total)}</strong>
+      </div>
+
+    </div>
+  `;
+
+        document.getElementById("roomPaymentDetailEditBtn").onclick = () => {
+          closeRoomPaymentDetail();
+          recordRoomRentPayment(roomId, month, "edit");
+        };
+
+        document
+          .getElementById("roomPaymentDetailBackdrop")
+          .classList.add("show");
+      };
+
+      window.closeRoomPaymentDetail = function () {
+        document
+          .getElementById("roomPaymentDetailBackdrop")
+          .classList.remove("show");
+
+        currentRoomPaymentDetail = null;
+      };
       /* =====================================
    MONTHLY UTILITY SUMMARY
 ===================================== */
@@ -9087,12 +9433,31 @@
           monthlyBills.map((bill) => [bill.roomId, bill]),
         );
 
-        const rows = activeRooms.map((room) => ({
-          room,
-          bill: billByRoom.get(room.id) || null,
-          isPaid:
-            Array.isArray(room.paidMonths) && room.paidMonths.includes(month),
-        }));
+        const rows = activeRooms.map((room) => {
+          const bill = billByRoom.get(room.id) || null;
+
+          const legacyPaid =
+            Array.isArray(room.paidMonths) && room.paidMonths.includes(month);
+
+          const total = Number(bill?.total || 0);
+
+          const paidAmount = bill
+            ? Number(bill.paidAmount ?? (legacyPaid ? total : 0))
+            : 0;
+
+          const remainingAmount = Math.max(0, total - paidAmount);
+
+          const isPaid = !!bill && total > 0 && paidAmount >= total;
+
+          return {
+            room,
+            bill,
+            total,
+            paidAmount,
+            remainingAmount,
+            isPaid,
+          };
+        });
         const savedRows = rows.filter((item) => item.bill);
         const paidCount = rows.filter((item) => item.isPaid).length;
         const totalElectricityUsage = savedRows.reduce(
@@ -9141,7 +9506,7 @@
         } else {
           tbody.innerHTML = rows
             .map(
-              ({ room, bill, isPaid }) => `
+              ({ room, bill, total, paidAmount, remainingAmount, isPaid }) => `
       <tr>
         <td style="padding:10px 8px">
           <strong>${roomRentEscapeHtml(room.name)}</strong>
@@ -9163,14 +9528,39 @@
         <td style="text-align:right;padding:10px 8px">
           ${bill ? roomRentMoney(bill.waterAmount) : "—"}
         </td>
-        <td style="text-align:center;padding:10px 8px">
-  <button
-    type="button"
-    class="rr-payment-btn ${isPaid ? "paid" : ""}"
-    onclick="toggleRoomRentPayment('${room.id}', '${month}', ${isPaid})"
-  >
-    ${isPaid ? "✓ Đã thanh toán" : "Chưa thanh toán"}
-  </button>
+       <td class="rr-payment-cell">
+  ${
+    !bill
+      ? `<span style="color:var(--muted)">Chưa có hóa đơn</span>`
+      : isPaid
+        ? `
+          <div class="rr-payment-complete">
+            ✓ Đã thanh toán đủ
+          </div>
+          <div style="font-size:12px;color:var(--muted);margin-top:5px">
+            ${roomRentMoney(total)}
+          </div>
+        `
+        : paidAmount <= 0
+          ? `
+          <button
+  type="button"
+  class="rr-payment-btn is-payment-entry"
+  onclick="recordRoomRentPayment('${room.id}', '${month}', 'partial')"
+>
+  + Nhập tiền đã nhận
+</button>
+          `
+          : `
+           <button
+  type="button"
+  class="rr-payment-btn is-payment-incomplete"
+  onclick="openRoomPaymentDetail('${room.id}', '${month}')"
+>
+  ⚠ Chưa thanh toán đủ
+</button>
+          `
+  }
 </td>
       </tr>
     `,
@@ -9203,37 +9593,225 @@
     `;
         }
       }
-      window.toggleRoomRentPayment = async function (
-        roomId,
-        month,
-        currentlyPaid,
-      ) {
-        if (!isAppUnlocked || !currentAccountId) {
-          return;
+      /* =====================================
+   ROOM RENT PAYMENT MODAL
+===================================== */
+
+      let roomPaymentModalData = null;
+
+      window.closeRoomPaymentModal = function () {
+        const modal = document.getElementById("roomPaymentModal");
+
+        if (modal) {
+          modal.classList.remove("show");
+          modal.setAttribute("aria-hidden", "true");
         }
+
+        roomPaymentModalData = null;
+      };
+
+      function formatRoomPaymentInput(value) {
+        const digits = String(value || "").replace(/\D/g, "");
+
+        return digits ? Number(digits).toLocaleString("vi-VN") : "";
+      }
+
+      function updateRoomPaymentPreview() {
+        const input = document.getElementById("roomPaymentAmount");
+
+        if (!input || !roomPaymentModalData) return;
+
+        const amount = Number(input.value.replace(/\D/g, "") || 0);
+
+        const { total, paidAmount, mode } = roomPaymentModalData;
+
+        const nextPaidAmount = mode === "edit" ? amount : paidAmount + amount;
+
+        const remaining = Math.max(0, total - nextPaidAmount);
+
+        document.getElementById("roomPaymentRemaining").textContent =
+          roomRentMoney(remaining);
+
+        const remainingElement = document.getElementById(
+          "roomPaymentRemaining",
+        );
+
+        remainingElement.style.color =
+          remaining === 0 ? "var(--income)" : "var(--text)";
+      }
+
+      document
+        .getElementById("roomPaymentAmount")
+        ?.addEventListener("input", function () {
+          this.value = formatRoomPaymentInput(this.value);
+
+          updateRoomPaymentPreview();
+        });
+
+      window.recordRoomRentPayment = async function (roomId, month, mode) {
+        if (!isAppUnlocked || !currentAccountId) return;
 
         const room = roomRentRooms.find((item) => item.id === roomId);
 
-        if (!room) return;
+        const bill = roomRentBills.find(
+          (item) => item.roomId === roomId && item.month === month,
+        );
 
-        const accountId = currentAccountId;
-        const nextPaid = !currentlyPaid;
+        if (!room || !bill) return;
 
-        const confirmed = await window.showAppDialog({
-          title: nextPaid
-            ? "Xác nhận đã nhận tiền?"
-            : "Hủy trạng thái thanh toán?",
-          message: nextPaid
-            ? `Xác nhận phòng ${room.name} đã thanh toán tiền phòng tháng ${month}?`
-            : `Bạn muốn chuyển phòng ${room.name} tháng ${month} về trạng thái chưa thanh toán?`,
-          type: "warning",
-          confirm: true,
-          confirmText: nextPaid ? "Đã nhận tiền" : "Xác nhận",
-        });
+        const total = Number(bill.total || 0);
 
-        if (!confirmed) return;
+        if (!Number.isSafeInteger(total) || total <= 0) {
+          await window.showAppDialog({
+            title: "Hóa đơn không hợp lệ",
+            message: "Vui lòng kiểm tra lại tổng tiền hóa đơn.",
+            type: "warning",
+          });
 
-        // Kiểm tra lại sau khi người dùng xác nhận.
+          return;
+        }
+
+        const legacyPaid =
+          Array.isArray(room.paidMonths) && room.paidMonths.includes(month);
+
+        const paidAmount = Number(bill.paidAmount ?? (legacyPaid ? total : 0));
+
+        const remaining = Math.max(0, total - paidAmount);
+
+        // Chế độ thanh toán đủ.
+        if (mode === "full") {
+          const confirmed = await window.showAppDialog({
+            title: "Xác nhận thanh toán đủ?",
+            message:
+              `Phòng ${room.name} - tháng ${month}\n\n` +
+              `Tổng hóa đơn: ${roomRentMoney(total)}\n` +
+              `Đã nhận: ${roomRentMoney(paidAmount)}\n` +
+              `Sẽ nhận thêm: ${roomRentMoney(remaining)}`,
+            type: "warning",
+            confirm: true,
+            confirmText: "Xác nhận",
+          });
+
+          if (!confirmed) return;
+
+          await saveRoomRentPayment(room, bill, month, total);
+
+          return;
+        }
+
+        // Mở modal nhập tiền hoặc chỉnh sửa số tiền đã nhận.
+        roomPaymentModalData = {
+          roomId,
+          month,
+          room,
+          bill,
+          total,
+          paidAmount,
+          mode,
+          accountId: currentAccountId,
+        };
+
+        const modal = document.getElementById("roomPaymentModal");
+
+        document.getElementById("roomPaymentModalTitle").textContent =
+          mode === "edit" ? "Thay đổi thanh toán" : "Ghi nhận thanh toán";
+
+        document.getElementById("roomPaymentModalSubtitle").textContent =
+          `${room.name} · Tháng ${month}`;
+
+        document.getElementById("roomPaymentTotal").textContent =
+          roomRentMoney(total);
+
+        document.getElementById("roomPaymentPrevious").textContent =
+          `Đã nhận trước đó: ${roomRentMoney(paidAmount)}`;
+
+        document.getElementById("roomPaymentAmountLabel").textContent =
+          mode === "edit" ? "Tổng số tiền đã nhận" : "Số tiền vừa nhận";
+
+        const input = document.getElementById("roomPaymentAmount");
+
+        input.value = mode === "edit" ? formatRoomPaymentInput(paidAmount) : "";
+
+        document.getElementById("roomPaymentSaveBtn").textContent =
+          mode === "edit" ? "Lưu thay đổi" : "Lưu thanh toán";
+
+        updateRoomPaymentPreview();
+
+        modal.classList.add("show");
+        modal.setAttribute("aria-hidden", "false");
+
+        setTimeout(() => input.focus(), 100);
+      };
+
+      /* =====================================
+   SAVE ROOM RENT PAYMENT
+===================================== */
+
+      window.saveRoomPaymentModal = async function () {
+        if (!roomPaymentModalData) return;
+
+        const data = roomPaymentModalData;
+
+        const input = document.getElementById("roomPaymentAmount");
+
+        const amount = Number(input.value.replace(/\D/g, "") || 0);
+
+        if (!Number.isSafeInteger(amount) || amount <= 0) {
+          await window.showAppDialog({
+            title: "Số tiền không hợp lệ",
+            message: "Vui lòng nhập số tiền lớn hơn 0.",
+            type: "warning",
+          });
+
+          return;
+        }
+
+        let nextPaidAmount =
+          data.mode === "edit" ? amount : data.paidAmount + amount;
+
+        if (nextPaidAmount > data.total) {
+          await window.showAppDialog({
+            title: "Số tiền vượt quá hóa đơn",
+            message:
+              `Tổng hóa đơn chỉ là ${roomRentMoney(data.total)}.\n\n` +
+              "Vui lòng kiểm tra lại số tiền đã nhận.",
+            type: "warning",
+          });
+
+          return;
+        }
+
+        if (
+          !isAppUnlocked ||
+          !currentAccountId ||
+          currentAccountId !== data.accountId
+        ) {
+          closeRoomPaymentModal();
+          return;
+        }
+
+        closeRoomPaymentModal();
+
+        await saveRoomRentPayment(
+          data.room,
+          data.bill,
+          data.month,
+          nextPaidAmount,
+          data.accountId,
+        );
+      };
+
+      /* =====================================
+   FIREBASE PAYMENT UPDATE
+===================================== */
+
+      async function saveRoomRentPayment(
+        room,
+        bill,
+        month,
+        nextPaidAmount,
+        accountId = currentAccountId,
+      ) {
         if (
           !isAppUnlocked ||
           !currentAccountId ||
@@ -9243,39 +9821,36 @@
         }
 
         try {
-          const roomRef = doc(db, "accounts", accountId, "rooms", roomId);
+          const billRef = doc(db, "accounts", accountId, "roomBills", bill.id);
 
-          await updateDoc(roomRef, {
-            paidMonths: nextPaid ? arrayUnion(month) : arrayRemove(month),
+          await updateDoc(billRef, {
+            paidAmount: nextPaidAmount,
             updatedAt: serverTimestamp(),
           });
 
-          // Cập nhật dữ liệu local ngay sau khi Firebase lưu thành công.
-          roomRentRooms = roomRentRooms.map((item) =>
-            item.id === roomId
+          roomRentBills = roomRentBills.map((item) =>
+            item.id === bill.id
               ? {
                   ...item,
-                  paidMonths: nextPaid
-                    ? [
-                        ...new Set([
-                          ...(Array.isArray(item.paidMonths)
-                            ? item.paidMonths
-                            : []),
-                          month,
-                        ]),
-                      ]
-                    : Array.isArray(item.paidMonths)
-                      ? item.paidMonths.filter(
-                          (itemMonth) => itemMonth !== month,
-                        )
-                      : [],
+                  paidAmount: nextPaidAmount,
                 }
               : item,
           );
 
           renderRoomRentSummary();
+
+          await window.showAppDialog({
+            title: "Đã cập nhật thanh toán",
+            message:
+              `Phòng ${room.name} - tháng ${month}\n\n` +
+              `Đã nhận: ${roomRentMoney(nextPaidAmount)}\n` +
+              `Còn thiếu: ${roomRentMoney(
+                Math.max(0, Number(bill.total || 0) - nextPaidAmount),
+              )}`,
+            type: "success",
+          });
         } catch (error) {
-          console.error("Toggle room rent payment error:", error);
+          console.error("Save room rent payment error:", error);
 
           await window.showAppDialog({
             title: "Không thể cập nhật thanh toán",
@@ -9283,8 +9858,7 @@
             type: "error",
           });
         }
-      };
-
+      }
       window.changeRoomRentSummaryMonth = function () {
         const summaryMonth = document.getElementById(
           "roomRentSummaryMonth",
@@ -9436,7 +10010,7 @@
         document.getElementById("roomRentBillMessage").textContent =
           "Đang chỉnh sửa hóa đơn đã lưu.";
 
-        document.getElementById("roomRentPage").scrollIntoView({
+        document.getElementById("roomRentBillSection")?.scrollIntoView({
           behavior: "smooth",
           block: "start",
         });
