@@ -2468,11 +2468,17 @@
 
               <hr class="kpi-divider" />
 
-              <div class="kpi-source-row">
-                <span class="kpi-source-label"> 🏦 Vào ngân hàng </span>
+              <div class="kpi-split">
+  <div class="kpi-source-row">
+    <span class="kpi-source-label">💵 Tiền mặt</span>
+    <div id="rentIncomeCashValue" class="kpi-value income">0 ₫</div>
+  </div>
 
-                <div id="rentIncomeBankValue" class="kpi-value income">0 ₫</div>
-              </div>
+  <div class="kpi-source-row">
+    <span class="kpi-source-label">🏦 Ngân hàng</span>
+    <div id="rentIncomeBankValue" class="kpi-value income">0 ₫</div>
+  </div>
+</div>
             </div>
             <!-- TỔNG CHI -->
             <div class="card kpi">
@@ -5712,7 +5718,8 @@
 
           // 🏠 Thu tiền trọ
           "rentIncomeValue",
-          "rentIncomeBankValue",
+"rentIncomeCashValue",
+"rentIncomeBankValue",
 
           "expenseTotalValue",
           "expenseCashValue",
@@ -10188,13 +10195,24 @@ sourceSelect.disabled = false;
 
         const totalMonthExpense = cashMonthExpense + bankMonthExpense;
         // ==============================
-        // THU TIỀN TRỌ
-        // ==============================
-        const rentIncome = transactions
-          .filter(
-            (item) => item.type === "income" && item.incomeKind === "rent",
-          )
-          .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+// THU TIỀN TRỌ
+// ==============================
+const rentTransactions = transactions.filter(
+  (item) => item.type === "income" && item.incomeKind === "rent",
+);
+
+const rentIncome = rentTransactions.reduce(
+  (sum, item) => sum + Number(item.amount || 0),
+  0,
+);
+
+const rentIncomeCash = rentTransactions
+  .filter((item) => (item.source || "cash") === "cash")
+  .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+
+const rentIncomeBank = rentTransactions
+  .filter((item) => item.source === "bank")
+  .reduce((sum, item) => sum + Number(item.amount || 0), 0);
         // ==============================
         // HIỂN THỊ DASHBOARD
         // ==============================
@@ -10207,7 +10225,8 @@ sourceSelect.disabled = false;
           balanceBankValue: bankBalance,
 
           rentIncomeValue: rentIncome,
-          rentIncomeBankValue: rentIncome,
+rentIncomeCashValue: rentIncomeCash,
+rentIncomeBankValue: rentIncomeBank,
           // Tổng thu
           incomeTotalValue: totalIncome,
           incomeCashValue: cashIncome,
