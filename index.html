@@ -7572,9 +7572,9 @@
         // =====================================
         // TIỀN TRỌ LUÔN VÀO NGÂN HÀNG
         // =====================================
-        if (currentTransactionType === "income" && incomeKind === "rent") {
-          source = "bank";
-        }
+        // if (currentTransactionType === "income" && incomeKind === "rent") {
+        //   source = "bank";
+        // }
 
         if (!date) {
           await window.showAppDialog({
@@ -7997,12 +7997,14 @@
         incomeKindField.style.display = "flex";
 
         // Nếu là tiền trọ -> bắt buộc Bank
-        if (incomeKindSelect && incomeKindSelect.value === "rent") {
-          sourceSelect.value = "bank";
-          sourceSelect.disabled = true;
-        } else {
-          sourceSelect.disabled = false;
-        }
+        // if (incomeKindSelect && incomeKindSelect.value === "rent") {
+        //   sourceSelect.value = "bank";
+        //   sourceSelect.disabled = true;
+        // } else {
+        //   sourceSelect.disabled = false;
+        // }
+        // Tiền trọ cũng được chọn nguồn tiền như khoản thu thông thường
+sourceSelect.disabled = false;
       }
       document
         .getElementById("transactionIncomeKind")
@@ -8011,12 +8013,15 @@
 
           if (!sourceSelect) return;
 
-          if (this.value === "rent") {
-            sourceSelect.value = "bank";
-            sourceSelect.disabled = true;
-          } else {
-            sourceSelect.disabled = false;
-          }
+          // if (this.value === "rent") {
+          //   sourceSelect.value = "bank";
+          //   sourceSelect.disabled = true;
+          // } else {
+          //   sourceSelect.disabled = false;
+          // }
+
+          // Không khóa nguồn tiền khi chọn khoản thu Tiền trọ
+sourceSelect.disabled = false;
         });
       /* =====================================
    ROOM RENT MODULE
