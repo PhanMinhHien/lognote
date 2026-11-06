@@ -1859,7 +1859,7 @@
           align-items: stretch;
           gap: 10px;
         }
- 
+
         .rr-room-search,
         .rr-room-filter {
           flex: 1 1 auto;
@@ -2469,16 +2469,20 @@
               <hr class="kpi-divider" />
 
               <div class="kpi-split">
-  <div class="kpi-source-row">
-    <span class="kpi-source-label">💵 Tiền mặt</span>
-    <div id="rentIncomeCashValue" class="kpi-value income">0 ₫</div>
-  </div>
+                <div class="kpi-source-row">
+                  <span class="kpi-source-label">💵 Tiền mặt</span>
+                  <div id="rentIncomeCashValue" class="kpi-value income">
+                    0 ₫
+                  </div>
+                </div>
 
-  <div class="kpi-source-row">
-    <span class="kpi-source-label">🏦 Ngân hàng</span>
-    <div id="rentIncomeBankValue" class="kpi-value income">0 ₫</div>
-  </div>
-</div>
+                <div class="kpi-source-row">
+                  <span class="kpi-source-label">🏦 Ngân hàng</span>
+                  <div id="rentIncomeBankValue" class="kpi-value income">
+                    0 ₫
+                  </div>
+                </div>
+              </div>
             </div>
             <!-- TỔNG CHI -->
             <div class="card kpi">
@@ -5718,8 +5722,8 @@
 
           // 🏠 Thu tiền trọ
           "rentIncomeValue",
-"rentIncomeCashValue",
-"rentIncomeBankValue",
+          "rentIncomeCashValue",
+          "rentIncomeBankValue",
 
           "expenseTotalValue",
           "expenseCashValue",
@@ -8011,7 +8015,7 @@
         //   sourceSelect.disabled = false;
         // }
         // Tiền trọ cũng được chọn nguồn tiền như khoản thu thông thường
-sourceSelect.disabled = false;
+        sourceSelect.disabled = false;
       }
       document
         .getElementById("transactionIncomeKind")
@@ -8028,7 +8032,7 @@ sourceSelect.disabled = false;
           // }
 
           // Không khóa nguồn tiền khi chọn khoản thu Tiền trọ
-sourceSelect.disabled = false;
+          sourceSelect.disabled = false;
         });
       /* =====================================
    ROOM RENT MODULE
@@ -10195,24 +10199,24 @@ sourceSelect.disabled = false;
 
         const totalMonthExpense = cashMonthExpense + bankMonthExpense;
         // ==============================
-// THU TIỀN TRỌ
-// ==============================
-const rentTransactions = transactions.filter(
-  (item) => item.type === "income" && item.incomeKind === "rent",
-);
+        // THU TIỀN TRỌ
+        // ==============================
+        const rentTransactions = transactions.filter(
+          (item) => item.type === "income" && item.incomeKind === "rent",
+        );
 
-const rentIncome = rentTransactions.reduce(
-  (sum, item) => sum + Number(item.amount || 0),
-  0,
-);
+        const rentIncome = rentTransactions.reduce(
+          (sum, item) => sum + Number(item.amount || 0),
+          0,
+        );
 
-const rentIncomeCash = rentTransactions
-  .filter((item) => (item.source || "cash") === "cash")
-  .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        const rentIncomeCash = rentTransactions
+          .filter((item) => (item.source || "cash") === "cash")
+          .reduce((sum, item) => sum + Number(item.amount || 0), 0);
 
-const rentIncomeBank = rentTransactions
-  .filter((item) => item.source === "bank")
-  .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        const rentIncomeBank = rentTransactions
+          .filter((item) => item.source === "bank")
+          .reduce((sum, item) => sum + Number(item.amount || 0), 0);
         // ==============================
         // HIỂN THỊ DASHBOARD
         // ==============================
@@ -10225,8 +10229,8 @@ const rentIncomeBank = rentTransactions
           balanceBankValue: bankBalance,
 
           rentIncomeValue: rentIncome,
-rentIncomeCashValue: rentIncomeCash,
-rentIncomeBankValue: rentIncomeBank,
+          rentIncomeCashValue: rentIncomeCash,
+          rentIncomeBankValue: rentIncomeBank,
           // Tổng thu
           incomeTotalValue: totalIncome,
           incomeCashValue: cashIncome,
