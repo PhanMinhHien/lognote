@@ -9565,24 +9565,24 @@
           maximumFractionDigits: 3,
         });
       }
-function formatRoomBillMillion(amount) {
-  const value = Math.round(Number(amount) || 0);
+      function formatRoomBillMillion(amount) {
+        const value = Math.round(Number(amount) || 0);
 
-  if (value >= 1000000) {
-    const millions = Math.floor(value / 1000000);
-    const thousands = Math.floor((value % 1000000) / 1000);
+        if (value >= 1000000) {
+          const millions = Math.floor(value / 1000000);
+          const thousands = Math.floor((value % 1000000) / 1000);
 
-    return thousands > 0
-      ? `${millions}tr${String(thousands).padStart(3, "0")}`
-      : `${millions}tr`;
-  }
+          return thousands > 0
+            ? `${millions}tr${String(thousands).padStart(3, "0")}`
+            : `${millions}tr`;
+        }
 
-  if (value >= 1000) {
-    return `${Math.floor(value / 1000)}k`;
-  }
+        if (value >= 1000) {
+          return `${Math.floor(value / 1000)}k`;
+        }
 
-  return String(value);
-}
+        return String(value);
+      }
       window.copyRoomRentBillText = async function () {
         const roomId = document.getElementById("roomBillRoom")?.value;
         const month = document.getElementById("roomBillMonth")?.value;
@@ -9623,14 +9623,15 @@ function formatRoomBillMillion(amount) {
           values.garbage +
           values.otherAmount;
         const lines = [
-`Tiền ${room.name} - tháng ${month.split("-").reverse().join(".")}`,
-          "",
-          `Điện: ${values.electricityNew} - ${values.electricityOld} = ${values.electricityUsage} x ${formatRoomBillRate(values.electricityRate)} = ${formatRoomBillShortAmount(values.electricityAmount)}`,
+  `Tiền ${room.name} - tháng ${month.split("-").reverse().join(".")}`,
+  "",
+  `Điện: ${values.electricityNew} - ${values.electricityOld} = ${values.electricityUsage} x ${formatRoomBillRate(values.electricityRate)} = ${formatRoomBillMillion(values.electricityAmount)}`,
 
-          `Nước: ${values.waterNew} - ${values.waterOld} = ${values.waterUsage} x ${formatRoomBillRate(values.waterRate)} = ${formatRoomBillShortAmount(values.waterAmount)}`,
-          `Rác: ${formatRoomBillShortAmount(values.garbage)}`,
-`Nhà: ${formatRoomBillMillion(values.rent)}`,
-        ];
+  `Nước: ${values.waterNew} - ${values.waterOld} = ${values.waterUsage} x ${formatRoomBillRate(values.waterRate)} = ${formatRoomBillMillion(values.waterAmount)}`,
+
+  `Rác: ${formatRoomBillMillion(values.garbage)}`,
+  `Nhà: ${formatRoomBillMillion(values.rent)}`,
+];
 
         // Chỉ thêm phụ thu khi có số tiền
         if (values.otherAmount > 0) {
@@ -9639,10 +9640,7 @@ function formatRoomBillMillion(amount) {
           );
         }
 
-lines.push(
-  "",
-  `Tổng: ${formatRoomBillMillion(roundedTotal)}`,
-);
+        lines.push("", `Tổng: ${formatRoomBillMillion(roundedTotal)}`);
         const text = lines.join("\n");
 
         try {
@@ -12048,79 +12046,79 @@ lines.push(
    ENTER KEY TO SAVE - GLOBAL MODAL
 ===================================== */
 
-document.addEventListener("keydown", function (event) {
-  if (event.key !== "Enter") return;
+      document.addEventListener("keydown", function (event) {
+        if (event.key !== "Enter") return;
 
-  if (
-    event.isComposing ||
-    event.shiftKey ||
-    event.ctrlKey ||
-    event.altKey
-  ) {
-    return;
-  }
+        if (
+          event.isComposing ||
+          event.shiftKey ||
+          event.ctrlKey ||
+          event.altKey
+        ) {
+          return;
+        }
 
-  const target = event.target;
+        const target = event.target;
 
-  // Không can thiệp khi nhập nhiều dòng
-  if (target?.tagName === "TEXTAREA") return;
-  if (target?.isContentEditable) return;
+        // Không can thiệp khi nhập nhiều dòng
+        if (target?.tagName === "TEXTAREA") return;
+        if (target?.isContentEditable) return;
 
-  // Không can thiệp vào select để tránh ảnh hưởng thao tác chọn
-  if (target?.tagName === "SELECT") return;
+        // Không can thiệp vào select để tránh ảnh hưởng thao tác chọn
+        if (target?.tagName === "SELECT") return;
 
-  // Xác định modal đang mở
-  const visible = (el) =>
-    el &&
-    el.getClientRects().length > 0 &&
-    getComputedStyle(el).visibility !== "hidden";
+        // Xác định modal đang mở
+        const visible = (el) =>
+          el &&
+          el.getClientRects().length > 0 &&
+          getComputedStyle(el).visibility !== "hidden";
 
-  let saveButton = null;
+        let saveButton = null;
 
-  // Giao dịch thu / chi
-  if (visible(document.getElementById("transactionModal"))) {
-    saveButton = document.getElementById("saveTransactionBtn");
-  }
+        // Giao dịch thu / chi
+        if (visible(document.getElementById("transactionModal"))) {
+          saveButton = document.getElementById("saveTransactionBtn");
+        }
 
-  // Chuyển tiền
-  else if (visible(document.getElementById("transferModal"))) {
-    saveButton = document.getElementById("saveTransferBtn");
-  }
+        // Chuyển tiền
+        else if (visible(document.getElementById("transferModal"))) {
+          saveButton = document.getElementById("saveTransferBtn");
+        }
 
-  // Thêm / sửa phòng
-  else if (visible(document.getElementById("roomRentRoomModal"))) {
-    saveButton = document.getElementById("saveRoomBtn");
-  }
+        // Thêm / sửa phòng
+        else if (visible(document.getElementById("roomRentRoomModal"))) {
+          saveButton = document.getElementById("saveRoomBtn");
+        }
 
-  // Thanh toán phòng
-  else if (visible(document.getElementById("roomPaymentModal"))) {
-    saveButton = document.getElementById("roomPaymentSaveBtn");
-  }
+        // Thanh toán phòng
+        else if (visible(document.getElementById("roomPaymentModal"))) {
+          saveButton = document.getElementById("roomPaymentSaveBtn");
+        }
 
-  // Tạo tài khoản
-  else if (visible(document.getElementById("createAccountForm"))) {
-    saveButton = document
-      .getElementById("createAccountForm")
-      ?.querySelector('button[onclick="createAccount()"]');
-  }
+        // Tạo tài khoản
+        else if (visible(document.getElementById("createAccountForm"))) {
+          saveButton = document
+            .getElementById("createAccountForm")
+            ?.querySelector('button[onclick="createAccount()"]');
+        }
 
-  // Tính tiền phòng
-  else if (visible(document.getElementById("roomRentBillSection"))) {
-    saveButton = document.getElementById("saveRoomBillBtn");
-  }
+        // Tính tiền phòng
+        else if (visible(document.getElementById("roomRentBillSection"))) {
+          saveButton = document.getElementById("saveRoomBillBtn");
+        }
 
-  // Thêm danh mục
-  else if (visible(document.getElementById("newCategoryName"))) {
-    saveButton = document.getElementById("addCategoryBtn");
-  }
+        // Thêm danh mục
+        else if (visible(document.getElementById("newCategoryName"))) {
+          saveButton = document.getElementById("addCategoryBtn");
+        }
 
-  if (!saveButton || saveButton.disabled) return;
+        if (!saveButton || saveButton.disabled) return;
 
-  event.preventDefault();
-  event.stopPropagation();
+        event.preventDefault();
+        event.stopPropagation();
 
-  saveButton.click();
-});
+        saveButton.click();
+      });
       /* =====================================
          INITIAL
       ===================================== */
