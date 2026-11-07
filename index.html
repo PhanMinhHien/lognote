@@ -12024,6 +12024,84 @@
           input.value = value.charAt(0).toUpperCase() + value.slice(1);
         }
       });
+
+      /* =====================================
+   ENTER KEY TO SAVE - GLOBAL MODAL
+===================================== */
+
+document.addEventListener("keydown", function (event) {
+  if (event.key !== "Enter") return;
+
+  if (
+    event.isComposing ||
+    event.shiftKey ||
+    event.ctrlKey ||
+    event.altKey
+  ) {
+    return;
+  }
+
+  const target = event.target;
+
+  // Không can thiệp khi nhập nhiều dòng
+  if (target?.tagName === "TEXTAREA") return;
+  if (target?.isContentEditable) return;
+
+  // Không can thiệp vào select để tránh ảnh hưởng thao tác chọn
+  if (target?.tagName === "SELECT") return;
+
+  // Xác định modal đang mở
+  const visible = (el) =>
+    el &&
+    el.getClientRects().length > 0 &&
+    getComputedStyle(el).visibility !== "hidden";
+
+  let saveButton = null;
+
+  // Giao dịch thu / chi
+  if (visible(document.getElementById("transactionModal"))) {
+    saveButton = document.getElementById("saveTransactionBtn");
+  }
+
+  // Chuyển tiền
+  else if (visible(document.getElementById("transferModal"))) {
+    saveButton = document.getElementById("saveTransferBtn");
+  }
+
+  // Thêm / sửa phòng
+  else if (visible(document.getElementById("roomRentRoomModal"))) {
+    saveButton = document.getElementById("saveRoomBtn");
+  }
+
+  // Thanh toán phòng
+  else if (visible(document.getElementById("roomPaymentModal"))) {
+    saveButton = document.getElementById("roomPaymentSaveBtn");
+  }
+
+  // Tạo tài khoản
+  else if (visible(document.getElementById("createAccountForm"))) {
+    saveButton = document
+      .getElementById("createAccountForm")
+      ?.querySelector('button[onclick="createAccount()"]');
+  }
+
+  // Tính tiền phòng
+  else if (visible(document.getElementById("roomRentBillSection"))) {
+    saveButton = document.getElementById("saveRoomBillBtn");
+  }
+
+  // Thêm danh mục
+  else if (visible(document.getElementById("newCategoryName"))) {
+    saveButton = document.getElementById("addCategoryBtn");
+  }
+
+  if (!saveButton || saveButton.disabled) return;
+
+  event.preventDefault();
+  event.stopPropagation();
+
+  saveButton.click();
+});
       /* =====================================
          INITIAL
       ===================================== */
