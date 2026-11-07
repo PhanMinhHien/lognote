@@ -1506,6 +1506,138 @@
         }
       }
       /* =====================================
+   ROOM RENT - COMPACT OVERVIEW / ACCORDIONS
+===================================== */
+
+      .rr-accordion {
+        padding: 0;
+        overflow: hidden;
+      }
+
+      .rr-accordion > summary,
+      .rr-subaccordion > summary {
+        list-style: none;
+        cursor: pointer;
+      }
+
+      .rr-accordion > summary::-webkit-details-marker,
+      .rr-subaccordion > summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .rr-accordion-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 20px 0;
+      }
+
+      .rr-accordion-summary .settings-description {
+        margin: 7px 0 0;
+      }
+
+      .rr-chevron {
+        flex: 0 0 auto;
+        color: var(--muted);
+        font-size: 20px;
+        transition: transform 0.2s ease;
+      }
+
+      .rr-accordion[open] > .rr-accordion-summary {
+        border-bottom: 1px solid var(--border);
+      }
+
+      .rr-accordion[open] > .rr-accordion-summary .rr-chevron,
+      .rr-subaccordion[open] > summary .rr-chevron {
+        transform: rotate(180deg);
+      }
+
+      /* .rr-accordion-content {
+        padding: 0 22px 22px;
+      } */
+
+      .rr-subaccordion {
+        margin-top: 14px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--bg);
+        overflow: hidden;
+      }
+
+      .rr-subaccordion > summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 13px 15px;
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .rr-subaccordion[open] > summary {
+        border-bottom: 1px solid var(--border);
+      }
+
+      .rr-subaccordion-content {
+        padding: 12px;
+      }
+
+      .rr-overview-kpis {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin: 16px 0;
+      }
+
+      .rr-overview-kpi {
+        min-width: 0;
+        padding: 15px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--bg);
+      }
+
+      .rr-overview-kpi-label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 7px;
+      }
+
+      .rr-overview-kpi-value {
+        font-size: clamp(16px, 2vw, 21px);
+        font-weight: 850;
+        overflow-wrap: anywhere;
+      }
+
+      .rr-overview-kpi-value.is-paid {
+        color: var(--income);
+      }
+
+      .rr-overview-kpi-value.is-due {
+        color: var(--expense);
+      }
+
+      @media (max-width: 600px) {
+        .rr-overview-kpis {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+
+        .rr-overview-kpi {
+          padding: 12px 14px;
+        }
+
+        .rr-accordion-summary {
+          padding: 17px;
+        }
+
+        .rr-accordion-content {
+          padding: 0 14px 16px;
+        }
+      }
+      /* =====================================
    ROOM RENT MODULE - MODERN UI
 ===================================== */
 
@@ -1685,7 +1817,7 @@
 
         padding: 4px 8px 4px 4px;
         margin-top: 0;
-
+        margin-bottom: 20px;
         scrollbar-width: thin;
         scrollbar-color: var(--border) transparent;
       }
@@ -2844,28 +2976,18 @@
           </div>
 
           <!-- ROOM MANAGEMENT -->
-          <div class="card rr-card">
-            <div class="rr-section-heading">
+          <details class="card rr-card rr-accordion">
+            <summary class="rr-accordion-summary">
               <div>
-                <div class="panel-title">🚪 Danh sách phòng</div>
+                <div class="panel-title">🚪 Danh sách phòng & cấu hình</div>
                 <div class="settings-description">
-                  Lưu tiền thuê, tiền rác và đơn giá điện nước riêng cho từng
-                  phòng.
+                  Quản lý phòng, tiền thuê, tiền rác và đơn giá điện nước.
                 </div>
               </div>
-            </div>
-
-            <div class="rr-actions">
-            <button
-  class="primary-btn"
-  type="button"
-  onclick="prepareNewRoomRentRoom()"
->
-  ＋ Thêm phòng
-</button>
-            </div>
-
-            <!-- <div class="rr-actions">
+              <span class="rr-chevron" aria-hidden="true">⌄</span>
+            </summary>
+            <div class="rr-accordion-content">
+              <!-- <div class="rr-actions">
               <button
                 id="saveRoomBtn"
                 class="primary-btn"
@@ -2886,34 +3008,45 @@
               </button>
             </div> -->
 
-            <div class="rr-room-toolbar">
-              <div class="field rr-room-search">
-                <input
-                  id="roomRentRoomSearch"
-                  type="search"
-                  placeholder="🔎 Tìm theo tên phòng..."
-                  oninput="renderRoomRentRooms()"
-                />
+              <div class="rr-room-toolbar">
+                <div class="field rr-room-search">
+                  <input
+                    id="roomRentRoomSearch"
+                    type="search"
+                    placeholder="🔎 Tìm theo tên phòng..."
+                    oninput="renderRoomRentRooms()"
+                  />
+                </div>
+
+                <div class="field rr-room-filter">
+                  <select
+                    id="roomRentRoomStatusFilter"
+                    onchange="renderRoomRentRooms()"
+                  >
+                    <option value="all">Tất cả phòng</option>
+                    <option value="active">Đang hoạt động</option>
+                    <option value="inactive">Ngừng sử dụng</option>
+                  </select>
+                </div>
               </div>
 
-              <div class="field rr-room-filter">
-                <select
-                  id="roomRentRoomStatusFilter"
-                  onchange="renderRoomRentRooms()"
+              <div id="roomRentRoomList" class="rr-room-list">
+                <div class="settings-description">
+                  Đang tải danh sách phòng...
+                </div>
+              </div>
+
+              <div class="rr-actions">
+                <button
+                  class="primary-btn"
+                  type="button"
+                  onclick="prepareNewRoomRentRoom()"
                 >
-                  <option value="all">Tất cả phòng</option>
-                  <option value="active">Đang hoạt động</option>
-                  <option value="inactive">Ngừng sử dụng</option>
-                </select>
+                  ＋ Thêm phòng
+                </button>
               </div>
             </div>
-
-            <div id="roomRentRoomList" class="rr-room-list">
-              <div class="settings-description">
-                Đang tải danh sách phòng...
-              </div>
-            </div>
-          </div>
+          </details>
           <!-- MONTHLY UTILITY SUMMARY -->
           <div class="card rr-card">
             <div class="panel-title">📊 Tổng hợp điện nước theo tháng</div>
@@ -2931,31 +3064,130 @@
               />
             </div>
 
-            <div class="rr-grid rr-grid-2" style="margin-top: 16px">
-              <div class="rr-utility-card">
-                <div class="rr-utility-title">⚡ Tổng điện sử dụng</div>
-                <div class="rr-result">
-                  <strong id="roomSummaryElectricityUsage">0 kWh</strong>
-                </div>
-                <div class="settings-description">
-                  Thành tiền:
-                  <strong id="roomSummaryElectricityAmount">0 ₫</strong>
+            <div class="rr-overview-kpis">
+              <div class="rr-overview-kpi">
+                <div class="rr-overview-kpi-label">Tổng hóa đơn</div>
+                <div class="rr-overview-kpi-value" id="roomSummaryTotalAmount">
+                  0 ₫
                 </div>
               </div>
 
-              <div class="rr-utility-card">
-                <div class="rr-utility-title">💧 Tổng nước sử dụng</div>
-                <div class="rr-result">
-                  <strong id="roomSummaryWaterUsage">0 m³</strong>
+              <div class="rr-overview-kpi">
+                <div class="rr-overview-kpi-label">Đã thu</div>
+                <div
+                  class="rr-overview-kpi-value is-paid"
+                  id="roomSummaryPaidAmount"
+                >
+                  0 ₫
                 </div>
-                <div class="settings-description">
-                  Thành tiền:
-                  <strong id="roomSummaryWaterAmount">0 ₫</strong>
+              </div>
+
+              <div class="rr-overview-kpi">
+                <div class="rr-overview-kpi-label">Còn phải thu</div>
+                <div
+                  class="rr-overview-kpi-value is-due"
+                  id="roomSummaryRemainingAmount"
+                >
+                  0 ₫
                 </div>
               </div>
             </div>
 
             <div
+              class="settings-description"
+              id="roomSummaryBillCount"
+              style="margin: 8px 0 14px"
+            >
+              Đã có hóa đơn: 0 / 0 phòng đang hoạt động
+            </div>
+
+            <details class="rr-subaccordion">
+              <summary>
+                <span>⚡ Chi tiết điện nước</span>
+                <span class="rr-chevron" aria-hidden="true">⌄</span>
+              </summary>
+
+              <div class="rr-subaccordion-content">
+                <div class="rr-grid rr-grid-2" style="margin-top: 0">
+                  <div class="rr-utility-card">
+                    <div class="rr-utility-title">⚡ Tổng điện sử dụng</div>
+                    <div class="rr-result">
+                      <strong id="roomSummaryElectricityUsage">0 kWh</strong>
+                    </div>
+                    <div class="settings-description">
+                      Thành tiền:
+                      <strong id="roomSummaryElectricityAmount">0 ₫</strong>
+                    </div>
+                  </div>
+
+                  <div class="rr-utility-card">
+                    <div class="rr-utility-title">💧 Tổng nước sử dụng</div>
+                    <div class="rr-result">
+                      <strong id="roomSummaryWaterUsage">0 m³</strong>
+                    </div>
+                    <div class="settings-description">
+                      Thành tiền:
+                      <strong id="roomSummaryWaterAmount">0 ₫</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </details>
+
+            <details class="rr-subaccordion">
+              <summary>
+                <span>🏠 Chi tiết từng phòng & thanh toán</span>
+                <span class="rr-chevron" aria-hidden="true">⌄</span>
+              </summary>
+
+              <div class="rr-subaccordion-content">
+                <div style="overflow-x: auto">
+                  <table
+                    style="
+                      width: 100%;
+                      border-collapse: collapse;
+                      min-width: 520px;
+                    "
+                  >
+                    <thead>
+                      <tr>
+                        <th style="text-align: left; padding: 10px 8px">
+                          Phòng
+                        </th>
+                        <th style="text-align: right; padding: 10px 8px">
+                          Điện
+                        </th>
+                        <th style="text-align: right; padding: 10px 8px">
+                          Tiền điện
+                        </th>
+                        <th style="text-align: right; padding: 10px 8px">
+                          Nước
+                        </th>
+                        <th style="text-align: right; padding: 10px 8px">
+                          Tiền nước
+                        </th>
+                        <th style="text-align: right; padding: 10px 8px">
+                          Tổng tiền phòng
+                        </th>
+                        <th style="text-align: center; padding: 10px 8px">
+                          Thanh toán
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody id="roomRentSummaryBody">
+                      <tr>
+                        <td colspan="7" class="rr-empty">Chưa có dữ liệu.</td>
+                      </tr>
+                    </tbody>
+
+                    <tfoot id="roomRentSummaryFoot"></tfoot>
+                  </table>
+                </div>
+              </div>
+            </details>
+
+            <!-- <div
               class="settings-description"
               id="roomSummaryBillCount"
               style="margin: 14px 0"
@@ -2994,269 +3226,285 @@
                 </tbody>
                 <tfoot id="roomRentSummaryFoot"></tfoot>
               </table>
-            </div>
+            </div> -->
           </div>
           <!-- MONTHLY BILL -->
-          <div class="card rr-card" id="roomRentBillSection">
-            <div class="panel-title">🧮 Tính tiền phòng</div>
-
-            <div class="settings-description">
-              Chọn phòng và tháng cần tính. Chỉ số đầu kỳ sẽ tự lấy từ chỉ số
-              cuối kỳ của hóa đơn tháng trước nếu có.
-            </div>
-
-            <div class="rr-grid rr-grid-2">
-              <div class="field">
-                <label for="roomBillRoom">Phòng</label>
-                <select
-                  id="roomBillRoom"
-                  onchange="window.prepareRoomBillForSelection()"
-                >
-                  <option value="">-- Chọn phòng --</option>
-                </select>
+          <details class="card rr-card rr-accordion" id="roomRentBillSection">
+            <summary class="rr-accordion-summary">
+              <div>
+                <div class="panel-title">🧮 Tính tiền phòng</div>
+                <div class="settings-description">
+                  Chọn phòng, nhập chỉ số điện nước và lập hóa đơn hàng tháng.
+                </div>
               </div>
+              <span class="rr-chevron" aria-hidden="true">⌄</span>
+            </summary>
 
-              <div class="field">
-                <label for="roomBillMonth">Tháng</label>
-                <input
-                  id="roomBillMonth"
-                  type="month"
-                  onchange="window.prepareRoomBillForSelection()"
-                />
-              </div>
-            </div>
-
-            <div class="rr-divider"></div>
-
-            <div class="rr-grid rr-grid-2">
-              <!-- ELECTRICITY -->
-              <div class="rr-utility-card">
-                <div class="rr-utility-title">⚡ Tiền điện</div>
+            <div class="rr-accordion-content">
+              <div class="rr-grid rr-grid-2">
+                <div class="field">
+                  <label for="roomBillRoom">Phòng</label>
+                  <select
+                    id="roomBillRoom"
+                    onchange="window.prepareRoomBillForSelection()"
+                  >
+                    <option value="">-- Chọn phòng --</option>
+                  </select>
+                </div>
 
                 <div class="field">
-                  <label for="roomElectricityOld">Chỉ số cũ</label>
+                  <label for="roomBillMonth">Tháng</label>
                   <input
-                    id="roomElectricityOld"
-                    type="number"
-                    min="0"
-                    step="1"
+                    id="roomBillMonth"
+                    type="month"
+                    onchange="window.prepareRoomBillForSelection()"
+                  />
+                </div>
+              </div>
+
+              <div class="rr-divider"></div>
+
+              <div class="rr-grid rr-grid-2">
+                <!-- ELECTRICITY -->
+                <div class="rr-utility-card">
+                  <div class="rr-utility-title">⚡ Tiền điện</div>
+
+                  <div class="field">
+                    <label for="roomElectricityOld">Chỉ số cũ</label>
+                    <input
+                      id="roomElectricityOld"
+                      type="number"
+                      min="0"
+                      step="1"
+                      oninput="calculateRoomBillPreview()"
+                    />
+                  </div>
+
+                  <div class="field">
+                    <label for="roomElectricityNew">Chỉ số mới</label>
+                    <input
+                      id="roomElectricityNew"
+                      type="number"
+                      min="0"
+                      step="1"
+                      oninput="calculateRoomBillPreview()"
+                    />
+                  </div>
+
+                  <div class="field">
+                    <label for="roomElectricityRatePreview">
+                      Đơn giá (VNĐ / kWh)
+                    </label>
+                    <input
+                      id="roomElectricityRatePreview"
+                      type="number"
+                      min="0"
+                      step="1"
+                      oninput="calculateRoomBillPreview()"
+                    />
+                  </div>
+
+                  <div class="rr-result">
+                    <span>Số điện sử dụng</span>
+                    <strong id="roomElectricityUsage">0 kWh</strong>
+                  </div>
+
+                  <div class="rr-result">
+                    <span>Thành tiền</span>
+                    <strong id="roomElectricityAmount">0 ₫</strong>
+                  </div>
+                </div>
+
+                <!-- WATER -->
+                <div class="rr-utility-card">
+                  <div class="rr-utility-title">💧 Tiền nước</div>
+
+                  <div class="field">
+                    <label for="roomWaterOld">Chỉ số cũ</label>
+                    <input
+                      id="roomWaterOld"
+                      type="number"
+                      min="0"
+                      step="1"
+                      oninput="calculateRoomBillPreview()"
+                    />
+                  </div>
+
+                  <div class="field">
+                    <label for="roomWaterNew">Chỉ số mới</label>
+                    <input
+                      id="roomWaterNew"
+                      type="number"
+                      min="0"
+                      step="1"
+                      oninput="calculateRoomBillPreview()"
+                    />
+                  </div>
+
+                  <div class="field">
+                    <label for="roomWaterRatePreview">
+                      Đơn giá (VNĐ / m³)
+                    </label>
+                    <input
+                      id="roomWaterRatePreview"
+                      type="number"
+                      min="0"
+                      step="1"
+                      oninput="calculateRoomBillPreview()"
+                    />
+                  </div>
+
+                  <div class="rr-result">
+                    <span>Lượng nước sử dụng</span>
+                    <strong id="roomWaterUsage">0 m³</strong>
+                  </div>
+
+                  <div class="rr-result">
+                    <span>Thành tiền</span>
+                    <strong id="roomWaterAmount">0 ₫</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rr-divider"></div>
+
+              <!-- OTHER COSTS -->
+              <div class="rr-grid rr-grid-2">
+                <div class="field">
+                  <label for="roomBillRent">Tiền thuê (VNĐ)</label>
+                  <input
+                    id="roomBillRent"
+                    type="text"
+                    inputmode="numeric"
+                    placeholder="0"
                     oninput="calculateRoomBillPreview()"
                   />
                 </div>
 
                 <div class="field">
-                  <label for="roomElectricityNew">Chỉ số mới</label>
+                  <label for="roomBillGarbage">Tiền rác (VNĐ)</label>
                   <input
-                    id="roomElectricityNew"
-                    type="number"
-                    min="0"
-                    step="1"
+                    id="roomBillGarbage"
+                    type="text"
+                    inputmode="numeric"
+                    placeholder="0"
                     oninput="calculateRoomBillPreview()"
                   />
                 </div>
 
                 <div class="field">
-                  <label for="roomElectricityRatePreview">
-                    Đơn giá (VNĐ / kWh)
+                  <label for="roomBillOtherName">Khoản phát sinh</label>
+                  <input
+                    id="roomBillOtherName"
+                    type="text"
+                    placeholder="Ví dụ: Phí sửa chữa"
+                    maxlength="80"
+                    oninput="calculateRoomBillPreview()"
+                  />
+                </div>
+
+                <div class="field">
+                  <label for="roomBillOtherAmount">
+                    Số tiền phát sinh (VNĐ)
                   </label>
                   <input
-                    id="roomElectricityRatePreview"
-                    type="number"
-                    min="0"
-                    step="1"
+                    id="roomBillOtherAmount"
+                    type="text"
+                    inputmode="numeric"
+                    placeholder="0"
                     oninput="calculateRoomBillPreview()"
                   />
                 </div>
-
-                <div class="rr-result">
-                  <span>Số điện sử dụng</span>
-                  <strong id="roomElectricityUsage">0 kWh</strong>
-                </div>
-
-                <div class="rr-result">
-                  <span>Thành tiền</span>
-                  <strong id="roomElectricityAmount">0 ₫</strong>
-                </div>
               </div>
 
-              <!-- WATER -->
-              <div class="rr-utility-card">
-                <div class="rr-utility-title">💧 Tiền nước</div>
-
-                <div class="field">
-                  <label for="roomWaterOld">Chỉ số cũ</label>
-                  <input
-                    id="roomWaterOld"
-                    type="number"
-                    min="0"
-                    step="1"
-                    oninput="calculateRoomBillPreview()"
-                  />
-                </div>
-
-                <div class="field">
-                  <label for="roomWaterNew">Chỉ số mới</label>
-                  <input
-                    id="roomWaterNew"
-                    type="number"
-                    min="0"
-                    step="1"
-                    oninput="calculateRoomBillPreview()"
-                  />
-                </div>
-
-                <div class="field">
-                  <label for="roomWaterRatePreview"> Đơn giá (VNĐ / m³) </label>
-                  <input
-                    id="roomWaterRatePreview"
-                    type="number"
-                    min="0"
-                    step="1"
-                    oninput="calculateRoomBillPreview()"
-                  />
-                </div>
-
-                <div class="rr-result">
-                  <span>Lượng nước sử dụng</span>
-                  <strong id="roomWaterUsage">0 m³</strong>
-                </div>
-
-                <div class="rr-result">
-                  <span>Thành tiền</span>
-                  <strong id="roomWaterAmount">0 ₫</strong>
-                </div>
-              </div>
-            </div>
-
-            <div class="rr-divider"></div>
-
-            <!-- OTHER COSTS -->
-            <div class="rr-grid rr-grid-2">
-              <div class="field">
-                <label for="roomBillRent">Tiền thuê (VNĐ)</label>
-                <input
-                  id="roomBillRent"
-                  type="text"
-                  inputmode="numeric"
-                  placeholder="0"
-                  oninput="calculateRoomBillPreview()"
-                />
+              <div class="rr-total">
+                <span>TỔNG TIỀN PHÒNG</span>
+                <strong id="roomBillTotal">0 ₫</strong>
               </div>
 
-              <div class="field">
-                <label for="roomBillGarbage">Tiền rác (VNĐ)</label>
-                <input
-                  id="roomBillGarbage"
-                  type="text"
-                  inputmode="numeric"
-                  placeholder="0"
-                  oninput="calculateRoomBillPreview()"
-                />
-              </div>
-
-              <div class="field">
-                <label for="roomBillOtherName">Khoản phát sinh</label>
-                <input
-                  id="roomBillOtherName"
-                  type="text"
-                  placeholder="Ví dụ: Phí sửa chữa"
-                  maxlength="80"
-                  oninput="calculateRoomBillPreview()"
-                />
-              </div>
-
-              <div class="field">
-                <label for="roomBillOtherAmount">
-                  Số tiền phát sinh (VNĐ)
-                </label>
-                <input
-                  id="roomBillOtherAmount"
-                  type="text"
-                  inputmode="numeric"
-                  placeholder="0"
-                  oninput="calculateRoomBillPreview()"
-                />
-              </div>
-            </div>
-
-            <div class="rr-total">
-              <span>TỔNG TIỀN PHÒNG</span>
-              <strong id="roomBillTotal">0 ₫</strong>
-            </div>
-
-            <div class="rr-actions">
-              <button
-                id="saveRoomBillBtn"
-                class="primary-btn"
-                type="button"
-                onclick="saveRoomRentBill()"
-              >
-                💾 Lưu hóa đơn
-              </button>
-              <button
-                class="secondary-btn"
-                type="button"
-                onclick="copyRoomRentBillText()"
-              >
-                📋 Copy gửi khách
-              </button>
-              <button
-                class="secondary-btn"
-                type="button"
-                onclick="resetRoomRentBillForm()"
-              >
-                Làm mới
-              </button>
-            </div>
-
-            <div id="roomRentBillMessage" class="settings-description"></div>
-          </div>
-
-          <!-- HISTORY -->
-          <div class="card rr-card">
-            <div class="panel-title">📚 Lịch sử hóa đơn</div>
-
-            <div class="rr-grid rr-grid-2">
-              <div class="field">
-                <label for="roomHistoryFilter">Lọc theo phòng</label>
-                <select
-                  id="roomHistoryFilter"
-                  onchange="renderRoomRentHistory()"
+              <div class="rr-actions">
+                <button
+                  id="saveRoomBillBtn"
+                  class="primary-btn"
+                  type="button"
+                  onclick="saveRoomRentBill()"
                 >
-                  <option value="">Tất cả phòng</option>
-                </select>
+                  💾 Lưu hóa đơn
+                </button>
+                <button
+                  class="secondary-btn"
+                  type="button"
+                  onclick="copyRoomRentBillText()"
+                >
+                  📋 Copy gửi khách
+                </button>
+                <button
+                  class="secondary-btn"
+                  type="button"
+                  onclick="resetRoomRentBillForm()"
+                >
+                  Làm mới
+                </button>
               </div>
 
-              <div class="field">
-                <label for="roomHistoryMonth">Lọc theo tháng</label>
-                <input
-                  id="roomHistoryMonth"
-                  type="month"
-                  onchange="renderRoomRentHistory()"
-                />
+              <div id="roomRentBillMessage" class="settings-description"></div>
+            </div>
+          </details>
+          <!-- HISTORY -->
+          <details class="card rr-card rr-accordion">
+            <summary class="rr-accordion-summary">
+              <div>
+                <div class="panel-title">📚 Lịch sử hóa đơn</div>
+                <div class="settings-description">
+                  Tra cứu, chỉnh sửa và xóa các hóa đơn đã lưu.
+                </div>
+              </div>
+              <span class="rr-chevron" aria-hidden="true">⌄</span>
+            </summary>
+
+            <div class="rr-accordion-content">
+              <div class="rr-grid rr-grid-2">
+                <div class="field">
+                  <label for="roomHistoryFilter">Lọc theo phòng</label>
+                  <select
+                    id="roomHistoryFilter"
+                    onchange="renderRoomRentHistory()"
+                  >
+                    <option value="">Tất cả phòng</option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label for="roomHistoryMonth">Lọc theo tháng</label>
+                  <input
+                    id="roomHistoryMonth"
+                    type="month"
+                    onchange="renderRoomRentHistory()"
+                  />
+                </div>
+              </div>
+
+              <div class="table-wrapper">
+                <table class="rr-history-table">
+                  <thead>
+                    <tr>
+                      <th>Tháng</th>
+                      <th>Phòng</th>
+                      <th>Điện</th>
+                      <th>Nước</th>
+                      <th>Tổng tiền</th>
+                      <th>Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody id="roomRentHistoryBody">
+                    <tr>
+                      <td colspan="6">Đang tải dữ liệu...</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
-
-            <div class="table-wrapper">
-              <table class="rr-history-table">
-                <thead>
-                  <tr>
-                    <th>Tháng</th>
-                    <th>Phòng</th>
-                    <th>Điện</th>
-                    <th>Nước</th>
-                    <th>Tổng tiền</th>
-                    <th>Thao tác</th>
-                  </tr>
-                </thead>
-                <tbody id="roomRentHistoryBody">
-                  <tr>
-                    <td colspan="6">Đang tải dữ liệu...</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+          </details>
         </section>
         <section id="settingsPage" class="page">
           <div class="topbar">
@@ -8629,29 +8877,27 @@
       /* =====================================
    ROOM MANAGEMENT
 ===================================== */
-window.prepareNewRoomRentRoom = function () {
-  // Xóa trạng thái chỉnh sửa và toàn bộ dữ liệu cũ
-  editingRoomRentRoomId = null;
+      window.prepareNewRoomRentRoom = function () {
+        // Xóa trạng thái chỉnh sửa và toàn bộ dữ liệu cũ
+        editingRoomRentRoomId = null;
 
-  roomRentSetInput("roomName", "");
-  roomRentSetInput("roomDefaultRent", "");
-  roomRentSetInput("roomDefaultGarbage", "");
-  roomRentSetInput("roomElectricityRatePerRoom", "");
-  roomRentSetInput("roomWaterRatePerRoom", "");
+        roomRentSetInput("roomName", "");
+        roomRentSetInput("roomDefaultRent", "");
+        roomRentSetInput("roomDefaultGarbage", "");
+        roomRentSetInput("roomElectricityRatePerRoom", "");
+        roomRentSetInput("roomWaterRatePerRoom", "");
 
-  // Cập nhật giao diện
-  document.getElementById("saveRoomBtn").textContent =
-    "＋ Thêm phòng";
+        // Cập nhật giao diện
+        document.getElementById("saveRoomBtn").textContent = "＋ Thêm phòng";
 
-  document.getElementById("cancelRoomEditBtn").style.display =
-    "none";
+        document.getElementById("cancelRoomEditBtn").style.display = "none";
 
-  document.getElementById("roomRentRoomModalTitle").textContent =
-    "＋ Thêm phòng";
+        document.getElementById("roomRentRoomModalTitle").textContent =
+          "＋ Thêm phòng";
 
-  // Mở modal sau khi đã reset
-  window.openRoomRentRoomModal();
-};
+        // Mở modal sau khi đã reset
+        window.openRoomRentRoomModal();
+      };
       window.openRoomRentRoomModal = function () {
         const modal = document.getElementById("roomRentRoomModal");
         if (!modal) return;
@@ -8937,28 +9183,26 @@ window.prepareNewRoomRentRoom = function () {
         window.openRoomRentRoomModal();
       };
 
-    window.resetRoomRentRoomForm = function () {
-  editingRoomRentRoomId = null;
+      window.resetRoomRentRoomForm = function () {
+        editingRoomRentRoomId = null;
 
-  // Xóa toàn bộ input
-  roomRentSetInput("roomName", "");
-  roomRentSetInput("roomDefaultRent", "");
-  roomRentSetInput("roomDefaultGarbage", "");
-  roomRentSetInput("roomElectricityRatePerRoom", "");
-  roomRentSetInput("roomWaterRatePerRoom", "");
+        // Xóa toàn bộ input
+        roomRentSetInput("roomName", "");
+        roomRentSetInput("roomDefaultRent", "");
+        roomRentSetInput("roomDefaultGarbage", "");
+        roomRentSetInput("roomElectricityRatePerRoom", "");
+        roomRentSetInput("roomWaterRatePerRoom", "");
 
-  // Trả giao diện về trạng thái thêm phòng
-  document.getElementById("saveRoomBtn").textContent =
-    "＋ Thêm phòng";
+        // Trả giao diện về trạng thái thêm phòng
+        document.getElementById("saveRoomBtn").textContent = "＋ Thêm phòng";
 
-  document.getElementById("cancelRoomEditBtn").style.display =
-    "none";
+        document.getElementById("cancelRoomEditBtn").style.display = "none";
 
-  document.getElementById("roomRentRoomModalTitle").textContent =
-    "＋ Thêm phòng";
+        document.getElementById("roomRentRoomModalTitle").textContent =
+          "＋ Thêm phòng";
 
-  window.closeRoomRentRoomModal();
-};
+        window.closeRoomRentRoomModal();
+      };
 
       window.toggleRoomRentRoomStatus = async function (id) {
         const room = roomRentRooms.find((item) => item.id === id);
@@ -9860,6 +10104,26 @@ window.prepareNewRoomRentRoom = function () {
           (sum, item) => sum + Number(item.total || 0),
           0,
         );
+        const totalPaidAmount = savedRows.reduce(
+          (sum, item) => sum + Number(item.paidAmount || 0),
+          0,
+        );
+
+        const totalRemainingAmount = savedRows.reduce(
+          (sum, item) => sum + Number(item.remainingAmount || 0),
+          0,
+        );
+
+        const totalKpi = document.getElementById("roomSummaryTotalAmount");
+        const paidKpi = document.getElementById("roomSummaryPaidAmount");
+        const remainingKpi = document.getElementById(
+          "roomSummaryRemainingAmount",
+        );
+
+        if (totalKpi) totalKpi.textContent = roomRentMoney(totalRoomBillAmount);
+        if (paidKpi) paidKpi.textContent = roomRentMoney(totalPaidAmount);
+        if (remainingKpi)
+          remainingKpi.textContent = roomRentMoney(totalRemainingAmount);
         document.getElementById("roomSummaryElectricityUsage").textContent =
           totalElectricityUsage.toLocaleString("vi-VN") + " kWh";
 
@@ -10400,7 +10664,13 @@ window.prepareNewRoomRentRoom = function () {
         document.getElementById("roomRentBillMessage").textContent =
           "Đang chỉnh sửa hóa đơn đã lưu.";
 
-        document.getElementById("roomRentBillSection")?.scrollIntoView({
+        const billSection = document.getElementById("roomRentBillSection");
+
+        if (billSection) {
+          billSection.open = true;
+        }
+
+        billSection?.scrollIntoView({
           behavior: "smooth",
           block: "start",
         });
