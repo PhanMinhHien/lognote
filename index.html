@@ -2243,6 +2243,94 @@
           transform: translateY(0) scale(1);
         }
       }
+      /* ROOM MANAGEMENT MODAL */
+      .rr-room-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 125;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        background: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(4px);
+      }
+
+      .rr-room-modal-backdrop.show {
+        display: flex;
+      }
+
+      .rr-room-modal {
+        width: 100%;
+        max-width: 560px;
+        max-height: 90vh;
+        overflow-y: auto;
+        padding: 22px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--card);
+        color: var(--text);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        animation: rrRoomModalIn 0.18s ease;
+      }
+
+      .rr-room-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .rr-room-modal-close {
+        flex-shrink: 0;
+        width: 36px;
+        height: 36px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--bg);
+        color: var(--text);
+        cursor: pointer;
+      }
+
+      .rr-room-modal-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 22px;
+      }
+
+      .rr-room-modal-actions button {
+        flex: 1;
+      }
+
+      @keyframes rrRoomModalIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px) scale(0.98);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @media (max-width: 520px) {
+        .rr-room-modal {
+          padding: 18px;
+        }
+
+        .rr-room-modal .rr-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .rr-room-modal-actions {
+          flex-direction: column;
+        }
+
+        .rr-room-modal-actions button {
+          width: 100%;
+        }
+      }
     </style>
   </head>
 
@@ -2767,60 +2855,17 @@
               </div>
             </div>
 
-            <div class="rr-grid rr-grid-2">
-              <div class="field">
-                <label for="roomName">Tên phòng</label>
-                <input
-                  id="roomName"
-                  type="text"
-                  placeholder="Ví dụ: Phòng 4"
-                  maxlength="50"
-                />
-              </div>
-
-              <div class="field">
-                <label for="roomDefaultRent">Tiền thuê mặc định (VNĐ)</label>
-                <input
-                  id="roomDefaultRent"
-                  type="text"
-                  inputmode="numeric"
-                  placeholder="Ví dụ: 3.000.000"
-                />
-              </div>
-
-              <div class="field">
-                <label for="roomDefaultGarbage">Tiền rác mặc định (VNĐ)</label>
-                <input
-                  id="roomDefaultGarbage"
-                  type="text"
-                  inputmode="numeric"
-                  placeholder="Ví dụ: 25.000"
-                />
-              </div>
-              <div class="field">
-                <label for="roomElectricityRatePerRoom">
-                  Giá điện (VNĐ / kWh)
-                </label>
-                <input
-                  id="roomElectricityRatePerRoom"
-                  type="text"
-                  inputmode="numeric"
-                  placeholder="Ví dụ: 4.000"
-                />
-              </div>
-
-              <div class="field">
-                <label for="roomWaterRatePerRoom"> Giá nước (VNĐ / m³) </label>
-                <input
-                  id="roomWaterRatePerRoom"
-                  type="text"
-                  inputmode="numeric"
-                  placeholder="Ví dụ: 25.000"
-                />
-              </div>
+            <div class="rr-actions">
+              <button
+                class="primary-btn"
+                type="button"
+                onclick="openRoomRentRoomModal()"
+              >
+                ＋ Thêm phòng
+              </button>
             </div>
 
-            <div class="rr-actions">
+            <!-- <div class="rr-actions">
               <button
                 id="saveRoomBtn"
                 class="primary-btn"
@@ -2839,7 +2884,7 @@
               >
                 Hủy sửa
               </button>
-            </div>
+            </div> -->
 
             <div class="rr-room-toolbar">
               <div class="field rr-room-search">
@@ -2931,14 +2976,14 @@
                     </th>
                     <th style="text-align: right; padding: 10px 8px">Nước</th>
                     <th style="text-align: right; padding: 10px 8px">
-  Tiền nước
-</th>
-<th style="text-align: right; padding: 10px 8px">
-  Tổng tiền phòng
-</th>
-<th style="text-align: center; padding: 10px 8px">
-  Thanh toán
-</th>
+                      Tiền nước
+                    </th>
+                    <th style="text-align: right; padding: 10px 8px">
+                      Tổng tiền phòng
+                    </th>
+                    <th style="text-align: center; padding: 10px 8px">
+                      Thanh toán
+                    </th>
                   </tr>
                 </thead>
 
@@ -3834,6 +3879,113 @@
             id="roomPaymentDetailEditBtn"
           >
             ✎ Cập nhật tiền đã nhận
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- ROOM MANAGEMENT MODAL -->
+    <div
+      id="roomRentRoomModal"
+      class="rr-room-modal-backdrop"
+      onclick="if (event.target === this) closeRoomRentRoomModal();"
+    >
+      <div
+        class="rr-room-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="roomRentRoomModalTitle"
+      >
+        <div class="rr-room-modal-header">
+          <div>
+            <div class="panel-title" id="roomRentRoomModalTitle">
+              ＋ Thêm phòng
+            </div>
+            <div class="settings-description">
+              Lưu tiền thuê, tiền rác và đơn giá điện nước riêng cho từng phòng.
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="rr-room-modal-close"
+            onclick="closeRoomRentRoomModal()"
+            aria-label="Đóng"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div class="rr-grid rr-grid-2">
+          <div class="field">
+            <label for="roomName">Tên phòng</label>
+            <input
+              id="roomName"
+              type="text"
+              placeholder="Ví dụ: Phòng 4"
+              maxlength="50"
+            />
+          </div>
+
+          <div class="field">
+            <label for="roomDefaultRent">Tiền thuê mặc định (VNĐ)</label>
+            <input
+              id="roomDefaultRent"
+              type="text"
+              inputmode="numeric"
+              placeholder="Ví dụ: 3.000.000"
+            />
+          </div>
+
+          <div class="field">
+            <label for="roomDefaultGarbage">Tiền rác mặc định (VNĐ)</label>
+            <input
+              id="roomDefaultGarbage"
+              type="text"
+              inputmode="numeric"
+              placeholder="Ví dụ: 25.000"
+            />
+          </div>
+
+          <div class="field">
+            <label for="roomElectricityRatePerRoom">
+              Giá điện (VNĐ / kWh)
+            </label>
+            <input
+              id="roomElectricityRatePerRoom"
+              type="text"
+              inputmode="numeric"
+              placeholder="Ví dụ: 4.000"
+            />
+          </div>
+
+          <div class="field">
+            <label for="roomWaterRatePerRoom">Giá nước (VNĐ / m³)</label>
+            <input
+              id="roomWaterRatePerRoom"
+              type="text"
+              inputmode="numeric"
+              placeholder="Ví dụ: 25.000"
+            />
+          </div>
+        </div>
+
+        <div class="rr-room-modal-actions">
+          <button
+            id="saveRoomBtn"
+            class="primary-btn"
+            type="button"
+            onclick="saveRoomRentRoom()"
+          >
+            ＋ Thêm phòng
+          </button>
+
+          <button
+            id="cancelRoomEditBtn"
+            class="secondary-btn"
+            type="button"
+            onclick="resetRoomRentRoomForm()"
+          >
+            Hủy
           </button>
         </div>
       </div>
@@ -8477,7 +8629,20 @@
       /* =====================================
    ROOM MANAGEMENT
 ===================================== */
+      window.openRoomRentRoomModal = function () {
+        const modal = document.getElementById("roomRentRoomModal");
+        if (!modal) return;
 
+        modal.classList.add("show");
+
+        setTimeout(() => {
+          document.getElementById("roomName")?.focus();
+        }, 100);
+      };
+
+      window.closeRoomRentRoomModal = function () {
+        document.getElementById("roomRentRoomModal")?.classList.remove("show");
+      };
       function renderRoomRentRooms() {
         const container = document.getElementById("roomRentRoomList");
         if (!container) return;
@@ -8743,6 +8908,10 @@
           "💾 Cập nhật phòng";
 
         document.getElementById("cancelRoomEditBtn").style.display = "";
+        document.getElementById("roomRentRoomModalTitle").textContent =
+          "✏️ Chỉnh sửa phòng";
+
+        window.openRoomRentRoomModal();
       };
 
       window.resetRoomRentRoomForm = function () {
@@ -8762,7 +8931,12 @@
 
         document.getElementById("saveRoomBtn").textContent = "＋ Thêm phòng";
 
-        document.getElementById("cancelRoomEditBtn").style.display = "none";
+        document.getElementById("cancelRoomEditBtn").style.display = "";
+
+        document.getElementById("roomRentRoomModalTitle").textContent =
+          "＋ Thêm phòng";
+
+        window.closeRoomRentRoomModal();
       };
 
       window.toggleRoomRentRoomStatus = async function (id) {
@@ -9160,12 +9334,12 @@
           });
           return;
         }
-const roundedTotal =
-  Math.ceil(values.electricityAmount / 1000) * 1000 +
-  Math.ceil(values.waterAmount / 1000) * 1000 +
-  values.rent +
-  values.garbage +
-  values.otherAmount;
+        const roundedTotal =
+          Math.ceil(values.electricityAmount / 1000) * 1000 +
+          Math.ceil(values.waterAmount / 1000) * 1000 +
+          values.rent +
+          values.garbage +
+          values.otherAmount;
         const lines = [
           `Tiền ${room.name} - tháng ${month}`,
           "",
@@ -9661,10 +9835,10 @@ const roundedTotal =
           (sum, item) => sum + Number(item.bill.waterAmount || 0),
           0,
         );
-const totalRoomBillAmount = savedRows.reduce(
-  (sum, item) => sum + Number(item.total || 0),
-  0,
-);
+        const totalRoomBillAmount = savedRows.reduce(
+          (sum, item) => sum + Number(item.total || 0),
+          0,
+        );
         document.getElementById("roomSummaryElectricityUsage").textContent =
           totalElectricityUsage.toLocaleString("vi-VN") + " kWh";
 
