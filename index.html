@@ -2394,6 +2394,14 @@
             </div>
             <div style="display: flex; gap: 10px; flex-wrap: wrap">
               <button
+                id="toggleFundDetailsBtn"
+                class="secondary-btn"
+                type="button"
+                onclick="toggleFundDetails()"
+              >
+                Chi tiết quỹ
+              </button>
+              <button
                 class="secondary-btn"
                 type="button"
                 onclick="openTransferModal()"
@@ -3535,6 +3543,13 @@
             <label for="transactionCategory">Category</label>
             <select id="transactionCategory"></select>
           </div>
+          <div class="field" id="expenseFundField" style="display: none">
+            <label for="transactionFund">Phân loại khoản chi</label>
+            <select id="transactionFund">
+              <option value="personal">👤 Chi cá nhân</option>
+              <option value="rent">🏠 Chi tiền trọ</option>
+            </select>
+          </div>
 
           <div class="field">
             <label for="transactionNote">Note</label>
@@ -3646,6 +3661,14 @@
           </button>
         </div>
       </div>
+    </div>
+
+    <div class="field" id="transferFundField">
+      <label for="transferFund">Quỹ tiền chuyển</label>
+      <select id="transferFund">
+        <option value="personal">👤 Tiền cá nhân</option>
+        <option value="rent">🏠 Tiền trọ</option>
+      </select>
     </div>
     <!-- CUSTOM NOTIFICATION / CONFIRMATION MODAL -->
     <div id="appDialogBackdrop" class="modal-backdrop" aria-hidden="true">
@@ -7373,6 +7396,9 @@
 
           document.getElementById("transferNote").value =
             transaction.note || "";
+
+          document.getElementById("transferFund").value =
+            transaction.fundType || "personal";
         } else {
           document.getElementById("transferModalTitle").textContent =
             "↔ Chuyển tiền";
@@ -7386,6 +7412,7 @@
           document.getElementById("transferTo").value = "bank";
 
           document.getElementById("transferNote").value = "";
+          document.getElementById("transferFund").value = "personal";
         }
 
         modal.classList.add("show");
@@ -7481,6 +7508,8 @@
           date,
           fromSource,
           toSource,
+          fundType:
+            document.getElementById("transferFund")?.value || "personal",
           note,
           updatedAt: serverTimestamp(),
         };
@@ -7579,7 +7608,12 @@
           currentTransactionType === "expense"
             ? document.getElementById("transactionCategory").value
             : "";
-
+        const fundType =
+          currentTransactionType === "expense"
+            ? document.getElementById("transactionFund")?.value || "personal"
+            : incomeKind === "rent"
+              ? "rent"
+              : "personal";
         // =====================================
         // TIỀN TRỌ LUÔN VÀO NGÂN HÀNG
         // =====================================
@@ -7616,6 +7650,7 @@
           category,
           source,
           incomeKind,
+          fundType,
           note,
           updatedAt: serverTimestamp(),
         };
@@ -7835,10 +7870,17 @@
         // =====================================
         // CATEGORY CHỈ CHO CHI
         // =====================================
+        // =====================================
+        // CATEGORY CHỈ CHO CHI
+        // =====================================
         if (currentTransactionType === "expense") {
           renderCategoryOptions(transaction.category || "");
+
+          document.getElementById("transactionFund").value =
+            transaction.fundType || "personal";
         } else {
           renderCategoryOptions(accountCategories[0]?.name || "");
+          document.getElementById("transactionFund").value = "personal";
         }
 
         updateTypeUI();
@@ -7873,7 +7915,7 @@
         currentTransactionType = "income";
 
         document.getElementById("modalTitle").textContent = "Thêm giao dịch";
-
+        document.getElementById("transactionFund").value = "personal";
         document.getElementById("transactionDate").value = getToday();
 
         document.getElementById("transactionAmount").value = "";
@@ -7992,7 +8034,7 @@
         if (currentTransactionType === "expense") {
           categoryField.style.display = "flex";
           incomeKindField.style.display = "none";
-
+          document.getElementById("expenseFundField").style.display = "flex";
           // Không để dữ liệu "Tiền trọ" dính sang Chi
           if (incomeKindSelect) {
             incomeKindSelect.value = "normal";
@@ -8006,7 +8048,7 @@
         // =====================================
         categoryField.style.display = "none";
         incomeKindField.style.display = "flex";
-
+        document.getElementById("expenseFundField").style.display = "none";
         // Nếu là tiền trọ -> bắt buộc Bank
         // if (incomeKindSelect && incomeKindSelect.value === "rent") {
         //   sourceSelect.value = "bank";
@@ -10217,6 +10259,132 @@
         const rentIncomeBank = rentTransactions
           .filter((item) => item.source === "bank")
           .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+
+        // =====================================
+        // PHÂN LOẠI QUỸ CÁ NHÂN / TIỀN TRỌ
+        // =====================================
+
+        function sumFund(items, predicate) {
+          return items
+            .filter(predicate)
+            .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        }
+
+        function getFundType(item) {
+          if (item.type === "income") {
+            return item.incomeKind === "rent" ? "rent" : "personal";
+          }
+
+          // Giao dịch cũ chưa có fundType mặc định là cá nhân
+          return item.fundType === "rent" ? "rent" : "personal";
+        }
+
+        function getFundSourceTotal(fund, source, type) {
+          return sumFund(
+            transactions,
+            (item) =>
+              item.type === type &&
+              getFundType(item) === fund &&
+              (item.source || "cash") === source,
+          );
+        }
+
+        function getFundTransferTotal(fund, source, direction) {
+          return sumFund(
+            transactions,
+            (item) =>
+              item.type === "transfer" &&
+              getFundType(item) === fund &&
+              (direction === "out"
+                ? item.fromSource === source
+                : item.toSource === source),
+          );
+        }
+
+        function calculateFundBalance(fund) {
+          const cashIncome = getFundSourceTotal(fund, "cash", "income");
+          const bankIncome = getFundSourceTotal(fund, "bank", "income");
+
+          const cashExpense = getFundSourceTotal(fund, "cash", "expense");
+          const bankExpense = getFundSourceTotal(fund, "bank", "expense");
+
+          const cashTransferOut = getFundTransferTotal(fund, "cash", "out");
+          const cashTransferIn = getFundTransferTotal(fund, "cash", "in");
+
+          const bankTransferOut = getFundTransferTotal(fund, "bank", "out");
+          const bankTransferIn = getFundTransferTotal(fund, "bank", "in");
+
+          const cash =
+            cashIncome - cashExpense - cashTransferOut + cashTransferIn;
+
+          const bank =
+            bankIncome - bankExpense - bankTransferOut + bankTransferIn;
+
+          return {
+            cash,
+            bank,
+            total: cash + bank,
+          };
+        }
+
+        const personalBalance = calculateFundBalance("personal");
+        const rentBalance = calculateFundBalance("rent");
+
+        const personalIncomeCash = getFundSourceTotal(
+          "personal",
+          "cash",
+          "income",
+        );
+
+        const personalIncomeBank = getFundSourceTotal(
+          "personal",
+          "bank",
+          "income",
+        );
+
+        const personalIncomeTotal = personalIncomeCash + personalIncomeBank;
+
+        const rentIncomeTotal = rentIncomeCash + rentIncomeBank;
+
+        // =====================================
+        // CHI THEO QUỸ CÁ NHÂN / TIỀN TRỌ
+        // =====================================
+
+        function getFundExpenseTotals(fund, monthOnly = false) {
+          const items = transactions.filter((item) => {
+            if (item.type !== "expense" || getFundType(item) !== fund) {
+              return false;
+            }
+
+            return (
+              !monthOnly || String(item.date || "").startsWith(currentMonth)
+            );
+          });
+
+          const cash = sumFund(
+            items,
+            (item) => (item.source || "cash") === "cash",
+          );
+
+          const bank = sumFund(
+            items,
+            (item) => (item.source || "cash") === "bank",
+          );
+
+          return {
+            cash,
+            bank,
+            total: cash + bank,
+          };
+        }
+
+        // Tổng chi
+        const personalExpense = getFundExpenseTotals("personal");
+        const rentExpense = getFundExpenseTotals("rent");
+
+        // Chi tháng này
+        const personalMonthExpense = getFundExpenseTotals("personal", true);
+        const rentMonthExpense = getFundExpenseTotals("rent", true);
         // ==============================
         // HIỂN THỊ DASHBOARD
         // ==============================
@@ -10254,7 +10422,80 @@
 
           element.textContent = formatMoney(value);
         });
+        renderFundSplitCards({
+          personalBalance: {
+            title: "👤 Tiền cá nhân",
+            rows: [
+              { label: "Tổng số dư", value: personalBalance.total },
+              { label: "💵 Tiền mặt", value: personalBalance.cash },
+              { label: "🏦 Ngân hàng", value: personalBalance.bank },
+            ],
+          },
 
+          rentBalance: {
+            title: "🏠 Tiền trọ",
+            rows: [
+              { label: "Tổng số dư", value: rentBalance.total },
+              { label: "💵 Tiền mặt", value: rentBalance.cash },
+              { label: "🏦 Ngân hàng", value: rentBalance.bank },
+            ],
+          },
+
+          personalIncome: {
+            title: "👤 Thu cá nhân",
+            rows: [
+              { label: "Tổng thu", value: personalIncomeTotal },
+              { label: "💵 Tiền mặt", value: personalIncomeCash },
+              { label: "🏦 Ngân hàng", value: personalIncomeBank },
+            ],
+          },
+
+          rentIncome: {
+            title: "🏠 Thu tiền trọ",
+            rows: [
+              { label: "Tổng thu", value: rentIncomeTotal },
+              { label: "💵 Tiền mặt", value: rentIncomeCash },
+              { label: "🏦 Ngân hàng", value: rentIncomeBank },
+            ],
+          },
+          // Tổng chi
+          personalExpense: {
+            title: "👤 Tiền cá nhân",
+            rows: [
+              { label: "Tổng chi", value: personalExpense.total },
+              { label: "💵 Tiền mặt", value: personalExpense.cash },
+              { label: "🏦 Ngân hàng", value: personalExpense.bank },
+            ],
+          },
+
+          rentExpense: {
+            title: "🏠 Tiền trọ",
+            rows: [
+              { label: "Tổng chi", value: rentExpense.total },
+              { label: "💵 Tiền mặt", value: rentExpense.cash },
+              { label: "🏦 Ngân hàng", value: rentExpense.bank },
+            ],
+          },
+
+          // Chi tháng này
+          personalMonthExpense: {
+            title: "👤 Tiền cá nhân",
+            rows: [
+              { label: "Chi tháng này", value: personalMonthExpense.total },
+              { label: "💵 Tiền mặt", value: personalMonthExpense.cash },
+              { label: "🏦 Ngân hàng", value: personalMonthExpense.bank },
+            ],
+          },
+
+          rentMonthExpense: {
+            title: "🏠 Tiền trọ",
+            rows: [
+              { label: "Chi tháng này", value: rentMonthExpense.total },
+              { label: "💵 Tiền mặt", value: rentMonthExpense.cash },
+              { label: "🏦 Ngân hàng", value: rentMonthExpense.bank },
+            ],
+          },
+        });
         // ==============================
         // MÀU SẮC SỐ DƯ
         // ==============================
@@ -10295,7 +10536,186 @@
         renderSourceList();
         renderRecentTransactions();
       }
+      function renderFundSplitCards(data) {
+        const balanceCard = document
+          .getElementById("balanceTotalValue")
+          ?.closest(".kpi");
 
+        const incomeCard = document
+          .getElementById("incomeTotalValue")
+          ?.closest(".kpi");
+
+        const expenseCard = document
+          .getElementById("expenseTotalValue")
+          ?.closest(".kpi");
+
+        const monthExpenseCard = document
+          .getElementById("monthExpenseTotalValue")
+          ?.closest(".kpi");
+
+        if (!balanceCard || !incomeCard || !expenseCard || !monthExpenseCard) {
+          return;
+        }
+
+        // CSS cho hai quỹ nằm song song
+        if (!document.getElementById("fundSplitCompactStyle")) {
+          const style = document.createElement("style");
+          style.id = "fundSplitCompactStyle";
+
+          style.textContent = `
+    .kpi-fund-grid {
+  display: none;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+/* Khi bật chi tiết quỹ */
+#dashboardPage.show-fund-details .kpi-fund-grid {
+  display: grid;
+}
+
+      .kpi-fund-item {
+        min-width: 0;
+        padding: 11px;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--card-bg, transparent);
+      }
+
+      .kpi-fund-title {
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 9px;
+      }
+
+      .kpi-fund-total {
+        font-size: 17px;
+        font-weight: 750;
+        margin-bottom: 10px;
+        overflow-wrap: anywhere;
+      }
+
+      .kpi-fund-detail {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 6px;
+        margin-top: 7px;
+        font-size: 12px;
+      }
+
+      .kpi-fund-detail span {
+        color: var(--muted);
+      }
+
+      .kpi-fund-detail strong {
+        text-align: right;
+        overflow-wrap: anywhere;
+      }
+
+      @media (max-width: 480px) {
+        .kpi-fund-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    `;
+
+          document.head.appendChild(style);
+        }
+
+        function renderFund(fund) {
+          return `
+      <div class="kpi-fund-item">
+        <div class="kpi-fund-title">${fund.title}</div>
+
+        <div class="kpi-fund-total">
+          ${formatMoney(fund.rows[0].value)}
+        </div>
+
+        <div class="kpi-fund-detail">
+          <span>💵 Tiền mặt</span>
+          <strong>${formatMoney(fund.rows[1].value)}</strong>
+        </div>
+
+        <div class="kpi-fund-detail">
+          <span>🏦 Ngân hàng</span>
+          <strong>${formatMoney(fund.rows[2].value)}</strong>
+        </div>
+      </div>
+    `;
+        }
+
+        // Số dư
+        let balanceBox = document.getElementById("fundBalanceBreakdown");
+
+        if (!balanceBox) {
+          balanceBox = document.createElement("div");
+          balanceBox.id = "fundBalanceBreakdown";
+          balanceCard.appendChild(balanceBox);
+        }
+
+        balanceBox.className = "kpi-fund-grid";
+        balanceBox.innerHTML =
+          renderFund(data.personalBalance) + renderFund(data.rentBalance);
+
+        // Tổng thu
+        let incomeBox = document.getElementById("fundIncomeBreakdown");
+
+        if (!incomeBox) {
+          incomeBox = document.createElement("div");
+          incomeBox.id = "fundIncomeBreakdown";
+          incomeCard.appendChild(incomeBox);
+        }
+
+        incomeBox.className = "kpi-fund-grid";
+        incomeBox.innerHTML =
+          renderFund(data.personalIncome) + renderFund(data.rentIncome);
+
+        // Tổng chi
+        let expenseBox = document.getElementById("fundExpenseBreakdown");
+
+        if (!expenseBox) {
+          expenseBox = document.createElement("div");
+          expenseBox.id = "fundExpenseBreakdown";
+          expenseCard.appendChild(expenseBox);
+        }
+
+        expenseBox.className = "kpi-fund-grid";
+        expenseBox.innerHTML =
+          renderFund(data.personalExpense) + renderFund(data.rentExpense);
+
+        // Chi tháng này
+        let monthExpenseBox = document.getElementById(
+          "fundMonthExpenseBreakdown",
+        );
+
+        if (!monthExpenseBox) {
+          monthExpenseBox = document.createElement("div");
+          monthExpenseBox.id = "fundMonthExpenseBreakdown";
+          monthExpenseCard.appendChild(monthExpenseBox);
+        }
+
+        monthExpenseBox.className = "kpi-fund-grid";
+        monthExpenseBox.innerHTML =
+          renderFund(data.personalMonthExpense) +
+          renderFund(data.rentMonthExpense);
+      }
+      // =====================================
+      // TOGGLE CHI TIẾT CÁC QUỸ DASHBOARD
+      // =====================================
+      window.toggleFundDetails = function () {
+        const dashboard = document.getElementById("dashboardPage");
+        const button = document.getElementById("toggleFundDetailsBtn");
+
+        if (!dashboard || !button) return;
+
+        const isExpanded = dashboard.classList.toggle("show-fund-details");
+
+        button.innerHTML = isExpanded ? "Thu gọn quỹ" : "Chi tiết quỹ";
+      };
       /* =====================================
          WEEKLY CHART
       ===================================== */
