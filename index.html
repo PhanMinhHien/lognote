@@ -799,7 +799,7 @@
           grid-template-columns: repeat(2, 1fr);
         }
         .kpi-fund-grid {
-          grid-template-columns: 1fr!important;
+          grid-template-columns: 1fr !important;
         }
         .dashboard-grid {
           grid-template-columns: 1fr;
@@ -3145,7 +3145,13 @@
               >
                 💾 Lưu hóa đơn
               </button>
-
+              <button
+                class="secondary-btn"
+                type="button"
+                onclick="copyRoomRentBillText()"
+              >
+                📋 Copy gửi khách
+              </button>
               <button
                 class="secondary-btn"
                 type="button"
@@ -9100,7 +9106,120 @@
           values.total,
         );
       };
+      // =====================================
+      // COPY CHI TIẾT TIỀN PHÒNG GỬI KHÁCH
+      // =====================================
 
+      // Hiển thị thành tiền: làm tròn lên đến nghìn gần nhất
+      function formatRoomBillShortAmount(value) {
+        const amount = Math.ceil(Number(value || 0) / 1000);
+
+        return amount.toLocaleString("vi-VN");
+      }
+
+      // Hiển thị đơn giá: giữ nguyên số lẻ
+      function formatRoomBillRate(value) {
+        return (Number(value || 0) / 1000).toLocaleString("vi-VN", {
+          maximumFractionDigits: 3,
+        });
+      }
+
+      window.copyRoomRentBillText = async function () {
+        const roomId = document.getElementById("roomBillRoom")?.value;
+        const month = document.getElementById("roomBillMonth")?.value;
+
+        const room = roomRentRooms.find((item) => item.id === roomId);
+
+        if (!room || !month) {
+          await window.showAppDialog({
+            title: "Thiếu thông tin",
+            message: "Vui lòng chọn phòng và tháng cần tính.",
+            type: "warning",
+          });
+          return;
+        }
+
+        const values = calculateRoomRentValues();
+
+        // Kiểm tra chỉ số công tơ
+        if (
+          !Number.isSafeInteger(values.electricityOld) ||
+          !Number.isSafeInteger(values.electricityNew) ||
+          !Number.isSafeInteger(values.waterOld) ||
+          !Number.isSafeInteger(values.waterNew) ||
+          values.electricityNew < values.electricityOld ||
+          values.waterNew < values.waterOld
+        ) {
+          await window.showAppDialog({
+            title: "Chỉ số chưa hợp lệ",
+            message: "Vui lòng kiểm tra lại chỉ số điện và nước.",
+            type: "warning",
+          });
+          return;
+        }
+const roundedTotal =
+  Math.ceil(values.electricityAmount / 1000) * 1000 +
+  Math.ceil(values.waterAmount / 1000) * 1000 +
+  values.rent +
+  values.garbage +
+  values.otherAmount;
+        const lines = [
+          `Tiền ${room.name} - tháng ${month}`,
+          "",
+          `Điện: ${values.electricityNew} - ${values.electricityOld} = ${values.electricityUsage} x ${formatRoomBillRate(values.electricityRate)} = ${formatRoomBillShortAmount(values.electricityAmount)}`,
+
+          `Nước: ${values.waterNew} - ${values.waterOld} = ${values.waterUsage} x ${formatRoomBillRate(values.waterRate)} = ${formatRoomBillShortAmount(values.waterAmount)}`,
+          `Rác: ${formatRoomBillShortAmount(values.garbage)}`,
+          `Nhà: ${formatRoomBillShortAmount(values.rent)}`,
+        ];
+
+        // Chỉ thêm phụ thu khi có số tiền
+        if (values.otherAmount > 0) {
+          lines.push(
+            `${values.otherName || "Phụ thu"}: ${formatRoomBillShortAmount(values.otherAmount)}`,
+          );
+        }
+
+        lines.push("", `Tổng: ${roomRentMoney(roundedTotal)}`);
+
+        const text = lines.join("\n");
+
+        try {
+          await navigator.clipboard.writeText(text);
+
+          await window.showAppDialog({
+            title: "Đã copy chi tiết tiền phòng",
+            message: "Bạn có thể dán nội dung và gửi cho khách.",
+            type: "success",
+          });
+        } catch (error) {
+          // Fallback nếu trình duyệt không hỗ trợ Clipboard API
+          const textarea = document.createElement("textarea");
+          textarea.value = text;
+          textarea.style.position = "fixed";
+          textarea.style.opacity = "0";
+
+          document.body.appendChild(textarea);
+          textarea.select();
+
+          const copied = document.execCommand("copy");
+          textarea.remove();
+
+          if (copied) {
+            await window.showAppDialog({
+              title: "Đã copy chi tiết tiền phòng",
+              message: "Bạn có thể dán nội dung và gửi cho khách.",
+              type: "success",
+            });
+          } else {
+            await window.showAppDialog({
+              title: "Không thể copy",
+              message: "Vui lòng thử lại trên trình duyệt.",
+              type: "error",
+            });
+          }
+        }
+      };
       /* =====================================
    BILL FORM
 ===================================== */
