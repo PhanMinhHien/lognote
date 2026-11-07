@@ -9565,7 +9565,24 @@
           maximumFractionDigits: 3,
         });
       }
+function formatRoomBillMillion(amount) {
+  const value = Math.round(Number(amount) || 0);
 
+  if (value >= 1000000) {
+    const millions = Math.floor(value / 1000000);
+    const thousands = Math.floor((value % 1000000) / 1000);
+
+    return thousands > 0
+      ? `${millions}tr${String(thousands).padStart(3, "0")}`
+      : `${millions}tr`;
+  }
+
+  if (value >= 1000) {
+    return `${Math.floor(value / 1000)}k`;
+  }
+
+  return String(value);
+}
       window.copyRoomRentBillText = async function () {
         const roomId = document.getElementById("roomBillRoom")?.value;
         const month = document.getElementById("roomBillMonth")?.value;
@@ -9612,7 +9629,7 @@
 
           `Nước: ${values.waterNew} - ${values.waterOld} = ${values.waterUsage} x ${formatRoomBillRate(values.waterRate)} = ${formatRoomBillShortAmount(values.waterAmount)}`,
           `Rác: ${formatRoomBillShortAmount(values.garbage)}`,
-          `Nhà: ${formatRoomBillShortAmount(values.rent)}`,
+`Nhà: ${formatRoomBillMillion(values.rent)}`,
         ];
 
         // Chỉ thêm phụ thu khi có số tiền
@@ -9622,8 +9639,10 @@
           );
         }
 
-        lines.push("", `Tổng: ${roomRentMoney(roundedTotal)}`);
-
+lines.push(
+  "",
+  `Tổng: ${formatRoomBillMillion(roundedTotal)}`,
+);
         const text = lines.join("\n");
 
         try {
