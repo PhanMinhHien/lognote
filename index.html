@@ -9606,7 +9606,7 @@
           values.garbage +
           values.otherAmount;
         const lines = [
-          `Tiền ${room.name} - tháng ${month}`,
+`Tiền ${room.name} - tháng ${month.split("-").reverse().join(".")}`,
           "",
           `Điện: ${values.electricityNew} - ${values.electricityOld} = ${values.electricityUsage} x ${formatRoomBillRate(values.electricityRate)} = ${formatRoomBillShortAmount(values.electricityAmount)}`,
 
