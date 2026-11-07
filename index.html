@@ -2931,17 +2931,20 @@
                     </th>
                     <th style="text-align: right; padding: 10px 8px">Nước</th>
                     <th style="text-align: right; padding: 10px 8px">
-                      Tiền nước
-                    </th>
-                    <th style="text-align: center; padding: 10px 8px">
-                      Thanh toán
-                    </th>
+  Tiền nước
+</th>
+<th style="text-align: right; padding: 10px 8px">
+  Tổng tiền phòng
+</th>
+<th style="text-align: center; padding: 10px 8px">
+  Thanh toán
+</th>
                   </tr>
                 </thead>
 
                 <tbody id="roomRentSummaryBody">
                   <tr>
-                    <td colspan="6" class="rr-empty">Chưa có dữ liệu.</td>
+                    <td colspan="7" class="rr-empty">Chưa có dữ liệu.</td>
                   </tr>
                 </tbody>
                 <tfoot id="roomRentSummaryFoot"></tfoot>
@@ -9658,7 +9661,10 @@ const roundedTotal =
           (sum, item) => sum + Number(item.bill.waterAmount || 0),
           0,
         );
-
+const totalRoomBillAmount = savedRows.reduce(
+  (sum, item) => sum + Number(item.total || 0),
+  0,
+);
         document.getElementById("roomSummaryElectricityUsage").textContent =
           totalElectricityUsage.toLocaleString("vi-VN") + " kWh";
 
@@ -9707,6 +9713,13 @@ const roundedTotal =
         <td style="text-align:right;padding:10px 8px">
           ${bill ? roomRentMoney(bill.waterAmount) : "—"}
         </td>
+        <td style="text-align:right;padding:10px 8px">
+  ${
+    bill
+      ? `<strong style="color:var(--primary)">${roomRentMoney(total)}</strong>`
+      : "—"
+  }
+</td>
        <td class="rr-payment-cell">
   ${
     !bill
@@ -9765,6 +9778,9 @@ const roundedTotal =
         <th style="text-align:right;padding:10px 8px">
           ${roomRentMoney(totalWaterAmount)}
         </th>
+        <th style="text-align:right;padding:10px 8px">
+  ${roomRentMoney(totalRoomBillAmount)}
+</th>
         <th style="text-align:center;padding:10px 8px">
   ${paidCount}/${rows.length} phòng
 </th>
