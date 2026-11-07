@@ -2856,13 +2856,13 @@
             </div>
 
             <div class="rr-actions">
-              <button
-                class="primary-btn"
-                type="button"
-                onclick="openRoomRentRoomModal()"
-              >
-                ＋ Thêm phòng
-              </button>
+            <button
+  class="primary-btn"
+  type="button"
+  onclick="prepareNewRoomRentRoom()"
+>
+  ＋ Thêm phòng
+</button>
             </div>
 
             <!-- <div class="rr-actions">
@@ -8629,6 +8629,29 @@
       /* =====================================
    ROOM MANAGEMENT
 ===================================== */
+window.prepareNewRoomRentRoom = function () {
+  // Xóa trạng thái chỉnh sửa và toàn bộ dữ liệu cũ
+  editingRoomRentRoomId = null;
+
+  roomRentSetInput("roomName", "");
+  roomRentSetInput("roomDefaultRent", "");
+  roomRentSetInput("roomDefaultGarbage", "");
+  roomRentSetInput("roomElectricityRatePerRoom", "");
+  roomRentSetInput("roomWaterRatePerRoom", "");
+
+  // Cập nhật giao diện
+  document.getElementById("saveRoomBtn").textContent =
+    "＋ Thêm phòng";
+
+  document.getElementById("cancelRoomEditBtn").style.display =
+    "none";
+
+  document.getElementById("roomRentRoomModalTitle").textContent =
+    "＋ Thêm phòng";
+
+  // Mở modal sau khi đã reset
+  window.openRoomRentRoomModal();
+};
       window.openRoomRentRoomModal = function () {
         const modal = document.getElementById("roomRentRoomModal");
         if (!modal) return;
@@ -8914,30 +8937,28 @@
         window.openRoomRentRoomModal();
       };
 
-      window.resetRoomRentRoomForm = function () {
-        editingRoomRentRoomId = null;
+    window.resetRoomRentRoomForm = function () {
+  editingRoomRentRoomId = null;
 
-        roomRentSetInput("roomName", "");
-        roomRentSetInput("roomDefaultRent", "");
-        roomRentSetInput("roomDefaultGarbage", "");
+  // Xóa toàn bộ input
+  roomRentSetInput("roomName", "");
+  roomRentSetInput("roomDefaultRent", "");
+  roomRentSetInput("roomDefaultGarbage", "");
+  roomRentSetInput("roomElectricityRatePerRoom", "");
+  roomRentSetInput("roomWaterRatePerRoom", "");
 
-        // Phòng mới mặc định nhận đơn giá cũ làm giá khởi tạo.
-        roomRentSetInput(
-          "roomElectricityRatePerRoom",
-          roomRentConfig.electricityRate,
-        );
+  // Trả giao diện về trạng thái thêm phòng
+  document.getElementById("saveRoomBtn").textContent =
+    "＋ Thêm phòng";
 
-        roomRentSetInput("roomWaterRatePerRoom", roomRentConfig.waterRate);
+  document.getElementById("cancelRoomEditBtn").style.display =
+    "none";
 
-        document.getElementById("saveRoomBtn").textContent = "＋ Thêm phòng";
+  document.getElementById("roomRentRoomModalTitle").textContent =
+    "＋ Thêm phòng";
 
-        document.getElementById("cancelRoomEditBtn").style.display = "";
-
-        document.getElementById("roomRentRoomModalTitle").textContent =
-          "＋ Thêm phòng";
-
-        window.closeRoomRentRoomModal();
-      };
+  window.closeRoomRentRoomModal();
+};
 
       window.toggleRoomRentRoomStatus = async function (id) {
         const room = roomRentRooms.find((item) => item.id === id);
