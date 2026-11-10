@@ -2463,6 +2463,38 @@
           width: 100%;
         }
       }
+
+      .rr-type-summary-block {
+        padding: 14px 0;
+      }
+
+      .rr-type-summary-block + .rr-type-summary-block {
+        border-top: 1px solid var(--border);
+        margin-top: 12px;
+      }
+
+      .rr-type-summary-heading {
+        font-size: 14px;
+        font-weight: 800;
+        margin-bottom: 12px;
+        color: var(--text);
+      }
+      .rr-type-badge {
+        display: inline-flex;
+        align-items: center;
+        margin-top: 5px;
+        padding: 3px 8px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        background: var(--surface-2, rgba(128, 128, 128, 0.12));
+        color: var(--text);
+      }
+
+      .rr-type-badge.kiot {
+        background: rgba(59, 130, 246, 0.12);
+        color: #60a5fa;
+      }
     </style>
   </head>
 
@@ -3049,10 +3081,9 @@
           </details>
           <!-- MONTHLY UTILITY SUMMARY -->
           <div class="card rr-card">
-            <div class="panel-title">📊 Tổng hợp điện nước theo tháng</div>
-
+            <div class="panel-title">📊 Thống kê Trọ & Kiot</div>
             <div class="settings-description">
-              Thống kê các phòng đang hoạt động dựa trên hóa đơn đã lưu.
+              Thống kê Trọ và Kiot theo hóa đơn đã lưu trong tháng.
             </div>
 
             <div class="field" style="max-width: 260px">
@@ -3064,43 +3095,90 @@
               />
             </div>
 
-            <div class="rr-overview-kpis">
-              <div class="rr-overview-kpi">
-                <div class="rr-overview-kpi-label">Tổng hóa đơn</div>
-                <div class="rr-overview-kpi-value" id="roomSummaryTotalAmount">
-                  0 ₫
+            <!-- THỐNG KÊ RIÊNG TỪNG LOẠI -->
+            <div class="rr-type-summary-block">
+              <div class="rr-type-summary-heading">🏠 Nhà trọ</div>
+
+              <div class="rr-overview-kpis">
+                <div class="rr-overview-kpi">
+                  <div class="rr-overview-kpi-label">Tổng hóa đơn</div>
+                  <div
+                    class="rr-overview-kpi-value"
+                    id="roomSummaryTotalAmount_room"
+                  >
+                    0 ₫
+                  </div>
+                </div>
+
+                <div class="rr-overview-kpi">
+                  <div class="rr-overview-kpi-label">Đã thu</div>
+                  <div
+                    class="rr-overview-kpi-value is-paid"
+                    id="roomSummaryPaidAmount_room"
+                  >
+                    0 ₫
+                  </div>
+                </div>
+
+                <div class="rr-overview-kpi">
+                  <div class="rr-overview-kpi-label">Còn phải thu</div>
+                  <div
+                    class="rr-overview-kpi-value is-due"
+                    id="roomSummaryRemainingAmount_room"
+                  >
+                    0 ₫
+                  </div>
                 </div>
               </div>
 
-              <div class="rr-overview-kpi">
-                <div class="rr-overview-kpi-label">Đã thu</div>
-                <div
-                  class="rr-overview-kpi-value is-paid"
-                  id="roomSummaryPaidAmount"
-                >
-                  0 ₫
-                </div>
-              </div>
-
-              <div class="rr-overview-kpi">
-                <div class="rr-overview-kpi-label">Còn phải thu</div>
-                <div
-                  class="rr-overview-kpi-value is-due"
-                  id="roomSummaryRemainingAmount"
-                >
-                  0 ₫
-                </div>
-              </div>
+              <div
+                class="settings-description"
+                id="roomSummaryBillCount_room"
+              ></div>
             </div>
 
-            <div
-              class="settings-description"
-              id="roomSummaryBillCount"
-              style="margin: 8px 0 14px"
-            >
-              Đã có hóa đơn: 0 / 0 phòng đang hoạt động
+            <div class="rr-type-summary-block">
+              <div class="rr-type-summary-heading">🏪 Kiot</div>
+
+              <div class="rr-overview-kpis">
+                <div class="rr-overview-kpi">
+                  <div class="rr-overview-kpi-label">Tổng hóa đơn</div>
+                  <div
+                    class="rr-overview-kpi-value"
+                    id="roomSummaryTotalAmount_kiot"
+                  >
+                    0 ₫
+                  </div>
+                </div>
+
+                <div class="rr-overview-kpi">
+                  <div class="rr-overview-kpi-label">Đã thu</div>
+                  <div
+                    class="rr-overview-kpi-value is-paid"
+                    id="roomSummaryPaidAmount_kiot"
+                  >
+                    0 ₫
+                  </div>
+                </div>
+
+                <div class="rr-overview-kpi">
+                  <div class="rr-overview-kpi-label">Còn phải thu</div>
+                  <div
+                    class="rr-overview-kpi-value is-due"
+                    id="roomSummaryRemainingAmount_kiot"
+                  >
+                    0 ₫
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="settings-description"
+                id="roomSummaryBillCount_kiot"
+              ></div>
             </div>
 
+            <!-- CHI TIẾT ĐIỆN NƯỚC -->
             <details class="rr-subaccordion">
               <summary>
                 <span>⚡ Chi tiết điện nước</span>
@@ -3108,125 +3186,181 @@
               </summary>
 
               <div class="rr-subaccordion-content">
-                <div class="rr-grid rr-grid-2" style="margin-top: 0">
-                  <div class="rr-utility-card">
-                    <div class="rr-utility-title">⚡ Tổng điện sử dụng</div>
-                    <div class="rr-result">
-                      <strong id="roomSummaryElectricityUsage">0 kWh</strong>
+                <!-- NHÀ TRỌ -->
+                <div class="rr-type-summary-block">
+                  <div class="rr-type-summary-heading">🏠 Nhà trọ</div>
+
+                  <div class="rr-grid rr-grid-2" style="margin-top: 0">
+                    <div class="rr-utility-card">
+                      <div class="rr-utility-title">⚡ Tổng điện sử dụng</div>
+                      <div class="rr-result">
+                        <strong id="roomSummaryElectricityUsage_room"
+                          >0 kWh</strong
+                        >
+                      </div>
+                      <div class="settings-description">
+                        Thành tiền:
+                        <strong id="roomSummaryElectricityAmount_room"
+                          >0 ₫</strong
+                        >
+                      </div>
                     </div>
-                    <div class="settings-description">
-                      Thành tiền:
-                      <strong id="roomSummaryElectricityAmount">0 ₫</strong>
+
+                    <div class="rr-utility-card">
+                      <div class="rr-utility-title">💧 Tổng nước sử dụng</div>
+                      <div class="rr-result">
+                        <strong id="roomSummaryWaterUsage_room">0 m³</strong>
+                      </div>
+                      <div class="settings-description">
+                        Thành tiền:
+                        <strong id="roomSummaryWaterAmount_room">0 ₫</strong>
+                      </div>
                     </div>
                   </div>
+                </div>
 
-                  <div class="rr-utility-card">
-                    <div class="rr-utility-title">💧 Tổng nước sử dụng</div>
-                    <div class="rr-result">
-                      <strong id="roomSummaryWaterUsage">0 m³</strong>
+                <!-- KIOT -->
+                <div class="rr-type-summary-block">
+                  <div class="rr-type-summary-heading">🏪 Kiot</div>
+
+                  <div class="rr-grid rr-grid-2" style="margin-top: 0">
+                    <div class="rr-utility-card">
+                      <div class="rr-utility-title">⚡ Tổng điện sử dụng</div>
+                      <div class="rr-result">
+                        <strong id="roomSummaryElectricityUsage_kiot"
+                          >0 kWh</strong
+                        >
+                      </div>
+                      <div class="settings-description">
+                        Thành tiền:
+                        <strong id="roomSummaryElectricityAmount_kiot"
+                          >0 ₫</strong
+                        >
+                      </div>
                     </div>
-                    <div class="settings-description">
-                      Thành tiền:
-                      <strong id="roomSummaryWaterAmount">0 ₫</strong>
+
+                    <div class="rr-utility-card">
+                      <div class="rr-utility-title">💧 Tổng nước sử dụng</div>
+                      <div class="rr-result">
+                        <strong id="roomSummaryWaterUsage_kiot">0 m³</strong>
+                      </div>
+                      <div class="settings-description">
+                        Thành tiền:
+                        <strong id="roomSummaryWaterAmount_kiot">0 ₫</strong>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </details>
 
+            <!-- CHI TIẾT HÓA ĐƠN VÀ THANH TOÁN -->
             <details class="rr-subaccordion">
               <summary>
-                <span>🏠 Chi tiết từng phòng & thanh toán</span>
+                <span>🏠 Chi tiết từng đối tượng & thanh toán</span>
                 <span class="rr-chevron" aria-hidden="true">⌄</span>
               </summary>
 
               <div class="rr-subaccordion-content">
-                <div style="overflow-x: auto">
-                  <table
-                    style="
-                      width: 100%;
-                      border-collapse: collapse;
-                      min-width: 520px;
-                    "
-                  >
-                    <thead>
-                      <tr>
-                        <th style="text-align: left; padding: 10px 8px">
-                          Phòng
-                        </th>
-                        <th style="text-align: right; padding: 10px 8px">
-                          Điện
-                        </th>
-                        <th style="text-align: right; padding: 10px 8px">
-                          Tiền điện
-                        </th>
-                        <th style="text-align: right; padding: 10px 8px">
-                          Nước
-                        </th>
-                        <th style="text-align: right; padding: 10px 8px">
-                          Tiền nước
-                        </th>
-                        <th style="text-align: right; padding: 10px 8px">
-                          Tổng tiền phòng
-                        </th>
-                        <th style="text-align: center; padding: 10px 8px">
-                          Thanh toán
-                        </th>
-                      </tr>
-                    </thead>
+                <!-- BẢNG NHÀ TRỌ -->
+                <div class="rr-type-summary-block">
+                  <div class="rr-type-summary-heading">🏠 Nhà trọ</div>
 
-                    <tbody id="roomRentSummaryBody">
-                      <tr>
-                        <td colspan="7" class="rr-empty">Chưa có dữ liệu.</td>
-                      </tr>
-                    </tbody>
+                  <div style="overflow-x: auto">
+                    <table
+                      style="
+                        width: 100%;
+                        border-collapse: collapse;
+                        min-width: 720px;
+                      "
+                    >
+                      <thead>
+                        <tr>
+                          <th style="text-align: left; padding: 10px 8px">
+                            Phòng
+                          </th>
+                          <th style="text-align: right; padding: 10px 8px">
+                            Điện
+                          </th>
+                          <th style="text-align: right; padding: 10px 8px">
+                            Tiền điện
+                          </th>
+                          <th style="text-align: right; padding: 10px 8px">
+                            Nước
+                          </th>
+                          <th style="text-align: right; padding: 10px 8px">
+                            Tiền nước
+                          </th>
+                          <th style="text-align: right; padding: 10px 8px">
+                            Tổng tiền
+                          </th>
+                          <th style="text-align: center; padding: 10px 8px">
+                            Thanh toán
+                          </th>
+                        </tr>
+                      </thead>
 
-                    <tfoot id="roomRentSummaryFoot"></tfoot>
-                  </table>
+                      <tbody id="roomRentSummaryBody_room">
+                        <tr>
+                          <td colspan="7" class="rr-empty">Chưa có dữ liệu.</td>
+                        </tr>
+                      </tbody>
+
+                      <tfoot id="roomRentSummaryFoot_room"></tfoot>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- BẢNG KIOT -->
+                <div class="rr-type-summary-block">
+                  <div class="rr-type-summary-heading">🏪 Kiot</div>
+
+                  <div style="overflow-x: auto">
+                    <table
+                      style="
+                        width: 100%;
+                        border-collapse: collapse;
+                        min-width: 720px;
+                      "
+                    >
+                      <thead>
+                        <tr>
+                          <th style="text-align: left; padding: 10px 8px">
+                            Kiot
+                          </th>
+                          <th style="text-align: right; padding: 10px 8px">
+                            Điện
+                          </th>
+                          <th style="text-align: right; padding: 10px 8px">
+                            Tiền điện
+                          </th>
+                          <th style="text-align: right; padding: 10px 8px">
+                            Nước
+                          </th>
+                          <th style="text-align: right; padding: 10px 8px">
+                            Tiền nước
+                          </th>
+                          <th style="text-align: right; padding: 10px 8px">
+                            Tổng tiền
+                          </th>
+                          <th style="text-align: center; padding: 10px 8px">
+                            Thanh toán
+                          </th>
+                        </tr>
+                      </thead>
+
+                      <tbody id="roomRentSummaryBody_kiot">
+                        <tr>
+                          <td colspan="7" class="rr-empty">Chưa có dữ liệu.</td>
+                        </tr>
+                      </tbody>
+
+                      <tfoot id="roomRentSummaryFoot_kiot"></tfoot>
+                    </table>
+                  </div>
                 </div>
               </div>
             </details>
-
-            <!-- <div
-              class="settings-description"
-              id="roomSummaryBillCount"
-              style="margin: 14px 0"
-            >
-              Đã có hóa đơn: 0 / 0 phòng đang hoạt động
-            </div>
-
-            <div style="overflow-x: auto">
-              <table
-                style="width: 100%; border-collapse: collapse; min-width: 520px"
-              >
-                <thead>
-                  <tr>
-                    <th style="text-align: left; padding: 10px 8px">Phòng</th>
-                    <th style="text-align: right; padding: 10px 8px">Điện</th>
-                    <th style="text-align: right; padding: 10px 8px">
-                      Tiền điện
-                    </th>
-                    <th style="text-align: right; padding: 10px 8px">Nước</th>
-                    <th style="text-align: right; padding: 10px 8px">
-                      Tiền nước
-                    </th>
-                    <th style="text-align: right; padding: 10px 8px">
-                      Tổng tiền phòng
-                    </th>
-                    <th style="text-align: center; padding: 10px 8px">
-                      Thanh toán
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody id="roomRentSummaryBody">
-                  <tr>
-                    <td colspan="7" class="rr-empty">Chưa có dữ liệu.</td>
-                  </tr>
-                </tbody>
-                <tfoot id="roomRentSummaryFoot"></tfoot>
-              </table>
-            </div> -->
           </div>
           <!-- MONTHLY BILL -->
           <details class="card rr-card rr-accordion" id="roomRentBillSection">
@@ -4173,7 +4307,13 @@
               maxlength="50"
             />
           </div>
-
+          <div class="field">
+            <label for="roomType">Loại hình</label>
+            <select id="roomType">
+              <option value="room">🏠 Trọ</option>
+              <option value="kiot">🏪 Kiot</option>
+            </select>
+          </div>
           <div class="field">
             <label for="roomDefaultRent">Tiền thuê mặc định (VNĐ)</label>
             <input
@@ -8894,7 +9034,7 @@
 
         document.getElementById("roomRentRoomModalTitle").textContent =
           "＋ Thêm phòng";
-
+        document.getElementById("roomType").value = "room";
         // Mở modal sau khi đã reset
         window.openRoomRentRoomModal();
       };
@@ -8975,9 +9115,13 @@
             return `
     <div class="rr-room-item">
       <div class="rr-room-heading">
-        <div class="rr-room-name">
-          ${roomRentEscapeHtml(room.name)}
-        </div>
+      <div class="rr-room-name">
+  ${roomRentEscapeHtml(room.name)}
+</div>
+
+<span class="type-badge ${room.type === "kiot" ? "expense" : "income"}">
+  ${room.type === "kiot" ? "🏪 Kiot" : "🏠 Trọ"}
+</span>
 
         <span class="rr-room-status ${inactive ? "inactive" : ""}">
           ${inactive ? "● Ngừng sử dụng" : "● Đang hoạt động"}
@@ -9072,7 +9216,7 @@
         }
 
         const name = document.getElementById("roomName").value.trim();
-
+        const roomType = document.getElementById("roomType")?.value || "room";
         const defaultRent = roomRentInputMoney("roomDefaultRent");
         const defaultGarbage = roomRentInputMoney("roomDefaultGarbage");
 
@@ -9112,12 +9256,38 @@
 
         const data = {
           name,
+          type: roomType,
           defaultRent,
           defaultGarbage,
           electricityRate,
           waterRate,
           updatedAt: serverTimestamp(),
         };
+        // Không cho đổi loại nếu đã có hóa đơn
+        if (editingRoomRentRoomId) {
+          const existingRoom = roomRentRooms.find(
+            (room) => room.id === editingRoomRentRoomId,
+          );
+
+          const hasBills = roomRentBills.some(
+            (bill) => bill.roomId === editingRoomRentRoomId,
+          );
+
+          if (
+            existingRoom &&
+            hasBills &&
+            (existingRoom.type || "room") !== roomType
+          ) {
+            await window.showAppDialog({
+              title: "Không thể đổi loại",
+              message:
+                "Đối tượng này đã có hóa đơn. Bạn không thể đổi giữa Trọ và Kiot để tránh làm sai lệch thống kê lịch sử.",
+              type: "warning",
+            });
+
+            return;
+          }
+        }
 
         try {
           if (editingRoomRentRoomId) {
@@ -9156,7 +9326,7 @@
         if (!room) return;
 
         editingRoomRentRoomId = id;
-
+        document.getElementById("roomType").value = room.type || "room";
         roomRentSetInput("roomName", room.name);
 
         roomRentSetInput("roomDefaultRent", room.defaultRent || 0);
@@ -9200,7 +9370,7 @@
 
         document.getElementById("roomRentRoomModalTitle").textContent =
           "＋ Thêm phòng";
-
+        document.getElementById("roomType").value = "room";
         window.closeRoomRentRoomModal();
       };
 
@@ -9623,15 +9793,15 @@
           values.garbage +
           values.otherAmount;
         const lines = [
-  `Tiền ${room.name} - tháng ${month.split("-").reverse().join(".")}`,
-  "",
-  `Điện: ${values.electricityNew} - ${values.electricityOld} = ${values.electricityUsage} x ${formatRoomBillRate(values.electricityRate)} = ${formatRoomBillMillion(values.electricityAmount)}`,
+          `Tiền ${room.name} - tháng ${month.split("-").reverse().join(".")}`,
+          "",
+          `Điện: ${values.electricityNew} - ${values.electricityOld} = ${values.electricityUsage} x ${formatRoomBillRate(values.electricityRate)} = ${formatRoomBillMillion(values.electricityAmount)}`,
 
-  `Nước: ${values.waterNew} - ${values.waterOld} = ${values.waterUsage} x ${formatRoomBillRate(values.waterRate)} = ${formatRoomBillMillion(values.waterAmount)}`,
+          `Nước: ${values.waterNew} - ${values.waterOld} = ${values.waterUsage} x ${formatRoomBillRate(values.waterRate)} = ${formatRoomBillMillion(values.waterAmount)}`,
 
-  `Rác: ${formatRoomBillMillion(values.garbage)}`,
-  `Nhà: ${formatRoomBillMillion(values.rent)}`,
-];
+          `Rác: ${formatRoomBillMillion(values.garbage)}`,
+          `Nhà: ${formatRoomBillMillion(values.rent)}`,
+        ];
 
         // Chỉ thêm phụ thu khi có số tiền
         if (values.otherAmount > 0) {
@@ -9879,6 +10049,7 @@
         const data = {
           roomId,
           roomName: room.name,
+          type: room.type || "room",
           month,
 
           electricityOld: values.electricityOld,
@@ -10049,220 +10220,346 @@
           document.getElementById("roomRentSummaryMonth")?.value ||
           roomRentCurrentMonth();
 
-        const tbody = document.getElementById("roomRentSummaryBody");
+        const typeConfigs = [
+          {
+            type: "room",
+            label: "phòng",
+            suffix: "room",
+          },
+          {
+            type: "kiot",
+            label: "kiot",
+            suffix: "kiot",
+          },
+        ];
 
-        if (!tbody) return;
+        // Danh sách phòng để xác định loại cho các hóa đơn cũ
+        // chưa có trường type.
+        const roomById = new Map(roomRentRooms.map((room) => [room.id, room]));
 
-        // Chỉ lấy phòng đang hoạt động.
-        const activeRooms = roomRentRooms
-          .filter((room) => room.isActive !== false)
-          .sort((a, b) =>
-            String(a.name || "").localeCompare(String(b.name || ""), "vi", {
-              numeric: true,
-            }),
-          );
-
-        // Chỉ lấy hóa đơn đã lưu của tháng được chọn.
+        // Chỉ lấy hóa đơn của tháng đang xem.
         const monthlyBills = roomRentBills.filter(
           (bill) => bill.month === month,
         );
 
-        const billByRoom = new Map(
-          monthlyBills.map((bill) => [bill.roomId, bill]),
-        );
+        typeConfigs.forEach(({ type, label, suffix }) => {
+          const tbody = document.getElementById(
+            `roomRentSummaryBody_${suffix}`,
+          );
 
-        const rows = activeRooms.map((room) => {
-          const bill = billByRoom.get(room.id) || null;
+          if (!tbody) return;
 
-          const legacyPaid =
-            Array.isArray(room.paidMonths) && room.paidMonths.includes(month);
-
-          const total = Number(bill?.total || 0);
-
-          const paidAmount = bill
-            ? Number(bill.paidAmount ?? (legacyPaid ? total : 0))
-            : 0;
-
-          const remainingAmount = Math.max(0, total - paidAmount);
-
-          const isPaid = !!bill && total > 0 && paidAmount >= total;
-
-          return {
-            room,
-            bill,
-            total,
-            paidAmount,
-            remainingAmount,
-            isPaid,
-          };
-        });
-        const savedRows = rows.filter((item) => item.bill);
-        const paidCount = rows.filter((item) => item.isPaid).length;
-        const totalElectricityUsage = savedRows.reduce(
-          (sum, item) => sum + Number(item.bill.electricityUsage || 0),
-          0,
-        );
-
-        const totalElectricityAmount = savedRows.reduce(
-          (sum, item) => sum + Number(item.bill.electricityAmount || 0),
-          0,
-        );
-
-        const totalWaterUsage = savedRows.reduce(
-          (sum, item) => sum + Number(item.bill.waterUsage || 0),
-          0,
-        );
-
-        const totalWaterAmount = savedRows.reduce(
-          (sum, item) => sum + Number(item.bill.waterAmount || 0),
-          0,
-        );
-        const totalRoomBillAmount = savedRows.reduce(
-          (sum, item) => sum + Number(item.total || 0),
-          0,
-        );
-        const totalPaidAmount = savedRows.reduce(
-          (sum, item) => sum + Number(item.paidAmount || 0),
-          0,
-        );
-
-        const totalRemainingAmount = savedRows.reduce(
-          (sum, item) => sum + Number(item.remainingAmount || 0),
-          0,
-        );
-
-        const totalKpi = document.getElementById("roomSummaryTotalAmount");
-        const paidKpi = document.getElementById("roomSummaryPaidAmount");
-        const remainingKpi = document.getElementById(
-          "roomSummaryRemainingAmount",
-        );
-
-        if (totalKpi) totalKpi.textContent = roomRentMoney(totalRoomBillAmount);
-        if (paidKpi) paidKpi.textContent = roomRentMoney(totalPaidAmount);
-        if (remainingKpi)
-          remainingKpi.textContent = roomRentMoney(totalRemainingAmount);
-        document.getElementById("roomSummaryElectricityUsage").textContent =
-          totalElectricityUsage.toLocaleString("vi-VN") + " kWh";
-
-        document.getElementById("roomSummaryElectricityAmount").textContent =
-          roomRentMoney(totalElectricityAmount);
-
-        document.getElementById("roomSummaryWaterUsage").textContent =
-          totalWaterUsage.toLocaleString("vi-VN") + " m³";
-
-        document.getElementById("roomSummaryWaterAmount").textContent =
-          roomRentMoney(totalWaterAmount);
-
-        document.getElementById("roomSummaryBillCount").textContent =
-          `Đã có hóa đơn: ${savedRows.length} / ${activeRooms.length} phòng đang hoạt động · Đã thu tiền: ${paidCount} / ${activeRooms.length} phòng`;
-
-        if (!rows.length) {
-          tbody.innerHTML = `
-      <tr>
-        <td colspan="5" class="rr-empty">
-          Chưa có phòng đang hoạt động.
-        </td>
-      </tr>
-    `;
-        } else {
-          tbody.innerHTML = rows
-            .map(
-              ({ room, bill, total, paidAmount, remainingAmount, isPaid }) => `
-      <tr>
-        <td style="padding:10px 8px">
-          <strong>${roomRentEscapeHtml(room.name)}</strong>
-          ${bill ? "" : '<div style="color:var(--muted);font-size:11px">Chưa có hóa đơn</div>'}
-        </td>
-
-        <td style="text-align:right;padding:10px 8px">
-          ${bill ? Number(bill.electricityUsage || 0).toLocaleString("vi-VN") + " kWh" : "—"}
-        </td>
-
-        <td style="text-align:right;padding:10px 8px">
-          ${bill ? roomRentMoney(bill.electricityAmount) : "—"}
-        </td>
-
-        <td style="text-align:right;padding:10px 8px">
-          ${bill ? Number(bill.waterUsage || 0).toLocaleString("vi-VN") + " m³" : "—"}
-        </td>
-
-        <td style="text-align:right;padding:10px 8px">
-          ${bill ? roomRentMoney(bill.waterAmount) : "—"}
-        </td>
-        <td style="text-align:right;padding:10px 8px">
-  ${
-    bill
-      ? `<strong style="color:var(--primary)">${roomRentMoney(total)}</strong>`
-      : "—"
-  }
-</td>
-       <td class="rr-payment-cell">
-  ${
-    !bill
-      ? `<span style="color:var(--muted)">Chưa có hóa đơn</span>`
-      : isPaid
-        ? `
-          <div class="rr-payment-complete">
-            ✓ Đã thanh toán đủ
-          </div>
-          <div style="font-size:12px;color:var(--muted);margin-top:5px">
-            ${roomRentMoney(total)}
-          </div>
-        `
-        : paidAmount <= 0
-          ? `
-          <button
-  type="button"
-  class="rr-payment-btn is-payment-entry"
-  onclick="recordRoomRentPayment('${room.id}', '${month}', 'partial')"
->
-  + Nhập tiền đã nhận
-</button>
-          `
-          : `
-           <button
-  type="button"
-  class="rr-payment-btn is-payment-incomplete"
-  onclick="openRoomPaymentDetail('${room.id}', '${month}')"
->
-  ⚠ Chưa thanh toán đủ
-</button>
-          `
-  }
-</td>
-      </tr>
-    `,
+          // Lọc đối tượng đang hoạt động theo loại.
+          // Dữ liệu cũ không có type sẽ mặc định là room.
+          const activeRooms = roomRentRooms
+            .filter(
+              (room) =>
+                room.isActive !== false && (room.type || "room") === type,
             )
-            .join("");
-        }
+            .sort((a, b) =>
+              String(a.name || "").localeCompare(String(b.name || ""), "vi", {
+                numeric: true,
+              }),
+            );
 
-        const foot = document.getElementById("roomRentSummaryFoot");
+          // Chỉ lấy hóa đơn thuộc đúng loại.
+          const billsOfType = monthlyBills.filter((bill) => {
+            const room = roomById.get(bill.roomId);
 
-        if (foot) {
-          foot.innerHTML = `
-      <tr>
-        <th style="text-align:left;padding:10px 8px">Tổng cộng</th>
-        <th style="text-align:right;padding:10px 8px">
-          ${totalElectricityUsage.toLocaleString("vi-VN")} kWh
-        </th>
-        <th style="text-align:right;padding:10px 8px">
-          ${roomRentMoney(totalElectricityAmount)}
-        </th>
-        <th style="text-align:right;padding:10px 8px">
-          ${totalWaterUsage.toLocaleString("vi-VN")} m³
-        </th>
-        <th style="text-align:right;padding:10px 8px">
-          ${roomRentMoney(totalWaterAmount)}
-        </th>
-        <th style="text-align:right;padding:10px 8px">
-  ${roomRentMoney(totalRoomBillAmount)}
-</th>
-        <th style="text-align:center;padding:10px 8px">
-  ${paidCount}/${rows.length} phòng
-</th>
-      </tr>
-    `;
-        }
+            const billType = bill.type || room?.type || "room";
+
+            return billType === type;
+          });
+
+          const billByRoom = new Map(
+            billsOfType.map((bill) => [bill.roomId, bill]),
+          );
+
+          // Ghép phòng và hóa đơn.
+          const rows = activeRooms.map((room) => {
+            const bill = billByRoom.get(room.id) || null;
+
+            const legacyPaid =
+              Array.isArray(room.paidMonths) && room.paidMonths.includes(month);
+
+            const total = Number(bill?.total || 0);
+
+            const paidAmount = bill
+              ? Number(bill.paidAmount ?? (legacyPaid ? total : 0))
+              : 0;
+
+            const remainingAmount = Math.max(0, total - paidAmount);
+
+            const isPaid = !!bill && total > 0 && paidAmount >= total;
+
+            return {
+              room,
+              bill,
+              total,
+              paidAmount,
+              remainingAmount,
+              isPaid,
+            };
+          });
+
+          const savedRows = rows.filter((item) => item.bill);
+
+          const paidCount = rows.filter((item) => item.isPaid).length;
+
+          // Tổng điện.
+          const totalElectricityUsage = savedRows.reduce(
+            (sum, item) => sum + Number(item.bill.electricityUsage || 0),
+            0,
+          );
+
+          const totalElectricityAmount = savedRows.reduce(
+            (sum, item) => sum + Number(item.bill.electricityAmount || 0),
+            0,
+          );
+
+          // Tổng nước.
+          const totalWaterUsage = savedRows.reduce(
+            (sum, item) => sum + Number(item.bill.waterUsage || 0),
+            0,
+          );
+
+          const totalWaterAmount = savedRows.reduce(
+            (sum, item) => sum + Number(item.bill.waterAmount || 0),
+            0,
+          );
+
+          // Tổng hóa đơn.
+          const totalRoomBillAmount = savedRows.reduce(
+            (sum, item) => sum + item.total,
+            0,
+          );
+
+          const totalPaidAmount = savedRows.reduce(
+            (sum, item) => sum + item.paidAmount,
+            0,
+          );
+
+          const totalRemainingAmount = savedRows.reduce(
+            (sum, item) => sum + item.remainingAmount,
+            0,
+          );
+
+          // Cập nhật thống kê tiền.
+          const totalKpi = document.getElementById(
+            `roomSummaryTotalAmount_${suffix}`,
+          );
+
+          const paidKpi = document.getElementById(
+            `roomSummaryPaidAmount_${suffix}`,
+          );
+
+          const remainingKpi = document.getElementById(
+            `roomSummaryRemainingAmount_${suffix}`,
+          );
+
+          if (totalKpi) {
+            totalKpi.textContent = roomRentMoney(totalRoomBillAmount);
+          }
+
+          if (paidKpi) {
+            paidKpi.textContent = roomRentMoney(totalPaidAmount);
+          }
+
+          if (remainingKpi) {
+            remainingKpi.textContent = roomRentMoney(totalRemainingAmount);
+          }
+
+          // Cập nhật thống kê điện nước.
+          const electricityUsage = document.getElementById(
+            `roomSummaryElectricityUsage_${suffix}`,
+          );
+
+          const electricityAmount = document.getElementById(
+            `roomSummaryElectricityAmount_${suffix}`,
+          );
+
+          const waterUsage = document.getElementById(
+            `roomSummaryWaterUsage_${suffix}`,
+          );
+
+          const waterAmount = document.getElementById(
+            `roomSummaryWaterAmount_${suffix}`,
+          );
+
+          if (electricityUsage) {
+            electricityUsage.textContent =
+              totalElectricityUsage.toLocaleString("vi-VN") + " kWh";
+          }
+
+          if (electricityAmount) {
+            electricityAmount.textContent = roomRentMoney(
+              totalElectricityAmount,
+            );
+          }
+
+          if (waterUsage) {
+            waterUsage.textContent =
+              totalWaterUsage.toLocaleString("vi-VN") + " m³";
+          }
+
+          if (waterAmount) {
+            waterAmount.textContent = roomRentMoney(totalWaterAmount);
+          }
+
+          // Số lượng hóa đơn và thanh toán.
+          const countElement = document.getElementById(
+            `roomSummaryBillCount_${suffix}`,
+          );
+
+          if (countElement) {
+            countElement.textContent =
+              `Đã có hóa đơn: ${savedRows.length} / ${activeRooms.length} ${label} đang hoạt động · ` +
+              `Đã thanh toán đủ: ${paidCount} / ${activeRooms.length}`;
+          }
+
+          // Render bảng chi tiết.
+          if (!rows.length) {
+            tbody.innerHTML = `
+        <tr>
+          <td colspan="7" class="rr-empty">
+            Chưa có ${type === "kiot" ? "kiot" : "phòng"} đang hoạt động.
+          </td>
+        </tr>
+      `;
+          } else {
+            tbody.innerHTML = rows
+              .map(
+                ({ room, bill, total, paidAmount, isPaid }) => `
+            <tr>
+              <td style="padding:10px 8px">
+                <strong>
+                  ${roomRentEscapeHtml(room.name)}
+                </strong>
+
+                ${
+                  bill
+                    ? ""
+                    : '<div style="color:var(--muted);font-size:11px">Chưa có hóa đơn</div>'
+                }
+              </td>
+
+              <td style="text-align:right;padding:10px 8px">
+                ${
+                  bill
+                    ? Number(bill.electricityUsage || 0).toLocaleString(
+                        "vi-VN",
+                      ) + " kWh"
+                    : "—"
+                }
+              </td>
+
+              <td style="text-align:right;padding:10px 8px">
+                ${bill ? roomRentMoney(bill.electricityAmount) : "—"}
+              </td>
+
+              <td style="text-align:right;padding:10px 8px">
+                ${
+                  bill
+                    ? Number(bill.waterUsage || 0).toLocaleString("vi-VN") +
+                      " m³"
+                    : "—"
+                }
+              </td>
+
+              <td style="text-align:right;padding:10px 8px">
+                ${bill ? roomRentMoney(bill.waterAmount) : "—"}
+              </td>
+
+              <td style="text-align:right;padding:10px 8px">
+                ${
+                  bill
+                    ? `<strong style="color:var(--primary)">${roomRentMoney(total)}</strong>`
+                    : "—"
+                }
+              </td>
+
+              <td class="rr-payment-cell">
+                ${
+                  !bill
+                    ? `
+                      <span style="color:var(--muted)">
+                        Chưa có hóa đơn
+                      </span>
+                    `
+                    : isPaid
+                      ? `
+                        <div class="rr-payment-complete">
+                          ✓ Đã thanh toán đủ
+                        </div>
+
+                        <div style="font-size:12px;color:var(--muted);margin-top:5px">
+                          ${roomRentMoney(total)}
+                        </div>
+                      `
+                      : paidAmount <= 0
+                        ? `
+                          <button
+                            type="button"
+                            class="rr-payment-btn is-payment-entry"
+                            onclick="recordRoomRentPayment('${room.id}', '${month}', 'partial')"
+                          >
+                            + Nhập tiền đã nhận
+                          </button>
+                        `
+                        : `
+                          <button
+                            type="button"
+                            class="rr-payment-btn is-payment-incomplete"
+                            onclick="openRoomPaymentDetail('${room.id}', '${month}')"
+                          >
+                            ⚠ Chưa thanh toán đủ
+                          </button>
+                        `
+                }
+              </td>
+            </tr>
+          `,
+              )
+              .join("");
+          }
+
+          // Tổng cộng cuối bảng.
+          const foot = document.getElementById(`roomRentSummaryFoot_${suffix}`);
+
+          if (foot) {
+            foot.innerHTML = `
+        <tr>
+          <th style="text-align:left;padding:10px 8px">
+            Tổng cộng
+          </th>
+
+          <th style="text-align:right;padding:10px 8px">
+            ${totalElectricityUsage.toLocaleString("vi-VN")} kWh
+          </th>
+
+          <th style="text-align:right;padding:10px 8px">
+            ${roomRentMoney(totalElectricityAmount)}
+          </th>
+
+          <th style="text-align:right;padding:10px 8px">
+            ${totalWaterUsage.toLocaleString("vi-VN")} m³
+          </th>
+
+          <th style="text-align:right;padding:10px 8px">
+            ${roomRentMoney(totalWaterAmount)}
+          </th>
+
+          <th style="text-align:right;padding:10px 8px">
+            ${roomRentMoney(totalRoomBillAmount)}
+          </th>
+
+          <th style="text-align:center;padding:10px 8px">
+            ${paidCount}/${rows.length}
+          </th>
+        </tr>
+      `;
+          }
+        });
       }
       /* =====================================
    ROOM RENT PAYMENT MODAL
