@@ -9832,9 +9832,9 @@
 
         const personalIncomeTotal = personalIncomeCash + personalIncomeBank;
 
-        const rentIncomeTotal = rentIncomeCash + rentIncomeBank + roomRentUnclassified;
+        // const rentIncomeTotal = rentIncomeCash + rentIncomeBank + roomRentUnclassified;
 
-        const rentIncome = rentIncomeTotal;
+        // const rentIncome = rentIncomeTotal;
 
         // =====================================
         // CHI THEO QUỸ CÁ NHÂN / TIỀN TRỌ
@@ -9864,6 +9864,17 @@
         const personalExpense = getFundExpenseTotals("personal");
         const rentExpense = getFundExpenseTotals("rent");
 
+        // =====================================
+// SỐ DƯ QUỸ TIỀN TRỌ (THU - CHI)
+// =====================================
+
+const rentNetCash = rentIncomeCash - rentExpense.cash;
+const rentNetBank = rentIncomeBank - rentExpense.bank;
+
+// Phần thu cũ chưa phân loại vẫn được giữ nguyên
+const rentIncomeTotal = rentNetCash + rentNetBank + roomRentUnclassified;
+
+const rentIncome = rentIncomeTotal;
         // Chi tháng này
         const personalMonthExpense = getFundExpenseTotals("personal", true);
         const rentMonthExpense = getFundExpenseTotals("rent", true);
@@ -9878,9 +9889,9 @@
           balanceCashValue: cashBalance,
           balanceBankValue: bankBalance,
 
-          rentIncomeValue: rentIncome,
-          rentIncomeCashValue: rentIncomeCash,
-          rentIncomeBankValue: rentIncomeBank,
+         rentIncomeValue: rentIncomeTotal,
+rentIncomeCashValue: rentNetCash,
+rentIncomeBankValue: rentNetBank,
           // Tổng thu
           incomeTotalValue: totalIncome,
           incomeCashValue: cashIncome,
@@ -9933,13 +9944,13 @@
           },
 
           rentIncome: {
-            title: "🏠 Thu tiền trọ",
-            rows: [
-              { label: "Tổng thu", value: rentIncomeTotal },
-              { label: "💵 Tiền mặt", value: rentIncomeCash },
-              { label: "🏦 Ngân hàng", value: rentIncomeBank },
-            ],
-          },
+  title: "🏠 Thu tiền trọ",
+  rows: [
+    { label: "Tổng số dư", value: rentIncomeTotal },
+    { label: "💵 Tiền mặt", value: rentNetCash },
+    { label: "🏦 Ngân hàng", value: rentNetBank },
+  ],
+},
           // Tổng chi
           personalExpense: {
             title: "👤 Tiền cá nhân",
