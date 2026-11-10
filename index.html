@@ -3257,7 +3257,7 @@
             <!-- CHI TIẾT HÓA ĐƠN VÀ THANH TOÁN -->
             <details class="rr-subaccordion">
               <summary>
-                <span>🏠 Chi tiết từng đối tượng & thanh toán</span>
+                <span>🏠 Chi tiết từng loại & thanh toán</span>
                 <span class="rr-chevron" aria-hidden="true">⌄</span>
               </summary>
 
@@ -9281,7 +9281,7 @@
             await window.showAppDialog({
               title: "Không thể đổi loại",
               message:
-                "Đối tượng này đã có hóa đơn. Bạn không thể đổi giữa Trọ và Kiot để tránh làm sai lệch thống kê lịch sử.",
+                "loại này đã có hóa đơn. Bạn không thể đổi giữa Trọ và Kiot để tránh làm sai lệch thống kê lịch sử.",
               type: "warning",
             });
 
@@ -10249,7 +10249,7 @@
 
           if (!tbody) return;
 
-          // Lọc đối tượng đang hoạt động theo loại.
+          // Lọc loại đang hoạt động theo loại.
           // Dữ liệu cũ không có type sẽ mặc định là room.
           const activeRooms = roomRentRooms
             .filter(
